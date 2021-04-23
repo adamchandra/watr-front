@@ -3,15 +3,16 @@
   "description": "Template for setting up a TypeScript monorepo",
   "private": true,
   "workspaces": [
-    "packages/*",
-    "examples/*"
+    "packages/*"
   ],
   "scripts": {
     "docs": "doctoc --title '**Table of content**' README.md",
     "clean": "lerna run clean",
     "build": "lerna run build",
     "pub": "lerna publish",
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "deps:check": "lerna --concurrency 1 exec --stream -- ncu",
+    "deps:update": "lerna --concurrency 1 exec --stream -- ncu -u && lerna bootstrap"
   },
   "devDependencies": {
     "@nighttrax/eslint-config-tsx": "~8.0.0",

@@ -1,0 +1,15 @@
+{
+  /* Use the config the HAS the aliases. */
+  "extends": "../../tsconfig.json",
+
+  "compilerOptions": {
+    "types": [
+      "jest",
+      "node"
+    ],
+  },
+
+  "include": [
+    "src/**/*"
+  ]
+}
