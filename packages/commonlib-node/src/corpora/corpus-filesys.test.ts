@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { updateCorpusJsonFile, readCorpusJsonFile } from './corpus-file-walkers';
 import path from 'path';
 import fs from 'fs-extra';
-import { prettyPrint } from 'commonlib-shared';
+import { prettyPrint } from '@watr/commonlib-shared';
 
 export function initTestCorpusDirs(scratchDir: string): { corpusRoot: string, corpusPath: string } {
   if (fs.existsSync(scratchDir)) {

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import through from 'through2';
 import { expandDirRecursive, getDirWalkerStream } from './dirstream';
-import { prettyPrint } from 'commonlib-shared';
+import { prettyPrint } from '@watr/commonlib-shared';
 import fs from 'fs-extra';
 
 describe('File corpus operations', () => {

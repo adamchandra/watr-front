@@ -1,11 +1,10 @@
 {
   "extends": "./tsconfig.build.json",
-
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "@nighttrax/*": ["packages/*/src"],
-      "~/*": ["packages//src/*"]
+      "@watr/*": ["packages/*/src"],
+      "~/*": ["packages/*/src"]
     }
   }
 }

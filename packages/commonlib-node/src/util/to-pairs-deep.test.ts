@@ -1,6 +1,6 @@
 import 'chai';
 import _ from 'lodash';
-import { prettyPrint } from 'commonlib-shared';
+import { prettyPrint } from '@watr/commonlib-shared';
 import { getQualifiedKey, getQualifiedValue, toIQualifiedPaths, toQualifiedKeyValues, toQualifiedPath } from './to-pairs-deep';
 
 

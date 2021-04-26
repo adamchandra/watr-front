@@ -3,7 +3,7 @@ import path from 'path';
 import fs, { } from 'fs-extra';
 import stream, { Readable, Transform } from 'stream';
 import through from 'through2';
-import { createPump } from '~/util/stream-pump';
+import { createPump } from '../util/stream-pump';
 
 interface DirStackEntry {
   fullpath: string;

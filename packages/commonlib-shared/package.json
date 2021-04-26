@@ -1,7 +1,8 @@
 {
-  "name": "commonlib-shared",
+  "name": "@watr/commonlib-shared",
   "private": false,
   "version": "1.0.0",
+  "license": "ISC",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -10,24 +11,27 @@
     "test": "yarn run build"
   },
   "dependencies": {
-    "@nighttrax/foo": "*",
     "chalk": "^4.1.1",
     "crypto-js": "^4.0.0",
     "lodash": "^4.17.21",
     "slice-ansi": "^5.0.0",
     "diff": "^5.0.0",
     "fp-ts": "^2.10.4",
-    "typescript": "^4.2.4",
     "wrap-ansi": "^8.0.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "~6.0.0",
-    "@types/node": "~14.11.2",
-    "@types/jest": "^26.0.22",
+    "@wessberg/rollup-plugin-ts": "^1.3.14",
+    "@types/node": "~14.14.41",
+    "@types/jest": "^26.0.23",
     "@types/crypto-js": "^4.0.1",
     "@types/diff": "^5.0.0",
     "@types/lodash": "^4.14.168",
-    "rollup": "~2.28.1"
+    "@types/slice-ansi": "^4.0.0",
+    "@types/wrap-ansi": "^3.0.0",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.5.5",
+    "typescript": "^4.2.4",
+    "rollup": "~2.45.2"
   }
 }

@@ -1,8 +1,8 @@
 import _ from 'lodash';
 
-import sliceAnsi from 'slice-ansi';
+// import sliceAnsi from 'slice-ansi';
 import chalk from 'chalk';
-import wrapAnsi from 'wrap-ansi';
+// import wrapAnsi from 'wrap-ansi';
 import * as Diff from 'diff';
 import Crypto from 'crypto-js';
 
@@ -26,44 +26,44 @@ export function matchAll(re: RegExp, str: string): Array<[number, number]> {
 }
 
 
-export function highlightRegions(input: string, matches: Array<[number, number]>): string {
-  let res = input;
-  _.each(matches, ([mstart, mend], mindex) => {
-    const pre = sliceAnsi(res, 0, mstart);
-    const mid = sliceAnsi(res, mstart, mend);
-    const end = sliceAnsi(res, mend);
-    // prettyPrint({ pre, mid, end });
-    const r = (mindex * 13 * 13) % 64;
-    const g = (mindex * 7 * 13) % 64;
-    const b = (mindex * 5 * 13) % 64;
-    const midclr = chalk // .underline(mid);
-      .rgb(r + 128, g + 128, b + 128)
-      .bgRgb(b, g, r)(mid);
+// export function highlightRegions(input: string, matches: Array<[number, number]>): string {
+//   let res = input;
+//   _.each(matches, ([mstart, mend], mindex) => {
+//     const pre = sliceAnsi(res, 0, mstart);
+//     const mid = sliceAnsi(res, mstart, mend);
+//     const end = sliceAnsi(res, mend);
+//     // prettyPrint({ pre, mid, end });
+//     const r = (mindex * 13 * 13) % 64;
+//     const g = (mindex * 7 * 13) % 64;
+//     const b = (mindex * 5 * 13) % 64;
+//     const midclr = chalk // .underline(mid);
+//       .rgb(r + 128, g + 128, b + 128)
+//       .bgRgb(b, g, r)(mid);
 
-    res = pre + midclr + end;
-  });
+//     res = pre + midclr + end;
+//   });
 
-  return res;
-}
+//   return res;
+// }
 
-export function clipParagraph(width: number, height: number, para: string): string {
-  const wrappedLines = wrapAnsi(para, width).split('\n');
+// export function clipParagraph(width: number, height: number, para: string): string {
+//   const wrappedLines = wrapAnsi(para, width).split('\n');
 
-  let clipped: string;
-  if (wrappedLines.length > height) {
-    const elidedStartLine = _.clamp(height - 4, 1, wrappedLines.length);
-    const clippedHead = wrappedLines.slice(0, elidedStartLine).join('\n');
-    const len = wrappedLines.length;
-    const clippedEnd = wrappedLines.slice(len - 3).join('\n');
-    const clippedCount = len - height;
-    const middle = `... + ${clippedCount} lines`;
-    clipped = _.join([clippedHead, middle, clippedEnd], '\n');
-  } else {
-    clipped = wrappedLines.join('\n');
-  }
+//   let clipped: string;
+//   if (wrappedLines.length > height) {
+//     const elidedStartLine = _.clamp(height - 4, 1, wrappedLines.length);
+//     const clippedHead = wrappedLines.slice(0, elidedStartLine).join('\n');
+//     const len = wrappedLines.length;
+//     const clippedEnd = wrappedLines.slice(len - 3).join('\n');
+//     const clippedCount = len - height;
+//     const middle = `... + ${clippedCount} lines`;
+//     clipped = _.join([clippedHead, middle, clippedEnd], '\n');
+//   } else {
+//     clipped = wrappedLines.join('\n');
+//   }
 
-  return clipped;
-}
+//   return clipped;
+// }
 
 export function stripMargin(block: string): string {
   const lines = block.split('\n');
@@ -75,14 +75,16 @@ export function stripMargins(lines: string[]): string[] {
   return _
     .map(lines, l => {
       if (/^[ ]*[|]/.test(l)) {
-        return l.slice(l.indexOf('|')+1)
+        return l.slice(l.indexOf('|') + 1)
       }
       return l;
     });
 }
 
-import { parseJSON, isLeft, toError } from 'fp-ts/lib/Either';
-// import * as Js from 'fp-ts/lib/Json';
+import * as Js from 'fp-ts/Json';
+import { pipe } from 'fp-ts/function';
+import * as E from 'fp-ts/Either';
+
 
 export function parseJsonStripMargin(s: string): any | undefined {
   const s0 = stripMargin(s);
@@ -90,26 +92,26 @@ export function parseJsonStripMargin(s: string): any | undefined {
 }
 
 export function parseJson(s: string): any | undefined {
-  const parsed = parseJSON(s, toError);
+  return pipe(
+    Js.parse(s),
+    E.mapLeft((syntaxError: any) => {
+      console.log(`Parsing Error: ${syntaxError}`);
 
-  if (isLeft(parsed)) {
-    const syntaxError = parsed.left;
-    console.log(`Parsing Error: ${syntaxError}`);
+      const posRE = /position (\d+)/;
+      const posMatch = syntaxError.message.match(posRE);
 
-    const posRE = /position (\d+)/;
-    const posMatch = syntaxError.message.match(posRE);
+      if (posMatch && posMatch.length > 1) {
+        const errIndex = parseInt(posMatch[1]);
+        const begin = Math.max(0, errIndex - 50);
+        const end = Math.min(s.length, errIndex + 50);
+        const pre = s.slice(begin, errIndex + 1)
+        const post = s.slice(errIndex + 1, end)
+        console.log(`${syntaxError}\nContext:\n${pre} <-- Error\n${post}`);
+      }
+      return;
 
-    if (posMatch && posMatch.length > 1) {
-      const errIndex = parseInt(posMatch[1]);
-      const begin = Math.max(0, errIndex - 50);
-      const end = Math.min(s.length, errIndex + 50);
-      const pre = s.slice(begin, errIndex + 1)
-      const post = s.slice(errIndex + 1, end)
-      console.log(`${syntaxError}\nContext:\n${pre} <-- Error\n${post}`);
-    }
-    return;
-  }
-  return parsed.right;
+    })
+  );
 }
 
 type DiffCharsArgs = {
@@ -148,7 +150,7 @@ export function diffByChars(stra: string, strb: string, opts?: DiffCharsArgs): C
   const brief = opts && opts.brief;
   const changes = Diff.diffChars(stra, strb);
   const asPairs = _.map(changes, (change) => _.toPairs(change));
-  const filterUndefs = _.map(asPairs, change => _.filter(change, ([,v]) => !_.isNil(v)));
+  const filterUndefs = _.map(asPairs, change => _.filter(change, ([, v]) => !_.isNil(v)));
   const asObjects = _.map(filterUndefs, change => _.fromPairs(change));
   return _.map(asObjects, obj => {
     const { added, removed, count, value } = obj;

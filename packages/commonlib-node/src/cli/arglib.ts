@@ -4,7 +4,8 @@ import fs from 'fs-extra';
 import path from 'path';
 
 import yargs, { Argv, Arguments, Options } from 'yargs';
-import { prettyPrint } from 'commonlib-shared';
+
+import { prettyPrint } from '@watr/commonlib-shared';
 
 export type ArgvApp = (ya: Argv) => Argv;
 

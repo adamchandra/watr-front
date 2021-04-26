@@ -1,12 +1,8 @@
 {
-  /* Use the config the HAS the aliases. */
+  /* Use the config that HAS the aliases for rollup. */
   "extends": "../../tsconfig.json",
 
   "compilerOptions": {
-    "types": [
-      "jest",
-      "node"
-    ],
   },
 
   "include": [

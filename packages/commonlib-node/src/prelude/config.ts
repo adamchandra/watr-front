@@ -1,5 +1,5 @@
 import path from 'path';
-import { makeHashEncodedPath } from 'commonlib-shared';
+import { makeHashEncodedPath } from '@watr/commonlib-shared';
 
 
 export const Env = {

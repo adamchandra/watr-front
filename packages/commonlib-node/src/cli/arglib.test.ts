@@ -1,16 +1,14 @@
-//
 import 'chai';
 
 import _ from 'lodash';
-import { config, opt, ArgvApp, registerCmd, YArgs } from '~/cli/arglib';
+import { config, opt, ArgvApp, registerCmd, YArgs } from './arglib';
 import yargs from 'yargs';
-import { prettyPrint } from 'commonlib-shared';
+import { prettyPrint } from '@watr/commonlib-shared';
 
 describe('Arglib tests', () => {
   beforeEach(() => {
     yargs.reset()
   })
-
 
   async function runCmd(args: string, ...fs: ArgvApp[]): Promise<Record<string, unknown>> {
     return new Promise((resolve, reject) => {

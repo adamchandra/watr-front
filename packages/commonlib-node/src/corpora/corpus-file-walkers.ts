@@ -3,8 +3,8 @@ import { Readable } from 'stream';
 import path from 'path';
 import fs from 'fs-extra';
 import { getDirWalkerStream, stringStreamFilter } from './dirstream';
-import { throughFunc } from '~/util/stream-utils';
-import { shaEncodeAsHex } from 'commonlib-shared';
+import { throughFunc } from '../util/stream-utils';
+import { shaEncodeAsHex } from '@watr/commonlib-shared';
 
 
 export interface ExpandedDir {

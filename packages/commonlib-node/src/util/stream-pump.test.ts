@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { createPump } from './stream-pump';
 import { arrayStream, isDefined } from './stream-utils';
 import { Readable } from 'stream';
-import { prettyPrint } from 'commonlib-shared';
+import { prettyPrint } from '@watr/commonlib-shared';
 
 
 describe('Pump Builder', () => {

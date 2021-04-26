@@ -2,37 +2,37 @@ import 'chai';
 
 import _ from 'lodash';
 
-import { matchAll, highlightRegions, clipParagraph, diffByChars } from './string-utils';
+import { matchAll,  diffByChars } from './string-utils';
 
 import { diffChars, Change } from 'diff';
 import { prettyPrint } from './pretty-print';
 describe('String utils', () => {
 
-  it('should apply cleaning and hightlight', () => {
+  // it('should apply cleaning and hightlight', () => {
 
-    const input = 'some random string';
+  //   const input = 'some random string';
 
-    let matches = matchAll(/om/g, input);
-    let result = highlightRegions(input, matches);
-    console.log(result);
+  //   let matches = matchAll(/om/g, input);
+  //   let result = highlightRegions(input, matches);
+  //   console.log(result);
 
-    // matches = matchAll(/o../g, input);
-    // result = highlightRegions(result, matches)
-    // console.log(result);
+  //   // matches = matchAll(/o../g, input);
+  //   // result = highlightRegions(result, matches)
+  //   // console.log(result);
 
-    matches = matchAll(/n.*n/g, input);
-    result = highlightRegions(result, matches)
-    console.log(result);
+  //   matches = matchAll(/n.*n/g, input);
+  //   result = highlightRegions(result, matches)
+  //   console.log(result);
 
 
-  });
-  it.only('clip paragraphs', () => {
-    const p = 'ab cd ef gh ij'
-    // const p = ""
-    const result = clipParagraph(3, 2, p);
+  // });
+  // it('clip paragraphs', () => {
+  //   const p = 'ab cd ef gh ij'
+  //   // const p = ""
+  //   const result = clipParagraph(3, 2, p);
 
-    console.log(result);
-  });
+  //   console.log(result);
+  // });
 
   it.only('should diff strings', () => {
     const stra = 'the cat in the hat'
