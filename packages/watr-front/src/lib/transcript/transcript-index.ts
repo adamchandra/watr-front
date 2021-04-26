@@ -77,7 +77,7 @@ export class TranscriptIndex {
     const { pages } = this.transcript;
     // const pageN = pages[pageNumber];
     const pageNs = pageNumber === undefined ? pages : [pages[pageNumber]];
-    const labels = pageNs.flatMap(p => p.labels)
+    const labels = _.flatMap(pageNs, p => p.labels);
 
     const shapeLabels = _.filter(labels, l => {
       const hasName = labelNames.length === 0 || labelNames.includes(l.name);
