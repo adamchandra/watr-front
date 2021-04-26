@@ -1,0 +1,31 @@
+<div class="transcriptViewer">
+
+  <div class="left-side">
+    <div class="pageImageListFrame">
+      <div ref="pageImageListDiv" class="pageImageList" />
+    </div>
+  </div>
+
+  <div class="right-side">
+    <v-app-bar>
+      <v-btn @click.stop="showPageOverlays = !showPageOverlays" icon>
+        <v-icon>mdi-{{ `chevron-${showPageOverlays ? 'right' : 'left'}` }}</v-icon>
+      </v-btn>
+    </v-app-bar>
+    <div
+      class="selectionFilterFrame"
+      v-show="showPageOverlays"
+    >
+      <NarrowingFilter
+        v-on:items-selected="onItemsSelected"
+      />
+      <div ref="selectionFilterDiv" class="selectionFilter" />
+    </div>
+
+    <div class="stanzaListFrame">
+      <div ref="stanzaListDiv" class="stanzaList" />
+    </div>
+
+
+  </div>
+</div>

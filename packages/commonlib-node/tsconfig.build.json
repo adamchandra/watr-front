@@ -1,5 +1,5 @@
 {
-  /* Use the config the HAS the aliases. */
+  /* Use the config that has the aliases. */
   "extends": "../../tsconfig.json",
 
   "include": [
