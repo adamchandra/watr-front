@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 // import sliceAnsi from 'slice-ansi';
-import chalk from 'chalk';
+// import chalk from 'chalk';
 // import wrapAnsi from 'wrap-ansi';
 import * as Diff from 'diff';
 import Crypto from 'crypto-js';
@@ -14,7 +14,7 @@ export function shaEncodeAsHex(str: string): string {
 export function matchAll(re: RegExp, str: string): Array<[number, number]> {
   const re0 = RegExp(re);
   const matchOffsets: [number, number][] = [];
-  let matchArr;
+  let matchArr: RegExpExecArray;
   while ((matchArr = re0.exec(str)) !== null) {
     const mstr = matchArr[0];
     const mstart = matchArr.index;

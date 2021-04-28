@@ -14,6 +14,7 @@ import * as TE from 'fp-ts/lib/TaskEither';
 import { fetchAndDecodeTranscript } from '~/lib/data-fetch'
 import { getURLQueryParam } from '~/lib/url-utils';
 import { useLabelOverlay } from '../../label-overlay';
+import { Label } from '~/lib/transcript/labels';
 
 export default {
   setup() {
@@ -27,6 +28,8 @@ export default {
     let params = new URLSearchParams(uri);
     console.log('id', params.get('id'));
 
+    const pageLabelRefs: Array<Ref<Label[]>> = [];
+
     const run = pipe(
       TE.right({ entryId }),
       TE.bind('transcript', ({ entryId }) => fetchAndDecodeTranscript(entryId)),
@@ -39,10 +42,12 @@ export default {
         entryId,
       }).then(x => E.right(x))),
 
+
       TE.bind('labelOverlay', ({ pdfPageViewer, transcriptIndex }) => () => useLabelOverlay({
         pdfPageViewer,
         transcriptIndex,
         pageNumber,
+        pageLabelRef: pageLabelRefs[pageNumber],
         state
       }).then(x => E.right(x))),
 

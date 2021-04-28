@@ -34,5 +34,15 @@
     "@types/through2": "^2.0.36",
     "@types/yargs": "^16.0.1",
     "rollup": "~2.45.2"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/$1",
+      "^~/(.*)$": "<rootDir>/src/$1"
+    }
   }
 }

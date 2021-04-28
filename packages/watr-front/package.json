@@ -2,10 +2,10 @@
   "name": "@watr/watrfront",
   "version": "1.0.0",
   "description": "Web Frontends for WatrWorks projects",
+  "license": "ISC",
   "author": "Adam Saunders",
   "private": false,
   "scripts": {
-    "compile": "tsc",
     "build": "tsc",
     "nuxt": "nuxt",
     "nuxt:build": "nuxt build",
@@ -15,8 +15,6 @@
     "lint": "eslint --no-eslintrc --config .eslintrc.js --ext .ts --ignore-path ../../.gitignore src/",
     "lint:fix": "eslint --no-eslintrc --config .eslintrc.js --ext .ts --ignore-path ../../.gitignore src/ --fix",
     "test": "jest",
-    "serve:json": "json-server --port 3100 ./dev-data/db.json --static ./dev-data --routes ./dev-data/routes.json",
-    "ui:dev": "nuxt",
     "dev": "npm-run-all -p -r nuxt serve:json"
   },
   "dependencies": {
@@ -67,5 +65,15 @@
     "prettier": "^2.2.1",
     "ts-jest": "^26.5.5",
     "vue-jest": "^4.0.0-0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/$1",
+      "^~/(.*)$": "<rootDir>/src/$1"
+    }
   }
 }

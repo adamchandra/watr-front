@@ -33,12 +33,19 @@ export function resolveCorpusUrl(entryId: string, ...artifactPaths: string[]): s
 
 export function resolveCorpusPath(entryId: string, ...artifactPaths: string[]): string {
   const leaves = path.join(entryId, ...artifactPaths)
-  const full = path.join('/api/corpus/entry/', leaves)
-  return full
+  return path.join('/api/corpus/entry/', leaves)
 }
 
 export async function getArtifactData<T>(entryId: string, ...artifactPaths: string[]): Promise<T | undefined> {
   return configAxios()
     .get(resolveCorpusPath(entryId, ...artifactPaths))
+    .then(resp => resp.data)
+}
+
+export async function getEntryList<T>(): Promise<T | undefined> {
+  const endpoint = '/api/corpus/entries';
+
+  return configAxios()
+    .get(endpoint)
     .then(resp => resp.data)
 }

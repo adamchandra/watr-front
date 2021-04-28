@@ -9,45 +9,38 @@ import Router from 'koa-router';
 
 import {
   expandDirRecursive,
+  walkDotDStyleCorpus,
+  streamPump,
 } from '@watr/commonlib-node';
 
-// import {
-//   putStrLn,
-// } from 'commonlib-shared';
+import {
+  putStrLn
+} from '@watr/commonlib-shared';
 
 
-// export interface CorpusPage {
-//   corpusEntries: CorpusEntry[];
-//   offset: number;
-// }
-
-// TODO reinstate w/o pumpify (use 'commons')
-// export async function readCorpusEntries(
-//   corpusRoot: string,
-//   start: number,
-//   len: number
-// ): Promise<CorpusPage> {
-//   const entryStream = corpusEntryStream(corpusRoot);
-//   const pipe = pumpify.obj(
-//     entryStream,
-//     sliceStream(start, len),
-//     expandDirTrans,
-//   );
-
-//   return new Promise((resolve) => {
-//     const entries: CorpusEntry[] = [];
-//     pipe.on("data", (data: CorpusEntry) => {
-//       entries.push(data);
-//     });
-//     pipe.on("end", () => {
-//       const corpusPage = {
-//         corpusEntries: entries,
-//         offset: start
-//       };
-//       resolve(corpusPage);
-//     });
-//   })
-// }
+export async function readCorpusEntries(
+  corpusRoot: string,
+  // start: number,
+  // len: number
+): Promise<any> {
+  const entryStream = walkDotDStyleCorpus(corpusRoot);
+  const allFilesP = await streamPump.createPump()
+    .viaStream<string>(entryStream)
+    .gather()
+    .toPromise()
+    .then(files => {
+      if (files === undefined) {
+        return [];
+      }
+      return _.flatten(files);
+    });
+  const relative = _.map(allFilesP, f => path.relative(corpusRoot, f));
+  const cleaned = _.filter(_.map(relative, f => f.replace('/', '')), f => f.length > 0);
+  const entries = _.map(cleaned, entryId => ({ entryId }));
+  return {
+    entries
+  };
+}
 
 
 
@@ -92,41 +85,59 @@ export async function resolveArtifact(
   return undefined;
 }
 
+function withTrailingSegments(p: string): string {
+  return p + '/([^/]+)((/[^/]+)|/)*';
+}
+
+function getTrailingSegments(leadingPath:string, urlPath: string): string[] {
+  const endPath = urlPath.substr(leadingPath.length + 1)
+  return endPath.split('/');
+}
+
+function regex(path: string): RegExp {
+  return new RegExp(path);
+}
+
 export function initFileBasedRoutes(corpusRootPath: string): Router {
-  // TODO get this prefixed route working properly
-  // putStrLn(`initializing server with root @${corpusRootPath}`);
+  putStrLn(`initializing server with root @${corpusRootPath}`);
+
   const apiRouter = new Router({
-    // prefix: "/api"
   });
-  const pathPrefix = '/api/corpus/entry'
-  const pathMatcher = `${pathPrefix}/([^/]+)((/[^/]+)|/)*`
-  const re = new RegExp(pathMatcher);
 
   apiRouter
-    .get(re, async (ctx: Context, next) => {
+    .get(regex('/api/corpus/entries'), async (ctx: Context, next) => {
       const p = ctx.path;
-      // putStrLn(`server: GET ${p}`);
 
-      // map path entry id to physical path
       try {
-        const endPath = p.substr(pathPrefix.length + 1)
-        const pathParts = endPath.split('/');
-        const [entryId, ...remainingPath] = pathParts;
+        const corpusEntries = await readCorpusEntries(corpusRootPath);
+        ctx.body = corpusEntries;
+      } catch (error) {
+        putStrLn(`server: could not serve ${p}`);
+      }
+
+      return next();
+    })
+    .get(regex(withTrailingSegments('/api/corpus/entry')), async (ctx: Context, next) => {
+      const p = ctx.path;
+
+      try {
+        const [entryId, ...remainingPath] = getTrailingSegments('/api/corpus/entry', p);
         const entryPath = path.resolve(corpusRootPath, entryId);
         const artifactPath = await resolveArtifact(entryPath, remainingPath)
 
         if (artifactPath) {
           const respRelFile = path.relative(corpusRootPath, artifactPath);
-          // putStrLn(`server: serving ${respRelFile}`);
+          putStrLn(`server: serving ${respRelFile}`);
           return await send(ctx, respRelFile, { root: corpusRootPath });
         }
 
       } catch (error) {
-        // putStrLn(`server: could not serve ${p}`);
+        putStrLn(`server: could not serve ${p}`);
       }
 
       return next();
-    });
+    })
+    ;
 
 
   return apiRouter;

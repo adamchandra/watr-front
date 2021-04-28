@@ -1,7 +1,8 @@
 {
   "name": "@watr/server",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "license": "ISC",
+  "private": false,
   "description": "Backend server for WatrColors",
   "keywords": [],
   "dependencies": {
@@ -42,7 +43,6 @@
     "rollup": "~2.45.2",
     "typescript": "^4.2.4"
   },
-  "license": "ISC",
   "scripts": {
     "build": "rollup -c"
   },

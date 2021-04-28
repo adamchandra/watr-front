@@ -14,5 +14,7 @@
 </template>
 
 <script lang="ts">
-  export default {}
+  export default {
+    layout: 'default'
+  }
 </script>
