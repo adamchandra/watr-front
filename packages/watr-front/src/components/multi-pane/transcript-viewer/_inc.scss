@@ -39,14 +39,15 @@
     border: 2px solid blue;
 
     .selectionFilterFrame {
-      height: 10vh;
+      flex-grow: 1;
     }
 
     .stanzaListFrame {
       border: 3px solid white;
       margin-right: 1em;
-      height: 80vh;
       overflow-y: scroll;
+
+      flex-grow: 1;
 
       .stanzaList {
         display: flex;

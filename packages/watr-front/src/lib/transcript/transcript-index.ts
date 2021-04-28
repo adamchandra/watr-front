@@ -46,7 +46,9 @@ export class TranscriptIndex {
 
   initIndexables(): void {
     const { pages } = this.transcript;
-    _.each(pages, (page) => {
+    _.each(pages, (page, pageNumber) => {
+      _.each(page.labels, l => l.range.unshift({unit: 'page', at: pageNumber}));
+
       const primaryKey = `page#${page.page}/glyphs`;
       const pageIndexables = _.map(page.glyphs, (glyph) => {
         const { x, y, width, height } = glyph.rect;

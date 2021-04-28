@@ -42,7 +42,7 @@ const PageRange = io.type({
   at: PageNumber
 });
 
-type PageRange = io.TypeOf<typeof PageRange>;
+export type PageRange = io.TypeOf<typeof PageRange>;
 
 const GeometricRangeRepr = io.type({
   unit: io.literal('shape'),
@@ -141,8 +141,10 @@ export const LabelPartials: io.Type<LabelPartials, LabelPartialsRepr, unknown> =
 
 export const Label = new io.Type<Label, LabelRepr, unknown>(
   'Label',
-  (u: any): u is Label => io.string.is(u['name'])
-    && io.array(Range).is(u['range']),
+
+  (u: any): u is Label =>
+    io.string.is(u['name']) && io.array(Range).is(u['range']),
+
   (unk: unknown, c: io.Context) => pipe(
     LabelRepr.validate(unk, c),
     E.bindTo('repr'),
@@ -152,7 +154,7 @@ export const Label = new io.Type<Label, LabelRepr, unknown>(
     E.bind('partials', ({ repr }) => LabelPartialsRepr.validate(repr, c)),
     E.bind('id', ({ partials: { id } }) => id === undefined ? io.success({}) : io.success({ id })),
     E.bind('props', ({ partials: { props } }) => props === undefined ? io.success({}) : io.success({ props })),
-    E.bind('children', ({ partials: { children } }) => children === undefined ? io.success({}) : io.success({children })),
+    E.bind('children', ({ partials: { children } }) => children === undefined ? io.success({}) : io.success({ children })),
     E.chain(({ label, id, children, props }) => io.success(_.merge(label, id, children, props)))
   ),
   (a: Label) => {

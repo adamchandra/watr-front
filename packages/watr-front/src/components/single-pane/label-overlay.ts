@@ -1,5 +1,10 @@
 import _ from 'lodash';
 
+import {
+  Ref,
+  watch,
+} from '@vue/composition-api'
+
 import { StateArgs } from '~/components/basics/component-basics'
 import * as d3 from 'd3-selection';
 import { TranscriptIndex } from '~/lib/transcript/transcript-index';
@@ -11,6 +16,7 @@ type Args = StateArgs & {
   transcriptIndex: TranscriptIndex;
   pdfPageViewer: PdfPageViewer;
   pageNumber: number;
+  pageLabelRef: Ref<Label[]>;
 };
 
 export interface LabelOverlay {
@@ -18,43 +24,48 @@ export interface LabelOverlay {
 }
 
 export async function useLabelOverlay({
-  transcriptIndex,
+  // transcriptIndex,
   pdfPageViewer,
-  pageNumber,
+  // pageNumber,
+  pageLabelRef,
 }: Args): Promise<LabelOverlay> {
   const { superimposedElements } = pdfPageViewer;
 
-  const labelsToDisplay = [
-    'BaselineMidriseBand'
-  ];
+  // const labelsToDisplay = [
+  //   'BaselineMidriseBand'
+  // ];
 
-  const displayableLabels = transcriptIndex.getLabels(labelsToDisplay, pageNumber);
+  // const displayableLabels = transcriptIndex.getLabels(labelsToDisplay, pageNumber);
 
-  const svg = superimposedElements.overlayElements.svg!;
+  watch(pageLabelRef, (displayableLabels: Label[]) => {
+    const svg = superimposedElements.overlayElements.svg!;
 
-  const shapes = _.flatMap(displayableLabels, (label: Label) => {
-    return _.flatMap(label.range, range => {
-      if (range.unit === 'shape') {
-        const svg = shapeToSvg(range.at);
-        addShapeId(svg);
-        return [svg];
-      }
-      return [];
+    const shapes = _.flatMap(displayableLabels, (label: Label) => {
+      return _.flatMap(label.range, range => {
+        if (range.unit === 'shape') {
+          const svg = shapeToSvg(range.at);
+          addShapeId(svg);
+          return [svg];
+        }
+        return [];
+      });
     });
-  });
 
-  const dataSelection = d3.select(svg)
-    .selectAll('.shape')
-    .data(shapes, (sh: any) => sh.id);
+    const dataSelection = d3.select(svg)
+      .selectAll('.shape')
+      .data(shapes, (sh: any) => sh.id);
 
-  dataSelection.exit().remove();
+    dataSelection.exit().remove();
 
-  dataSelection.enter()
-    .each(function(shape: any) {
-      const self = d3.select(this);
-      return self.append(shape.type)
-        .call(initShapeAttrs);
-    });
+    dataSelection.enter()
+      .each(function(shape: any) {
+        const self = d3.select(this);
+        return self.append(shape.type)
+          .call(initShapeAttrs);
+      });
+
+  })
+
 
   return {};
 }
