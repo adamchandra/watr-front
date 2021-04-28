@@ -11,8 +11,6 @@ import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';
 import { CorpusEntryList, fetchAndDecodeCorpusEntryList } from '~/lib/data-fetch'
 
-
-
 export default defineComponent({
   components: { },
 
