@@ -1,107 +1,73 @@
 {
-  "//" : "Extracted Pages for 1503.00580.pdf.d",
-  "documentId" : "1503.00580.pdf.d",
-  "pages" : [{
-    "bounds" : [0, 0, 61200, 79200],
-    "lines" : [
+  "documentId": "austenite.pdf.d",
+  "pages": [{
+    "page": 0,
+    "bounds": [0, 0, 59500, 79400],
+    "glyphs": [["A", 1, [4853, 15403, 1258, 1214]], ["u", 2, [6164, 15832, 880, 807]], ["s", 3, [7152, 15813, 513, 826]],
+               ["t", 4, [7770, 15583, 494, 1056]], ["e", 5, [8332, 15813, 646, 826]], ["n", 6, [9055, 15813, 867, 804]]
+              ],
+    "labels": [
       {
-        "//": "Here 'A' and tilde are 2 glyphs combining into single char",
-        "text" : "I, Ãdam",
-        "chars" : [
-          [1, 2, 3, 4],
-          [2, 2, 3, 4],
-          [5, 2, 3, 4, {}],
-          [3, 2, 3, 4, {
-            "gs": [
-              [1, 2, 3, 4, {"g": "A"}],
-              [1, 2, 3, 4, {"g": "~"}]
-            ]
+        "props": {
+          "tags": ["@labelHomogenousFontRuns"]
+        },
+        "range": [
+          {
+            "unit": "shape",
+            "at": [[4267, 38018], [12526, 38018]]
+          }
+        ],
+        "id": 969,
+        "name": "CharRunFontBaseline"
+      } ,
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "props": {"class": ["=hover", "=trigger"]},
+                "range": [{"unit": "shape", "at": [36694, 45276, 1465, 924]}],
+                "name": "FocalRect"
+              },
+              {
+                "range": [{"unit": "shape", "at": [36694, 45276, 1465, 80324]}],
+                "name": "HorizonRect"
+              },
+              {
+                "children": [
+                  {
+                    "range": [],
+                    "name": "Search/Cell:Bottom"
+                  }
+                ],
+                "range": [],
+                "name": "SearchArea"
+              }
+            ],
+            "range": [],
+            "name": "Octothorpe"
+          }, {
+            "children": [{
+              "range": [],
+              "id": 58041,
+              "name": "GlyphBigram"
+            }, {
+              "range": [],
+            "id": 58044,
+            "name": "GlyphBigram"
           }],
-          [1, 2, 3, 4],
-          [1, 2, 3, 4],
-          [5, 2, 3, 4, {}],
-          [1, 2, 3, 4]
-        ]
-      },
-      {
-        "text" : "Fe_{3}",
-        "//": "_{} and ^{} are super/subscript escapes",
-        "chars" : [
-          [1, 2, 3, 4],
-          [2, 2, 3, 4],
-          [5, 2, 3, 4, {"o": -2}],
-          [5, 2, 3, 4, {"o": -1}],
-          [5, 2, 3, 4, {"os": [-2, -1, 1]}],
-          [5, 2, 3, 4, {"o": 1}]
-        ]
-      },
-      {
-        "text" : "affine",
-        "//": "ﬃ -> ffi",
-        "chars" : [
-          [1, 2, 3, 4],
-          [1, 2, 3, 4, {"os": [1,2], "g":"ﬃ"}],
-          [1, 2, 3, 4, {"o": 1}],
-          [1, 2, 3, 4, {"o": 2}],
-          [1, 2, 3, 4],
-          [1, 2, 3, 4]
-        ]
+          "range": [],
+          "name": "Found"
+        }],
+        "props": {
+          "class": [">triggered"],
+          "tags": ["@expandEdges"]
+        },
+        "range": [],
+        "name": "GlyphGraphNode"
       }
-    ]
-  }, {
-    "bounds" : [0, 0, 61200, 79200],
-    "lines" : [
     ]
   }],
-  "": [
-
-  ],
-  "labels": [
-    {
-      "//": "List of lines across one or more pages",
-      "label": "paragraph",
-      "range": [
-        { "unit": "text:lines", "page": 1, "at": [2, 5] },
-        { "unit": "text:chars", "page": 3, "at": [4, 2] },
-        { "unit": "shape:line", "page": 2, "at": [[1,2], [3,4]] },
-        { "unit": "shape:rect", "page": 1, "at": [[1,2], 10, 20] }
-      ]
-    },
-    {"label": "header:*"},
-    {"label": "layout:*"},
-    {"label": "layout:centered"},
-    {"label": "layout:left-justified"},
-    {"label": "table"},
-    {"label": "table:heading"},
-    {"label": "table:cell"},
-    {"label": "math"},
-    {"label": "authors"},
-    {"label": "author"},
-    {"label": "first-name"},
-    {"label": "column"},
-    {"label": "line-numbering"},
-    {"label": "sentence"},
-    {"label": "reference:marker"},
-    {"label": "reference:target"},
-    {"label": "entity:class"},
-    {"label": "entity:instance"},
-    {"label": "pos:*"},
-    {"label": "pos:nnp"},
-    {"label": "quantity"},
-    {"label": "action"},
-    {"label": "action:object"},
-    {"label": "action:verb"},
-    {"label": "action:modifier"},
-    {"label": "Key:Value"},
-    {
-      "//": "Let/env syntax",
-      "label": "paragraph",
-      "$let": {
-        "$env": { "units": "lines" } ,
-        "$in": {
-
-        }
-      }
-    }
-  ]
+  "stanzas": [],
+  "labels": []
 }

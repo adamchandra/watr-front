@@ -1,6 +1,7 @@
 import _ from 'lodash'
-import { Stanza } from './transcript'
+import { Stanza, Transcript } from './transcript'
 import { isIsomorphic } from '~/lib/codec-utils'
+import fs from 'fs-extra';
 
 describe('Transcript/Stanza IO', () => {
 
@@ -32,6 +33,8 @@ describe('Transcript/Stanza IO', () => {
   });
 
   it('should I/O Transcript', () => {
-    // expect(isIsomorphic(Transcript, example, true)).toBe(true)
+    const example =  fs.readJsonSync('./dev-data/transcriptions/sample-transcription.json');
+    // isIsomorphic(Transcript, example, true)
+    expect(isIsomorphic(Transcript, example, verbose)).toBe(true)
   })
 })

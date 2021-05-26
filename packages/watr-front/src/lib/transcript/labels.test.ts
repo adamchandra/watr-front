@@ -16,7 +16,8 @@ describe('Label/Range IO', () => {
       { unit: 'text:line', at: [1, 2] },
       { unit: 'text:char', at: [1, 2] },
       { unit: 'document', at: 'Doc#23' },
-      { unit: 'label', at: 32 }
+      { unit: 'label', at: 32 },
+      {"unit": "shape", "at": [36184, 46472, 1255, 924]}
     ];
 
     _.each(examples, (example) => {
@@ -33,6 +34,8 @@ describe('Label/Range IO', () => {
       // { name: 'IdLabel', id: 21, range: [{ unit: 'page', at: 3 }] },
       // { name: 'LabelWithID', id: 22, range: [{ unit: 'text:line', at: [8454, 8483], }] },
       { name: 'LabelWithProps', range: [], props: { key1: ['value'], key2: ['32'] } },
+      {"range": [{"unit": "shape", "at": [36184, 46472, 1255, 924]}], "name": "HorizonRect"},
+
     ]
 
     _.each(examples, (example) => {
@@ -57,10 +60,23 @@ describe('Label/Range IO', () => {
           },
         ]
       },
+      {
+        "name": "GlyphGraphNode",
+        "range": [
+        ],
+        "children": [
+          {
+            "name": "HorizonRect",
+            "range": [
+              {"unit": "shape", "at": [10, 20, 30, 40]}
+            ]
+          }
+        ],
+      }
     ];
 
     _.each(examples, (example) => {
-      expect(isIsomorphic(LabelRepr, example, verbose)).toBe(true)
+      // expect(isIsomorphic(LabelRepr, example, verbose)).toBe(true)
       expect(isIsomorphic(Label, example, verbose)).toBe(true)
     });
   });

@@ -107,6 +107,9 @@ export const Rect = new io.Type<Rect, RectRepr, unknown>(
   'Rect', isKind('rect'),
   (u: unknown, c: io.Context) => pipe(
     RectRepr.validate(u, c),
+    E.map(foo => {
+      return foo;
+    }),
     E.chain(validRepr => io.success(uRect(validRepr)))
   ),
   (a: Rect) => {
@@ -170,6 +173,7 @@ export interface PointSvg {
   cx: number;
   cy: number;
   id?: string;
+  classes?: string[];
 }
 
 export interface LineSvg {
@@ -179,6 +183,7 @@ export interface LineSvg {
   x2: number;
   y2: number;
   id?: string;
+  classes?: string[];
 }
 
 export interface RectSvg {
@@ -188,11 +193,13 @@ export interface RectSvg {
   width: number;
   height: number;
   id?: string;
+  classes?: string[];
 }
 export interface PathSvg {
   type: 'path';
   d: string;
   id?: string;
+  classes?: string[];
 }
 
 export type ShapeSvg = PointSvg | LineSvg | RectSvg | PathSvg;

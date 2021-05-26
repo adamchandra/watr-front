@@ -13,6 +13,7 @@
     "test": "lerna run test",
     "deps:check": "lerna --concurrency 1 exec --stream -- ncu",
     "ui:run": "lerna --concurrency 2 run --stream ui:run",
+    "ui:dev": "lerna --concurrency 2 run --stream ui:dev",
     "deps:update": "lerna --concurrency 1 exec --stream -- ncu -u && lerna bootstrap"
   },
   "devDependencies": {

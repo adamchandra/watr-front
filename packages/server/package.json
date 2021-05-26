@@ -7,7 +7,8 @@
   "keywords": [],
   "scripts": {
     "build": "rollup -c",
-    "ui:run": "node  ./dist/server.js corpus-server --corpus-root ../../../watr-works/corpus.d"
+    "ui:run": "node  ./dist/server.js corpus-server --corpus-root ../../../watr-works/corpus.d",
+    "ui:dev": "node  ./dist/server.js corpus-server --corpus-root ../../../watr-works/corpus.d"
   },
   "dependencies": {
     "@watr/commonlib-node": "*",

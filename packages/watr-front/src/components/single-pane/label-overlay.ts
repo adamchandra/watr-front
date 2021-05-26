@@ -23,33 +23,52 @@ export interface LabelOverlay {
   //
 }
 
+export function labelToSVG(label: Label): ShapeSvg[] {
+
+  const localClasses = label.props === undefined ? [] :
+    _.flatMap(label.props['tags'], (tag: string) => {
+      if (tag.startsWith('cls:')) {
+        return [tag.substring('cls:'.length)];
+      }
+      return [];
+    });
+
+  const childShapes: ShapeSvg[] = label.children === undefined ? [] :
+    _.flatMap(label.children, c => labelToSVG(c));
+
+  const localShapes = _.flatMap(label.range, range => {
+    if (range.unit === 'shape') {
+      const svg = shapeToSvg(range.at);
+      addShapeId(svg);
+      return [svg];
+    }
+    return [];
+  });
+
+  const allShapes = _.concat(localShapes, childShapes);
+
+  _.each(allShapes, shape => {
+    const cls = shape.classes ? shape.classes : []
+    cls.push(...localClasses);
+    shape.classes = cls;
+  });
+
+  return allShapes;
+}
+
 export async function useLabelOverlay({
-  // transcriptIndex,
   pdfPageViewer,
-  // pageNumber,
   pageLabelRef,
 }: Args): Promise<LabelOverlay> {
   const { superimposedElements } = pdfPageViewer;
 
-  // const labelsToDisplay = [
-  //   'BaselineMidriseBand'
-  // ];
-
-  // const displayableLabels = transcriptIndex.getLabels(labelsToDisplay, pageNumber);
 
   watch(pageLabelRef, (displayableLabels: Label[]) => {
     const svg = superimposedElements.overlayElements.svg!;
 
-    const shapes = _.flatMap(displayableLabels, (label: Label) => {
-      return _.flatMap(label.range, range => {
-        if (range.unit === 'shape') {
-          const svg = shapeToSvg(range.at);
-          addShapeId(svg);
-          return [svg];
-        }
-        return [];
-      });
-    });
+    const shapes = _.flatMap(displayableLabels, (label: Label) =>
+      labelToSVG(label)
+    );
 
     const dataSelection = d3.select(svg)
       .selectAll('.shape')

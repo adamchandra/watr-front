@@ -154,7 +154,8 @@ export const Label = new io.Type<Label, LabelRepr, unknown>(
     E.bind('partials', ({ repr }) => LabelPartialsRepr.validate(repr, c)),
     E.bind('id', ({ partials: { id } }) => id === undefined ? io.success({}) : io.success({ id })),
     E.bind('props', ({ partials: { props } }) => props === undefined ? io.success({}) : io.success({ props })),
-    E.bind('children', ({ partials: { children } }) => children === undefined ? io.success({}) : io.success({ children })),
+    E.bind('childArray', ({ partials: { children } }) => children === undefined ? io.success([]) : io.array(Label).validate(children, c)),
+    E.bind('children', ({ childArray }) => childArray.length === 0 ? io.success({}) : io.success({ children: childArray })),
     E.chain(({ label, id, children, props }) => io.success(_.merge(label, id, children, props)))
   ),
   (a: Label) => {

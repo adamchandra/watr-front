@@ -58,12 +58,19 @@ export function isIsomorphic<A, IO>(ioType: io.Type<A, IO, IO>, input: IO, verbo
   }
 
   const decoded = maybeDecoded.right
+  if (verbose) {
+    prettyPrint({ m: `(1) decode-success: isIsomorphic(${ioType.name})/decode === true`, decoded })
+  }
   const reEncoded = ioType.encode(decoded)
   if (!_.isEqual(input, reEncoded)) {
     if (verbose) {
       prettyPrint({ m: `isIsomorphic(${ioType.name})/re-encode === false`, input, decoded, reEncoded })
     }
     return false;
+  }
+
+  if (verbose) {
+    prettyPrint({ m: `(2) encode-success: isIsomorphic(${ioType.name})/decode === true`, reEncoded })
   }
 
   const maybeReDecoded = ioType.decode(reEncoded)
@@ -74,6 +81,9 @@ export function isIsomorphic<A, IO>(ioType: io.Type<A, IO, IO>, input: IO, verbo
     }
     return false
   }
+  if (verbose) {
+    console.log('isIsomorphic: decoded 3')
+  }
 
   const reDecoded = maybeReDecoded.right;
 
@@ -83,6 +93,9 @@ export function isIsomorphic<A, IO>(ioType: io.Type<A, IO, IO>, input: IO, verbo
     }
     return false;
   }
+  if (verbose) {
+    console.log('isIsomorphic: decoded 3')
+  }
 
   if (verbose) {
     prettyPrint({ m: `isIsomorphic(${ioType.name}) === true`, input, decoded, reEncoded, reDecoded })
@@ -90,3 +103,41 @@ export function isIsomorphic<A, IO>(ioType: io.Type<A, IO, IO>, input: IO, verbo
 
   return true
 }
+/*
+
+      "children": [{
+        "children": [{
+          "props": {"class": ["=hover", "=trigger"]},
+          "range": [{"unit": "shape", "at": [36694, 45276, 1465, 924]}],
+          "name": "FocalRect"
+        }, {
+          "range": [{"unit": "shape", "at": [36694, 45276, 1465, 80324]}],
+          "name": "HorizonRect"
+        }, {
+          "children": [{
+            "range": [{"unit": "shape", "at": [36694, 46201, 1465, 79399]}],
+            "name": "Search/Cell:Bottom"
+          }],
+          "range": [],
+          "name": "SearchArea"
+        }],
+        "range": [],
+        "name": "Octothorpe"
+      }, {
+        "children": [{
+          "range": [{"unit": "shape", "at": [36184, 46472, 1255, 924]}],
+          "id": 58041,
+          "name": "GlyphBigram"
+        }, {
+          "range": [{"unit": "shape", "at": [37884, 46472, 493, 924]}],
+          "id": 58044,
+          "name": "GlyphBigram"
+        }],
+        "range": [],
+        "name": "Found"
+      }],
+
+
+
+
+*/

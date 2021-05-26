@@ -122,7 +122,7 @@ See the full example [here](examples/webpack).
 
 If you use `Babel` then see [this example](examples/jest-babel) from the [Babel](#babel) section above.
 
-If you use [ts-jest](https://github.com/kulshekhar/ts-jest) then you can use its `pathsToModuleNameMapper` helper: 
+If you use [ts-jest](https://github.com/kulshekhar/ts-jest) then you can use its `pathsToModuleNameMapper` helper:
 
 ```js
 const { pathsToModuleNameMapper } = require("ts-jest/utils");

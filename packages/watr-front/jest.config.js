@@ -1,4 +1,5 @@
 module.exports = {
+  verbose: true,
   globals: {
     'ts-jest': {
       isolatedModules: true
@@ -11,14 +12,8 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'js', 'vue', 'json'],
   transform: {
-    '^.+\\.js$': 'babel-jest',
     '^.+\\.ts$': 'ts-jest',
     '.*\\.(vue)$': 'vue-jest'
   },
-  collectCoverage: false,
-  collectCoverageFrom: [
-    '<rootDir>/lib/**/*.ts',
-    '<rootDir>/components/**/*.vue',
-    '<rootDir>/pages/**/*.vue'
-  ]
+  collectCoverage: false
 }
