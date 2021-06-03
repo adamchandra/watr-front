@@ -4,6 +4,7 @@ import { ref, watch, Ref, defineComponent, inject, SetupContext } from '@vue/com
 import { watchOnceFor } from '~/components/basics/component-basics';
 
 export const ProvidedChoices = 'ProvidedChoices';
+export const ProvidedChoicesTrigger = 'ProvidedChoicesTrigger';
 
 export interface NarrowingChoice<T> {
   index: number;
@@ -18,8 +19,8 @@ export default defineComponent({
     const currSelectionRef = ref([] as NarrowingChoice<unknown>[])
     const queryTextRef = ref('');
 
-    const choicesRef: Ref<Array<NarrowingChoice<unknown>> | null> = inject(ProvidedChoices, ref(null))
-
+    const initChoicesRef: Ref<number | null> = inject(ProvidedChoicesTrigger, ref(null));
+    const choicesRef: Array<NarrowingChoice<unknown>> | null = inject(ProvidedChoices, null);
 
     const onSubmit = () => {
       emit('items-selected', currSelectionRef.value);
@@ -30,8 +31,9 @@ export default defineComponent({
       emit('items-reset');
     };
 
-    watchOnceFor(choicesRef, (choices: NarrowingChoice<unknown>[] | null) => {
-      if (choices === null) return;
+    watch(initChoicesRef, (choicesReady: number | null) => {
+      if (choicesReady === null) return;
+      const choices = choicesRef;
 
       const choicesLC = choices.map(c => [c, c.key.toLowerCase()] as const);
       currSelectionRef.value = choices;

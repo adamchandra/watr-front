@@ -40,10 +40,20 @@ export class TranscriptIndex {
     this.transcript = t;
     this.indexes = {};
     this.indexables = {};
-    this.initIndexables();
+    this.initPageRTrees(); // TODO on/off switch for this for performance reasons
+    this.initIndexables(); // TODO on/off switch for this for performance reasons
     this.nextId = newIdGenerator(1);
   }
 
+  initPageRTrees(): void {
+    const { pages } = this.transcript;
+    _.each(pages, (page, pageNumber) => {
+      _.each(page.labels, l => l.range.unshift({unit: 'page', at: pageNumber}));
+      const primaryKey = `page#${page.page}/glyphs`;
+      const rtree = new RBush<TranscriptIndexable<Glyph>>()
+      this.indexes[primaryKey] = rtree;
+    });
+  }
   initIndexables(): void {
     const { pages } = this.transcript;
     _.each(pages, (page, pageNumber) => {
@@ -69,9 +79,8 @@ export class TranscriptIndex {
         return glyphOverlay;
       });
 
-      const rtree = new RBush<TranscriptIndexable<Glyph>>()
+      const rtree = this.indexes[primaryKey];
       rtree.load(pageIndexables);
-      this.indexes[primaryKey] = rtree;
     });
   }
 
@@ -83,10 +92,7 @@ export class TranscriptIndex {
 
     const shapeLabels = _.filter(labels, l => {
       const hasName = labelNames.length === 0 || labelNames.includes(l.name);
-      if (!hasName) return false;
-
-      const isShape = _.some(l.range, r => r.unit === 'shape');
-      return isShape;
+      return hasName;
     });
     return shapeLabels;
 
@@ -143,6 +149,15 @@ export class TranscriptIndex {
       width: maxWidth,
       height: totalHeight
     };
+  }
+
+  public newKeyedIndex<T>(key: string) {
+    const rtree = new RBush<TranscriptIndexable<T>>()
+    this.indexes[key] = rtree;
+  }
+
+  public getKeyedIndex(key: string) {
+    return this.indexes[key];
   }
 }
 

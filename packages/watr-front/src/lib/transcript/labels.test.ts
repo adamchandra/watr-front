@@ -28,11 +28,11 @@ describe('Label/Range IO', () => {
 
   it('should I/O Labels/Reprs', () => {
     const examples: any[] = [
-      // { name: 'AnonLabel', range: [] },
-      // { name: 'AnonLabel', range: [], children: [{ name: 'AnonLabel', range: [] }] },
-      // { name: 'AnonLabel', range: [{ unit: 'shape', at: [8454, 8483], }] },
-      // { name: 'IdLabel', id: 21, range: [{ unit: 'page', at: 3 }] },
-      // { name: 'LabelWithID', id: 22, range: [{ unit: 'text:line', at: [8454, 8483], }] },
+      { name: 'AnonLabel', range: [] },
+      { name: 'AnonLabel', range: [], children: [{ name: 'AnonLabel', range: [] }] },
+      { name: 'AnonLabel', range: [{ unit: 'shape', at: [8454, 8483], }] },
+      { name: 'IdLabel', id: 21, range: [{ unit: 'page', at: 3 }] },
+      { name: 'LabelWithID', id: 22, range: [{ unit: 'text:line', at: [8454, 8483], }] },
       { name: 'LabelWithProps', range: [], props: { key1: ['value'], key2: ['32'] } },
       {"range": [{"unit": "shape", "at": [36184, 46472, 1255, 924]}], "name": "HorizonRect"},
 
@@ -78,6 +78,24 @@ describe('Label/Range IO', () => {
     _.each(examples, (example) => {
       // expect(isIsomorphic(LabelRepr, example, verbose)).toBe(true)
       expect(isIsomorphic(Label, example, verbose)).toBe(true)
+    });
+  });
+
+  it('should fallback to fully validated decoding on error', () => {
+    const examples: any[] = [
+      { name: 'AnonLabel', ranger: [] },
+      { name: 'AnonLabel', range: [], children: [{ name: 'AnonLabel', ranges: [] }] },
+      { name: 'IdLabel', id: 21, range: [{ unit: 'pagexx', at: 3 }] },
+      // { name: 'AnonLabel', range: [{ unit: 'shape', at: [8454, 8483], }] },
+      // { name: 'LabelWithID', id: 22, range: [{ unit: 'text:line', at: [8454, 8483], }] },
+      // { name: 'LabelWithProps', range: [], props: { key1: ['value'], key2: ['32'] } },
+      // {"range": [{"unit": "shape", "at": [36184, 46472, 1255, 924]}], "name": "HorizonRect"},
+
+    ]
+
+    _.each(examples, (example) => {
+      // expect(isIsomorphic(LabelRepr, example, verbose)).toBe(true)
+      expect(isIsomorphic(Label, example, verbose)).toBe(false)
     });
   });
 

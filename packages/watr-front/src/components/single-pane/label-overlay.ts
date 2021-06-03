@@ -7,10 +7,11 @@ import {
 
 import { StateArgs } from '~/components/basics/component-basics'
 import * as d3 from 'd3-selection';
-import { TranscriptIndex } from '~/lib/transcript/transcript-index';
+import { TranscriptIndex, TranscriptIndexable } from '~/lib/transcript/transcript-index';
 import { Label } from '~/lib/transcript/labels';
-import { ShapeSvg, shapeToSvg } from '~/lib/transcript/shapes';
+import { minMaxToRect, ShapeSvg, shapeToSvg } from '~/lib/transcript/shapes';
 import { PdfPageViewer } from './page-viewer';
+import { useFlashlight } from '../basics/rtree-search';
 
 type Args = StateArgs & {
   transcriptIndex: TranscriptIndex;
@@ -23,65 +24,169 @@ export interface LabelOverlay {
   //
 }
 
-export function labelToSVG(label: Label): ShapeSvg[] {
+export function labelToSVGs(label: Label, parentClasses: string[], forceEval: boolean): ShapeSvg[] {
 
-  const localClasses = label.props === undefined ? [] :
-    _.flatMap(label.props['tags'], (tag: string) => {
-      if (tag.startsWith('cls:')) {
-        return [tag.substring('cls:'.length)];
-      }
-      return [];
-    });
+  const classStrings = label?.props?.['class'] || [];
+
+  const isLazy = _.some(classStrings, s => s === '>lazy');
+
+  if (isLazy && !forceEval) {
+    return [labelToSVGLazy(label, label)];
+  }
+
+  const localClasses = _.filter(classStrings, c => c.startsWith('='))
+    .map(c => c.substring(1))
+
+  const propogatedClasses = _.filter(classStrings, c => c.startsWith('>'))
+    .map(c => c.substring(1))
 
   const childShapes: ShapeSvg[] = label.children === undefined ? [] :
-    _.flatMap(label.children, c => labelToSVG(c));
+    _.flatMap(label.children, c => labelToSVGs(c, propogatedClasses, forceEval));
 
   const localShapes = _.flatMap(label.range, range => {
     if (range.unit === 'shape') {
       const svg = shapeToSvg(range.at);
+      svg.classes = _.concat(localClasses, parentClasses, propogatedClasses);
       addShapeId(svg);
       return [svg];
     }
     return [];
   });
 
-  const allShapes = _.concat(localShapes, childShapes);
-
-  _.each(allShapes, shape => {
-    const cls = shape.classes ? shape.classes : []
-    cls.push(...localClasses);
-    shape.classes = cls;
-  });
-
-  return allShapes;
+  return _.concat(localShapes, childShapes);
 }
 
+export function labelToSVGLazy(label: Label, rootLabel: Label): ShapeSvg {
+  const classStrings = label?.props?.['class'] || [];
+  const isTrigger = _.some(classStrings, s => s === '=eager');
+
+  if (isTrigger) {
+    const localClasses = _.filter(classStrings, c => c.startsWith('='))
+      .map(c => c.substring(1))
+
+    const localShapes = _.flatMap(label.range, range => {
+      if (range.unit === 'shape') {
+        const svg = shapeToSvg(range.at);
+        svg.classes = localClasses;
+        addShapeId(svg);
+        const data = svg.data || {};
+        data['rootLabel'] = rootLabel;
+        return [svg];
+      }
+      return [];
+    });
+    return localShapes[0];
+  }
+
+  const children = label.children || [];
+  const childShapes: ShapeSvg[] =
+    _.flatMap(children, c => labelToSVGLazy(c, rootLabel));
+
+  return childShapes[0];
+}
+
+// TODO:
+//   - [ ] Toggle to make all shapes visible vs. only on hover
+//   - [ ] better visuals for line/point
+//   - [ ] put ids on shapes so that rtree works correctly
+//   - [ ] adjustable flashlight radius
+//   - [ ] shape display feedback panel (# of shapes currently displaying)
 export async function useLabelOverlay({
   pdfPageViewer,
   pageLabelRef,
+  transcriptIndex,
+  pageNumber
 }: Args): Promise<LabelOverlay> {
-  const { superimposedElements } = pdfPageViewer;
+  const { superimposedElements, eventlibCore } = pdfPageViewer;
 
+  const indexKey = `page#${pageNumber}/labels`;
+
+  transcriptIndex.newKeyedIndex(indexKey);
+
+  const flashlightRadius = 2;
+  const flashlight = useFlashlight<ShapeSvg>({ indexKey, transcriptIndex, eventlibCore, flashlightRadius });
 
   watch(pageLabelRef, (displayableLabels: Label[]) => {
-    const svg = superimposedElements.overlayElements.svg!;
+    console.log('displayableLabels', displayableLabels);
 
-    const shapes = _.flatMap(displayableLabels, (label: Label) =>
-      labelToSVG(label)
-    );
 
-    const dataSelection = d3.select(svg)
-      .selectAll('.shape')
-      .data(shapes, (sh: any) => sh.id);
-
-    dataSelection.exit().remove();
-
-    dataSelection.enter()
-      .each(function(shape: any) {
-        const self = d3.select(this);
-        return self.append(shape.type)
-          .call(initShapeAttrs);
+    const shapes = _.flatMap(displayableLabels, (label: Label) => {
+      const asSVGs = labelToSVGs(label, [], false);
+      return _.map(asSVGs, svg => {
+        const asIndexable: TranscriptIndexable<ShapeSvg> = {
+          ...svg,
+          cargo: svg,
+          indexedRects: {},
+          primaryKey: indexKey,
+          primaryRect: minMaxToRect(svg)
+        };
+        return asIndexable;
       });
+
+    });
+
+    transcriptIndex.getKeyedIndex(indexKey).load(shapes);
+
+    const svgOverlay = superimposedElements.overlayElements.svg!;
+
+    const showAll = true;
+    if (showAll) {
+      _.each(shapes, item => {
+        const itemSvg = item.cargo;
+        const rootLabel: Label = itemSvg.data['rootLabel'];
+        const items = [itemSvg];
+
+        if (rootLabel) {
+          const svgs = labelToSVGs(rootLabel, [], true);
+          items.push(...svgs);
+        }
+
+        const dataSelection = d3.select(svgOverlay)
+          .selectAll('.shape')
+          .data(items, (sh: any) => sh.id);
+
+        dataSelection.exit().remove();
+
+        dataSelection.enter()
+          .each(function(shape: any) {
+            const self = d3.select(this);
+            return self.append(shape.type)
+              .call(initShapeAttrs);
+          });
+      })
+    }
+
+
+    console.log(`loading ${shapes.length} shapes: 0=`, shapes[0]);
+
+    watch(flashlight.litItemsRef, (litItems) => {
+      if (litItems.length === 0) return;
+      console.log('litItems', litItems);
+
+      const item = litItems[0];
+      const itemSvg = item.cargo;
+      const rootLabel: Label = itemSvg.data['rootLabel'];
+      const items = [itemSvg];
+
+      if (rootLabel) {
+        const svgs = labelToSVGs(rootLabel, [], true);
+        items.push(...svgs);
+      }
+
+      const dataSelection = d3.select(svgOverlay)
+        .selectAll('.shape')
+        .data(items, (sh: any) => sh.id);
+
+      dataSelection.exit().remove();
+
+      dataSelection.enter()
+        .each(function(shape: any) {
+          const self = d3.select(this);
+          return self.append(shape.type)
+            .call(initShapeAttrs);
+        });
+    });
+
 
   })
 
@@ -165,25 +270,11 @@ function initShapeAttrs(r: any) {
   return r;
 }
 
+import { newIdGenerator } from '~/lib/misc-utils';
+const idgen = newIdGenerator(1);
+
 function addShapeId(shape: ShapeSvg): void {
   if (shape.id === undefined) {
-    let id = '';
-    switch (shape.type) {
-      case 'rect':
-        id = `r_${shape.x}_${shape.y}_${shape.width}_${shape.height}`;
-        break;
-      case 'circle':
-        id = `c_${shape.cx}_${shape.cy}_${shape.r}`;
-        break;
-      case 'line':
-        id = `l_${shape.x1}_${shape.y1}_${shape.x2}_${shape.y2}`;
-        break;
-      case 'path':
-        id = `p_${shape.d}`;
-        break;
-      default:
-        throw new Error(`getId(shape=${shape}) could not construct id`);
-    }
-    shape.id = id;
+    shape.id = idgen();
   }
 }

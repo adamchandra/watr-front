@@ -2,67 +2,88 @@
 
 .transcriptViewer {
   display: flex;
-  flex-direction: row;
-  height: 100%;
-  border: 2px solid blue;
+  flex-direction: column;
+  height: auto;
+  border: 2px solid red;
 
-  .left-side {
-    min-width: 30%;
-    border: 2px solid blue;
-    margin-right: 0.5em;
-
-    .pageImageListFrame {
-      border: 3px solid white;
-      margin-right: 1em;
-      height: 90vh;
-      overflow-y: scroll;
-
-      .pageImageList {
-        display: flex;
-        flex-direction: column;
-        align-items: left;
-        background: $base1;
-        color: black;
-
-        .layers {
-          background: $base2;
-          margin: 0.5em;
-          flex: 0 1 auto;
-        }
-      }
-    }
+  .header {
+    // height: 2vh;
+    height: 2%;
+    border: 2px solid yellow;
   }
-  .right-side {
+
+  .torso {
     display: flex;
-    flex-direction: column;
-    height: 100%;
+    flex-direction: row;
+    // height: 80vh;
+    height: 98%;
     border: 2px solid blue;
 
-    .selectionFilterFrame {
-      flex-grow: 1;
-    }
 
-    .stanzaListFrame {
-      border: 3px solid white;
-      margin-right: 1em;
-      height: 90vh;
-      overflow-y: scroll;
+    .left-side {
+      min-width: 30%;
+      border: 2px solid green;
+      margin-right: 0.5em;
 
-      flex-grow: 1;
+      .pageImageListFrame {
+        border: 3px solid white;
+        margin-right: 1em;
+        height: 80vh;
+        overflow-y: scroll;
 
-      .stanzaList {
-        display: flex;
-        flex-direction: column;
-        align-items: left;
-        background: $base1;
-        color: black;
+        .pageImageList {
+          display: flex;
+          flex-direction: column;
+          align-items: left;
+          background: $base1;
+          color: black;
 
-        .layers {
-          background: $base2;
-          margin: 0.5em;
-          flex: 0 1 auto;
+          .layers {
+            background: $base2;
+            margin: 0.5em;
+            flex: 0 1 auto;
+          }
         }
       }
     }
+    .right-side {
+      display: flex;
+      flex-direction: column;
+      border: 2px solid purple;
+
+      .selectionFilterFrame {
+        flex-grow: 1;
+      }
+
+      .stanzaListFrame {
+        border: 3px solid white;
+        margin-right: 1em;
+        height: 80vh;
+        overflow-y: scroll;
+
+        flex-grow: 1;
+
+        .stanzaList {
+          display: flex;
+          flex-direction: column;
+          align-items: left;
+          background: $base1;
+          color: black;
+
+          .layers {
+            background: $base2;
+            margin: 0.5em;
+            flex: 0 1 auto;
+          }
+        }
+      }
+    }
+
+  }
+
+  .footer {
+    // height: 2vh;
+    height: 2%;
+    border: 2px solid yellow;
   }
 }

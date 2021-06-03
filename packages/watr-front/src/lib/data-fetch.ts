@@ -6,6 +6,7 @@ import { getArtifactData, getEntryList } from './axios';
 import { Tracelog } from './transcript/tracelogs';
 import * as io from 'io-ts'
 import { Transcript } from './transcript/transcript';
+import { prettyPrint } from '@watr/commonlib-shared';
 
 export function fetchAndDecode<A, IO>(
   ioType: io.Type<A, IO, IO>,
@@ -15,7 +16,13 @@ export function fetchAndDecode<A, IO>(
     () => fetcher(),
     TE.chain(json => () => Promise.resolve(pipe(
       ioType.decode(json),
-      E.mapLeft(errors => PathReporter.report(E.left(errors)))
+      E.mapLeft(errors => {
+        errors.map(err => {
+          console.log({ err });
+        })
+        const report = PathReporter.report(E.left(errors))
+        return report;
+      })
     ))),
   );
 }
@@ -51,7 +58,7 @@ export type CorpusEntryList = io.TypeOf<typeof CorpusEntryList>;
 export const fetchAndDecodeCorpusEntryList = (): TE.TaskEither<string[], CorpusEntryList> => {
   const fetcher = () => getEntryList<any>()
     .then(data => data === undefined ?
-      E.left([`could not fetch corpus entry listing`])
+      E.left(['could not fetch corpus entry listing'])
       : E.right(data));
 
   return fetchAndDecode(CorpusEntryList, fetcher);

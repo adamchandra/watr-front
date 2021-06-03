@@ -6,7 +6,6 @@ import {
   provide,
   Ref,
   ref,
-  watch
 } from '@vue/composition-api'
 
 import * as VC from '@vue/composition-api'
@@ -19,7 +18,12 @@ import { TranscriptIndex } from '~/lib/transcript/transcript-index'
 import { Label, PageRange, Range } from '~/lib/transcript/labels'
 
 import NarrowingFilter from '~/components/single-pane/narrowing-filter/index.vue'
-import { NarrowingChoice, ProvidedChoices } from '~/components/single-pane/narrowing-filter/_inc'
+import {
+  NarrowingChoice,
+  ProvidedChoices,
+  ProvidedChoicesTrigger
+} from '~/components/single-pane/narrowing-filter/_inc'
+
 import { groupLabelsByNameAndTags } from '~/lib/transcript/tracelogs'
 
 import { pipe } from 'fp-ts/lib/function';
@@ -29,6 +33,14 @@ import { fetchAndDecodeTranscript } from '~/lib/data-fetch'
 import { useLabelOverlay } from '~/components/single-pane/label-overlay'
 import { getQueryParam } from '~/lib/url-utils'
 
+import { Splitpanes, Pane } from 'splitpanes'
+import 'splitpanes/dist/splitpanes.css'
+
+// export default {
+//   components: { Splitpanes, Pane },
+//   ...
+// }
+//
 interface AppState {
   showStanzaPane: boolean;
   showPageImagePane: boolean;
@@ -39,9 +51,17 @@ function awaitRefTask<T>(ref: Ref<T>): TE.TaskEither<never, T> {
   return () => awaitRef(ref).then(x => E.right(x));
 }
 
+const dbglogKeys = <A>() =>
+  TE.map<A, A>((entries: A) => {
+    const keys = _.keys(entries);
+    const keystr = _.join(keys, ', ');
+    console.log('keys', keystr);
+    return entries;
+  });
+
 
 export default defineComponent({
-  components: { NarrowingFilter },
+  components: { NarrowingFilter, Pane, Splitpanes },
 
   setup(_props, _context: SetupContext) {
     const pageImageListDiv = divRef()
@@ -49,10 +69,15 @@ export default defineComponent({
     const selectionFilterDiv = divRef()
     const state = initState()
 
-    const choicesRef: Ref<Array<NarrowingChoice<Label[]>> | null> = ref(null);
+    const initChoicesRef: Ref<number> = ref(0);
+    provide(ProvidedChoicesTrigger, initChoicesRef);
+
+    const choicesRef: Array<NarrowingChoice<Label[]>> = [];
+    provide(ProvidedChoices, choicesRef);
+
     const pageLabelRefs: Array<Ref<Label[]>> = [];
 
-    provide(ProvidedChoices, choicesRef);
+
     function isPageRange(r: Range): r is PageRange {
       return r.unit === 'page';
     }
@@ -83,17 +108,23 @@ export default defineComponent({
 
     const appStateRefs: VC.ToRefs<AppState> = VC.toRefs(appStateRef);
 
+
+
     const run = pipe(
       TE.right({}),
       TE.bind('entryId', ({ }) => TE.fromEither(getQueryParam('id'))),
+      dbglogKeys(),
       TE.bind('pageImageListDiv', ({ }) => awaitRefTask(pageImageListDiv)),
       TE.bind('stanzaListDiv', ({ }) => awaitRefTask(stanzaListDiv)),
+      dbglogKeys(),
       TE.bind('selectionFilterDiv', ({ }) => awaitRefTask(selectionFilterDiv)),
+      dbglogKeys(),
       TE.bind('transcript', ({ entryId }) => fetchAndDecodeTranscript(entryId)),
+      dbglogKeys(),
       TE.bind('transcriptIndex', ({ transcript }) => TE.right(new TranscriptIndex(transcript))),
+      dbglogKeys(),
 
       TE.bind('pageViewers', ({ entryId, pageImageListDiv, transcript, transcriptIndex }) => {
-
 
         const allPageLabels = transcriptIndex.getLabels([])
         const groupedLabels = groupLabelsByNameAndTags(allPageLabels);
@@ -102,7 +133,8 @@ export default defineComponent({
         const choices = _.map(labelKeys, (key, index) => ({
           index, key, value: groupedLabels[key]
         }));
-        choicesRef.value = choices;
+        choicesRef.push(...choices);
+        initChoicesRef.value += 1;
 
         pageLabelRefs.push(..._.map(transcript.pages, () => {
           const pageLabelRef: Ref<Label[]> = ref([]);
@@ -128,6 +160,7 @@ export default defineComponent({
         return () => Promise.all(inits).then(E.right);
       }),
 
+      dbglogKeys(),
       TE.bind('stanzaViewers', ({ stanzaListDiv, transcript, transcriptIndex }) => {
         const inits = _.map(transcript.stanzas, (_, stanzaNumber) => {
           const mount = document.createElement('div')
@@ -141,6 +174,7 @@ export default defineComponent({
         return () => Promise.all(inits).then(E.right);
       }),
 
+      dbglogKeys(),
       TE.mapLeft(errors => {
         _.each(errors, error => console.log('error', error));
         return errors;

@@ -10,7 +10,6 @@ import {
 } from '@vue/composition-api'
 
 import { EventlibCore } from './eventlib-core'
-import { StateArgs } from '~/components/basics/component-basics'
 import * as coords from '~/lib/coord-sys'
 import { EMouseEvent, MouseHandlerInit } from '~/lib/EventlibHandlers'
 import { TranscriptIndex, TranscriptIndexable } from '~/lib/transcript/transcript-index'
@@ -28,26 +27,28 @@ interface Flashlight<T> {
 }
 
 
-type Args = StateArgs & {
+type Args = {
   indexKey: string;
   transcriptIndex: TranscriptIndex;
   eventlibCore: EventlibCore;
+  flashlightRadius: number;
 }
 
 export function useFlashlight<T>({
   transcriptIndex,
   indexKey,
+  flashlightRadius,
   eventlibCore
 }: Args): Flashlight<T> {
 
   const litItemsRef: Ref<TranscriptIndexable<any>[]> = ref([])
 
-  const rtree = transcriptIndex.indexes[indexKey];
-
   const mousemove = (e: EMouseEvent) => {
     const pos = e.pos
-    const mousePt = coords.mkPoint.fromXy(pos.x, pos.y)
-    const queryBox = coords.boxCenteredAt(mousePt, 8, 8)
+    const mousePt = coords.mkPoint.fromXy(pos.x, pos.y);
+    const queryBox = coords.boxCenteredAt(mousePt, flashlightRadius, flashlightRadius);
+
+    const rtree = transcriptIndex.getKeyedIndex(indexKey);
     const hits = rtree.search(queryBox)
     litItemsRef.value = hits
   }

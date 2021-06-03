@@ -10,3 +10,8 @@ Vue.component('TranscriptViewer', TranscriptViewer);
 
 import CorpusBrowser from '~/components/single-pane/corpus-browser/index.vue'
 Vue.component('CorpusBrowser', CorpusBrowser);
+
+// import { Splitpanes, Pane } from 'splitpanes'
+// Vue.component('Splitpanes', Splitpanes);
+// Vue.component('Pane', Pane);
+// import 'splitpanes/dist/splitpanes.css'

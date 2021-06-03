@@ -5,6 +5,8 @@ import * as io from 'io-ts';
 import * as E from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import _ from 'lodash';
+import { MinMaxBox } from '../coord-sys';
+import { RTreeIndexable } from '~/components/basics/rtree-search';
 
 function isKind<T>(k: string): (v: any) => v is T {
   return function f(a: any): a is T {
@@ -167,51 +169,55 @@ export type ShapeRepr = io.TypeOf<typeof ShapeRepr>;
 export type ShapeKind = Shape['kind'];
 // export type ShapeRepr = RectRepr | PointRepr | TriangleRepr | TrapezoidRepr | LineRepr | CircleRepr;
 
-export interface PointSvg {
+export interface BaseSvg extends RTreeIndexable {
+  id: number;
+  classes?: string[];
+  data: Record<string, any>;
+}
+export interface PointSvg extends BaseSvg {
   type: 'circle';
   r: number;
   cx: number;
   cy: number;
-  id?: string;
-  classes?: string[];
 }
 
-export interface LineSvg {
+export interface LineSvg extends BaseSvg {
   type: 'line';
   x1: number;
   y1: number;
   x2: number;
   y2: number;
-  id?: string;
-  classes?: string[];
 }
 
-export interface RectSvg {
+export interface RectSvg extends BaseSvg {
   type: 'rect';
   x: number;
   y: number;
   width: number;
   height: number;
-  id?: string;
-  classes?: string[];
 }
-export interface PathSvg {
+
+export interface PathSvg extends BaseSvg {
   type: 'path';
   d: string;
-  id?: string;
-  classes?: string[];
 }
 
 export type ShapeSvg = PointSvg | LineSvg | RectSvg | PathSvg;
 
 export function shapeToSvg(shape: Shape): ShapeSvg {
+
   switch (shape.kind) {
     case 'point':
       return <PointSvg>{
         type: 'circle',
         r: 3,
         cx: shape.x,
-        cy: shape.y
+        cy: shape.y,
+        minX: shape.x - 1.5,
+        minY: shape.y - 1.5,
+        maxX: shape.x + 1.5,
+        maxY: shape.y + 1.5,
+        data: {}
       };
     case 'line':
       return <LineSvg>{
@@ -220,39 +226,74 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
         y1: shape.p1.y,
         x2: shape.p2.x,
         y2: shape.p2.y,
+        minX: Math.min(shape.p1.x, shape.p2.x),
+        minY: Math.min(shape.p1.y, shape.p2.y),
+        maxX: Math.max(shape.p1.x, shape.p2.x),
+        maxY: Math.max(shape.p1.y, shape.p2.y),
+        data: {},
       };
     case 'rect':
       return <RectSvg>{
         type: 'rect',
         x: shape.x,
         y: shape.y,
-        width: shape.width,
-        height: shape.height
+        width: Math.max(shape.width, 2),
+        height: Math.max(shape.height, 2),
+        minX: shape.x,
+        minY: shape.y,
+        maxX: shape.x + shape.width,
+        maxY: shape.y + shape.height,
+        data: {},
       };
+
     case 'circle':
+      const r = shape.r;
+      const r2 = r / 2;
       return <PointSvg>{
         type: 'circle',
         r: shape.r,
         cx: shape.p.x,
-        cy: shape.p.y
+        cy: shape.p.y,
+        minX: shape.p.x - r2,
+        minY: shape.p.y - r2,
+        maxX: shape.p.x + r2,
+        maxY: shape.p.y + r2,
+        data: {},
       };
-    case 'triangle':
+    case 'triangle': {
+
       const { p1, p2, p3 } = shape;
+      const minX = Math.min(p1.x, p2.x, p3.x)
+      const maxX = Math.max(p1.x, p2.x, p3.x)
+      const minY = Math.min(p1.y, p2.y, p3.y)
+      const maxY = Math.max(p1.y, p2.y, p3.y)
       return <PathSvg>{
         type: 'path',
         d: `M ${p1.x} ${p1.y} L ${p2.x} ${p2.y} L ${p3.x} ${p3.y} Z`,
+        minX, minY, maxX, maxY,
+        data: {},
       };
-    case 'trapezoid':
+    }
+    case 'trapezoid': {
+
       const { topLeft, topWidth, bottomLeft, bottomWidth } = shape;
       const bottomRight = _.clone(bottomLeft);
       bottomRight.x += bottomWidth;
       const topRight = _.clone(topLeft);
       topRight.x += topWidth;
 
+      const minX = Math.min(topLeft.x, bottomLeft.x);
+      const maxX = Math.max(topRight.x, bottomRight.x);
+      const minY = Math.min(topLeft.y, bottomLeft.y);
+      const maxY = Math.max(topLeft.y, bottomLeft.y);
+
       return <PathSvg>{
         type: 'path',
         d: `M ${topLeft.x} ${topLeft.y} L ${bottomLeft.x} ${bottomLeft.y} L ${bottomRight.x} ${bottomRight.y} L ${topRight.x} ${topRight.y} Z`,
-      };
+        minX, minY, maxX, maxY,
+        data: {},
+      }
+    };
   }
 }
 
@@ -304,4 +345,12 @@ export function uRect(repr: RectRepr): Rect {
     width: uFloat(w),
     height: uFloat(h)
   };
+}
+export function minMaxToRect(mm: MinMaxBox): Rect {
+  const { minX, minY, maxX, maxY } = mm;
+  const x = minX;
+  const y = minY;
+  const width = maxX - minX;
+  const height = maxY - minY;
+  return { kind: 'rect', x, y, width, height, };
 }

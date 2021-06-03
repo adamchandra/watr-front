@@ -35,7 +35,6 @@ type Args = StateArgs & {
 
 
 export function useGlyphOverlays({
-  state,
   eventlibCore,
   superimposedElements,
   transcriptIndex,
@@ -44,13 +43,13 @@ export function useGlyphOverlays({
   // TODO: setHoveredText (for highlighting sync-highlighting text on pdf-text widget)
   // TODO: setClickedText (for synching pdf page text w/ image)
 
-  // const rtreeIndex = useRTreeIndex<GlyphOverlay>({ state });
+  const flashlightRadius = 2;
   const indexKey = `page#${pageNumber}/glyphs`;
   const flashlight = useFlashlight<any>({
-    state,
     transcriptIndex,
     indexKey,
-    eventlibCore
+    eventlibCore,
+    flashlightRadius,
   });
 
   const svgLayer = superimposedElements.overlayElements.svg!;

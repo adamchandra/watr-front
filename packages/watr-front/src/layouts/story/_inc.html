@@ -1,4 +1,4 @@
-<v-container fluid id="story-container">
+<v-container fluid class="story-panels">
     <v-row justify="space-between">
         <!-- Title/Short description -->
         <v-card class="">
@@ -12,14 +12,12 @@
 
     <v-row justify="space-between">
 
-        <v-col class="story-main">
-            <v-card class="">
-                <!-- Main display -->
-                <slot name="main">Main</slot>
-            </v-card>
+        <v-col class="story-panel">
+          <!-- Main display -->
+          <slot name="main">Main</slot>
         </v-col>
 
-        <v-col>
+        <v-col class="control-panel">
             <v-tabs class="elevation-2">
 
                 <v-tab

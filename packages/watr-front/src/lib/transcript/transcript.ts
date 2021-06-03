@@ -42,7 +42,7 @@ export const BuildInfo = io.type({
 }, 'BuildInfo');
 
 
-export const Transcript = io.strict({
+export const Transcript = io.type({
   documentId: io.string,
   pages: io.array(Page),
   stanzas: io.array(Stanza),
