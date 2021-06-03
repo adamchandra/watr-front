@@ -6,7 +6,7 @@ import {
   watch,
   reactive,
   toRefs,
-} from '@vue/composition-api';
+} from '@nuxtjs/composition-api';
 
 export interface ComponentState {
 }

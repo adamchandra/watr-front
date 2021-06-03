@@ -1,0 +1,16 @@
+<splitpanes class="default-theme" vertical :push-other-panes="false">
+
+  <pane>
+    <slot name="leftside" />
+  </pane>
+  <pane>
+    <splitpanes horizontal :push-other-panes="true">
+      <pane>
+        <slot name="rightside-top" />
+      </pane>
+      <pane>
+        <slot name="rightside-bottom" />
+      </pane>
+    </splitpanes>
+  </pane>
+</splitpanes>

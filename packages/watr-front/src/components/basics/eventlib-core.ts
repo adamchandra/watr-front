@@ -9,7 +9,7 @@ import {
   ref,
   watch,
   UnwrapRef
-} from '@vue/composition-api';
+} from '@nuxtjs/composition-api';
 
 import RBush, {} from 'rbush';
 

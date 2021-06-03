@@ -3,15 +3,22 @@
 @import '~/assets/sass/inc/_noselect';
 
 
-.selection-frame {
+.narrowing-filter {
 
-  .selection {
-    background: $base01;
-    font-size: 0.9em;
-    font-weight: normal;
-    color: white;
-    height: 50vh;
-    overflow: auto;
+  .controls {
+      background: $base02;
   }
 
+  .selection-frame {
+
+    .selection {
+      background: $base01;
+      font-size: 0.9em;
+      font-weight: normal;
+      color: white;
+      overflow: auto;
+      max-height: 80vh;
+    }
+
+  }
 }

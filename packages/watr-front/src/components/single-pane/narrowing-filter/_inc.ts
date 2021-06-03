@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { ref, watch, Ref, defineComponent, inject, SetupContext } from '@vue/composition-api';
+import { ref, watch, Ref, defineComponent, inject, SetupContext } from '@nuxtjs/composition-api';
 import { watchOnceFor } from '~/components/basics/component-basics';
 
 export const ProvidedChoices = 'ProvidedChoices';

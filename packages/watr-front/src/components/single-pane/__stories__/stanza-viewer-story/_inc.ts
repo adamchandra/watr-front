@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from '@nuxtjs/composition-api'
 import { useStanzaViewer } from '~/components/single-pane/stanza-viewer'
 import { initState } from '~/components/basics/component-basics'
 import { divRef } from '~/lib/vue-composition-lib'

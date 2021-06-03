@@ -2,10 +2,10 @@ import _ from 'lodash';
 
 import {
   Ref,
-} from '@vue/composition-api';
+} from '@nuxtjs/composition-api';
 
-// import { UnwrapRef } from '@vue/composition-api/dist/reactivity';
-import { UnwrapRef } from '@vue/composition-api';
+// import { UnwrapRef } from '@nuxtjs/composition-api/dist/reactivity';
+import { UnwrapRef } from '@nuxtjs/composition-api';
 
 export function getCursorPosition(elem: Element, event: MouseEvent): EventlibPoint {
   const rect: DOMRect | ClientRect = elem.getBoundingClientRect()

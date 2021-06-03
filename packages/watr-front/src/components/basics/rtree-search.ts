@@ -7,7 +7,7 @@ import _ from 'lodash'
 import {
   Ref,
   ref
-} from '@vue/composition-api'
+} from '@nuxtjs/composition-api'
 
 import { EventlibCore } from './eventlib-core'
 import * as coords from '~/lib/coord-sys'

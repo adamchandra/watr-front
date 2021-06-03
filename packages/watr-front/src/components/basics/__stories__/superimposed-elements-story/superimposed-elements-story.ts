@@ -1,7 +1,7 @@
 import {
   ref,
   Ref
-} from '@vue/composition-api'
+} from '@nuxtjs/composition-api'
 
 import { useSuperimposedElements, ElementTypes } from '~/components/basics/superimposed-elements'
 import { initState } from '~/components/basics/component-basics'

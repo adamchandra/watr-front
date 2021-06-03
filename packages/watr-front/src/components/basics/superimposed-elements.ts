@@ -4,7 +4,7 @@ import {
   Ref,
   watch,
   ref,
-} from '@vue/composition-api';
+} from '@nuxtjs/composition-api';
 
 import { StateArgs, awaitRef } from '~/components/basics/component-basics'
 

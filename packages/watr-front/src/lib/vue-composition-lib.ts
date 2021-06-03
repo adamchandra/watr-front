@@ -2,7 +2,7 @@
 import {
   ref,
   Ref
-} from '@vue/composition-api'
+} from '@nuxtjs/composition-api'
 
 export function divRef(div?: HTMLDivElement): Ref<HTMLDivElement|null> {
   const d = div || null

@@ -11,7 +11,7 @@ import {
   reactive,
   toRefs,
   watch,
-} from '@vue/composition-api';
+} from '@nuxtjs/composition-api';
 
 import { EMouseEvent, MouseHandlerInit } from '~/lib/EventlibHandlers';
 import { EventlibCore } from './eventlib-core';

@@ -5,7 +5,7 @@ import {
   ref,
   Ref,
   watch,
-} from '@vue/composition-api';
+} from '@nuxtjs/composition-api';
 
 
 import { useSuperimposedElements, ElementTypes } from '~/components/basics/superimposed-elements';

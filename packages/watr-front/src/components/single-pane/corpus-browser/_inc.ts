@@ -5,7 +5,7 @@ import {
   SetupContext,
   Ref,
   ref,
-} from '@vue/composition-api'
+} from '@nuxtjs/composition-api'
 
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';

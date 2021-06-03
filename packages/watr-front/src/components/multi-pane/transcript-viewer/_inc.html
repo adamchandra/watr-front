@@ -5,38 +5,32 @@
 
   </div>
 
-  <div class="torso">
+  <SplitScreen>
 
-    <div class="left-side">
+    <template v-slot:leftside>
+      <!-- <div>Left feeder</div> -->
       <div class="pageImageListFrame">
         <div ref="pageImageListDiv" class="pageImageList" />
       </div>
-    </div>
+    </template>
 
-    <div class="right-side">
-      <v-app-bar>
-        <v-btn @click.stop="showPageOverlays = !showPageOverlays" icon>
-          <v-icon>mdi-{{ `chevron-${showPageOverlays ? 'right' : 'left'}` }}</v-icon>
-        </v-btn>
-      </v-app-bar>
-      <div
-        class="selectionFilterFrame"
-        v-show="showPageOverlays"
-      >
-        <NarrowingFilter
-          v-on:items-selected="onItemsSelected"
-        />
+    <template v-slot:rightside-top>
+      <!-- <div>Top feeder</div> -->
+      <div class="selectionFilterFrame" v-show="showPageOverlays" >
+        <NarrowingFilter v-on:items-selected="onItemsSelected" />
         <div ref="selectionFilterDiv" class="selectionFilter" />
       </div>
+    </template>
 
+    <template v-slot:rightside-bottom>
+      <!-- <div>Bottom feeder</div> -->
       <div class="stanzaListFrame">
         <div ref="stanzaListDiv" class="stanzaList" />
       </div>
+    </template>
 
+  </SplitScreen>
 
-    </div>
-
-  </div>
   <div class="footer">
     This is the footer
 

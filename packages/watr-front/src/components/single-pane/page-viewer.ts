@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 import {
   Ref,
-} from '@vue/composition-api';
+} from '@nuxtjs/composition-api';
 
 import { StateArgs } from '~/components/basics/component-basics'
 import { useEventlibCore, EventlibCore } from '~/components/basics/eventlib-core';

@@ -1,17 +1,15 @@
 import 'chai/register-should'
 import _ from 'lodash'
 
-import VueCompositionApi, {
+import {
   ref,
   watchEffect,
   watch
-} from '@vue/composition-api'
+} from '@nuxtjs/composition-api'
 
-import Vue from 'vue'
-import { watchAll   } from './component-basics'
+import { watchAll } from './component-basics'
 
 describe('Component Basics', () => {
-  Vue.use(VueCompositionApi)
 
   it('testing watch', () => {
     const dep1 = ref(1)

@@ -3,7 +3,7 @@ import _ from 'lodash';
 import {
   Ref,
   watch,
-} from '@vue/composition-api'
+} from '@nuxtjs/composition-api'
 
 import { StateArgs } from '~/components/basics/component-basics'
 import * as d3 from 'd3-selection';

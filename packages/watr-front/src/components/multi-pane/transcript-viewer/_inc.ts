@@ -6,9 +6,9 @@ import {
   provide,
   Ref,
   ref,
-} from '@vue/composition-api'
+} from '@nuxtjs/composition-api'
 
-import * as VC from '@vue/composition-api'
+import * as VC from '@nuxtjs/composition-api'
 
 import { divRef } from '~/lib/vue-composition-lib'
 import { initState, awaitRef } from '~/components/basics/component-basics'
@@ -33,14 +33,12 @@ import { fetchAndDecodeTranscript } from '~/lib/data-fetch'
 import { useLabelOverlay } from '~/components/single-pane/label-overlay'
 import { getQueryParam } from '~/lib/url-utils'
 
-import { Splitpanes, Pane } from 'splitpanes'
-import 'splitpanes/dist/splitpanes.css'
+import SplitScreen from '~/components/basics/splitscreen/index.vue'
 
-// export default {
-//   components: { Splitpanes, Pane },
-//   ...
-// }
-//
+// import { Splitpanes, Pane } from 'splitpanes'
+// import 'splitpanes/dist/splitpanes.css'
+
+
 interface AppState {
   showStanzaPane: boolean;
   showPageImagePane: boolean;
@@ -61,7 +59,7 @@ const dbglogKeys = <A>() =>
 
 
 export default defineComponent({
-  components: { NarrowingFilter, Pane, Splitpanes },
+  components: { NarrowingFilter, SplitScreen },
 
   setup(_props, _context: SetupContext) {
     const pageImageListDiv = divRef()

@@ -7,6 +7,7 @@ export type StoryEntry = {
 }
 
 export const storyItems: StoryEntry[] = [
+  { title: 'Split/Resize Windows', to: '/stories/autogen/splitScreen?' },
   { title: 'App[Image+Stanza+Labels]', to: '/stories/autogen/transcriptViewer?id=austenite.pdf.d' },
   { title: 'Corpus Listing Browser', to: '/stories/autogen/corpusBrowser?' },
   { title: 'Eventlib Core', to: '/stories/autogen/eventlibCore' },

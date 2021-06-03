@@ -19,7 +19,7 @@ import {
 
 import {
   watch,
-} from '@vue/composition-api';
+} from '@nuxtjs/composition-api';
 
 import { StateArgs } from '~/components/basics/component-basics'
 import { EventlibSelect } from '~/components/basics/eventlib-select';

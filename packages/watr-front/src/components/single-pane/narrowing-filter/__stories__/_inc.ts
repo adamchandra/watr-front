@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-import { ref, defineComponent, provide, Ref } from '@vue/composition-api'
+import { ref, defineComponent, provide, Ref } from '@nuxtjs/composition-api'
 import NarrowingFilter from '../index.vue'
 import { NarrowingChoice, ProvidedChoices  } from '../_inc'
 import { groupLabelsByNameAndTags } from '~/lib/transcript/tracelogs'

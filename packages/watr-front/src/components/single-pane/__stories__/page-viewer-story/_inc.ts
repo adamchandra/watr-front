@@ -1,7 +1,7 @@
 import {
   ref,
   Ref
-} from '@vue/composition-api'
+} from '@nuxtjs/composition-api'
 
 import _ from 'lodash';
 import { initState } from '~/components/basics/component-basics'
