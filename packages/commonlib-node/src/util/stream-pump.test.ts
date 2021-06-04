@@ -5,12 +5,12 @@ import _ from 'lodash';
 import { createPump } from './stream-pump';
 import { arrayStream, isDefined } from './stream-utils';
 import { Readable } from 'stream';
-import { prettyPrint } from '@watr/commonlib-shared';
+// import { prettyPrint } from '@watr/commonlib-shared';
 
 
 describe('Pump Builder', () => {
 
-  it('return pump as a promise', async done => {
+  it('return pump as a promise', done => {
     const astr = arrayStream('0 1 2 -30 100'.split(' '));
     const expected = [0, 1, 2, -30, 100];
     const pumpBuilder = createPump()
@@ -23,14 +23,14 @@ describe('Pump Builder', () => {
 
     const p = pumpBuilder.toPromise();
 
-    return p.then(() => {
+    p.then(() => {
       console.log('promise complete!')
       done();
     });
 
   });
 
-  it('should compose pipeline function with type safety', async done => {
+  it('should compose pipeline function with type safety', done => {
     const f1: (s: string) => string[] = s => s.split(' ');
     const f2: (s: string[]) => number[] = s => s.map(s0 => parseInt(s0));
     const astr = arrayStream(['0 1 2 -30 100']);
@@ -53,7 +53,7 @@ describe('Pump Builder', () => {
     return arrayStream(_.range(start, end));
   }
 
-  it('should filter a stream', async done => {
+  it('should filter a stream', done => {
     const astr = numberStream(1, 10);
     const expected = [2, 4, 6, 8];
 
@@ -69,8 +69,9 @@ describe('Pump Builder', () => {
   });
 
 
-  it('should narrow types when filtering', async done => {
+  it('should narrow types when filtering', done => {
     const astr = numberStream(1, 10);
+    const expected = [2, 4, 6, 8];
 
     const pumpBuilder = createPump()
       .viaStream<number>(astr)
@@ -81,14 +82,16 @@ describe('Pump Builder', () => {
         return undefined;
       })
       .guard(isDefined)
-      .onData((data) => {
-        prettyPrint({ data })
+      .gather()
+      .onData((d) => {
+        // prettyPrint({ datum })
+        expect(d).toEqual(expected);
       });
 
     pumpBuilder.toPromise().then(() => done());
   });
 
-  it('should include an Env', async done => {
+  it('should include an Env', done => {
     const astr = numberStream(1, 10);
     // const expected = [2, 4, 6, 8];
 
@@ -122,7 +125,7 @@ describe('Pump Builder', () => {
     pumpBuilder.toPromise().then(() => done());
   });
 
-  it('should gather with or without an Env', async done => {
+  it('should gather with or without an Env', done => {
     const astr = numberStream(1, 10);
 
     interface MyEnv {
@@ -139,13 +142,14 @@ describe('Pump Builder', () => {
       })
       .gather()
       .onData((d) => {
-        prettyPrint({ d });
+        expect(d).toEqual([3, 5, 7, 9]);
+        // prettyPrint({ d });
       });
 
     pumpBuilder.toPromise().then(() => done());
   });
 
-  it('should convert to promise that yield data', async done => {
+  it('should convert to promise that yield data', done => {
     const astr = numberStream(1, 10);
 
     interface MyEnv {
@@ -162,9 +166,10 @@ describe('Pump Builder', () => {
       .gather()
     ;
 
-    const result = await pumpBuilder.toPromise();
-    expect(result).toEqual([3, 5, 7, 9])
+    pumpBuilder.toPromise().then(result => {
+      expect(result).toEqual([3, 5, 7, 9])
+      done();
+    })
 
-    done();
   });
 });

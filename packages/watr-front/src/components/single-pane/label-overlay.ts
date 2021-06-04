@@ -107,8 +107,9 @@ export async function useLabelOverlay({
   const flashlight = useFlashlight<ShapeSvg>({ indexKey, transcriptIndex, eventlibCore, flashlightRadius });
 
   watch(pageLabelRef, (displayableLabels: Label[]) => {
-    console.log('displayableLabels', displayableLabels);
+    if (displayableLabels.length === 0) return;
 
+    console.log('displayableLabels', displayableLabels);
 
     const shapes = _.flatMap(displayableLabels, (label: Label) => {
       const asSVGs = labelToSVGs(label, [], false);
@@ -131,29 +132,52 @@ export async function useLabelOverlay({
 
     const showAll = true;
     if (showAll) {
-      _.each(shapes, item => {
-        const itemSvg = item.cargo;
+      const allSvgs = _.flatMap(shapes, shape => {
+        const itemSvg = shape.cargo;
         const rootLabel: Label = itemSvg.data['rootLabel'];
         const items = [itemSvg];
-
         if (rootLabel) {
           const svgs = labelToSVGs(rootLabel, [], true);
           items.push(...svgs);
         }
+        return items;
+      });
+      const dataSelection = d3.select(svgOverlay)
+        .selectAll('.shape')
+        .data(allSvgs, (sh: any) => sh.id);
 
-        const dataSelection = d3.select(svgOverlay)
-          .selectAll('.shape')
-          .data(items, (sh: any) => sh.id);
+      dataSelection.exit().remove();
 
-        dataSelection.exit().remove();
+      dataSelection.enter()
+        .each(function(shape: any) {
+          const self = d3.select(this);
+          return self.append(shape.type)
+            .call(initShapeAttrs);
+        });
 
-        dataSelection.enter()
-          .each(function(shape: any) {
-            const self = d3.select(this);
-            return self.append(shape.type)
-              .call(initShapeAttrs);
-          });
-      })
+      // _.each(shapes, item => {
+      //   const itemSvg = item.cargo;
+      //   const rootLabel: Label = itemSvg.data['rootLabel'];
+      //   const items = [itemSvg];
+
+      //   if (rootLabel) {
+      //     const svgs = labelToSVGs(rootLabel, [], true);
+      //     items.push(...svgs);
+      //   }
+
+      //   const dataSelection = d3.select(svgOverlay)
+      //     .selectAll('.shape')
+      //     .data(items, (sh: any) => sh.id);
+
+      //   dataSelection.exit().remove();
+
+      //   dataSelection.enter()
+      //     .each(function(shape: any) {
+      //       const self = d3.select(this);
+      //       return self.append(shape.type)
+      //         .call(initShapeAttrs);
+      //     });
+      // })
     }
 
 

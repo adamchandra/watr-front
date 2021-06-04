@@ -145,7 +145,7 @@ export function registerCmd(
       (argv: any) => {
         if (_.isArray(argv.errors)) {
           const fullArgs = _.merge({}, argv);
-          prettyPrint({ errors: argv.errors, fullArgs });
+          prettyPrint({ msg: 'Error registering yargs command', errors: argv.errors, fullArgs });
           return;
         }
         cb(argv);
@@ -154,7 +154,6 @@ export function registerCmd(
   }
 }
 
-// opt.dir.(exists|parentExists|ancestorExists)
 export const opt = {
   config: configFile,
   existingDir,

@@ -2,20 +2,17 @@
 
   <div class="header">
     This is the header
-
   </div>
 
   <SplitScreen>
 
     <template v-slot:leftside>
-      <!-- <div>Left feeder</div> -->
       <div class="pageImageListFrame">
         <div ref="pageImageListDiv" class="pageImageList" />
       </div>
     </template>
 
     <template v-slot:rightside-top>
-      <!-- <div>Top feeder</div> -->
       <div class="selectionFilterFrame" v-show="showPageOverlays" >
         <NarrowingFilter v-on:items-selected="onItemsSelected" />
         <div ref="selectionFilterDiv" class="selectionFilter" />
@@ -23,7 +20,6 @@
     </template>
 
     <template v-slot:rightside-bottom>
-      <!-- <div>Bottom feeder</div> -->
       <div class="stanzaListFrame">
         <div ref="stanzaListDiv" class="stanzaList" />
       </div>
@@ -33,7 +29,6 @@
 
   <div class="footer">
     This is the footer
-
   </div>
 
 </div>

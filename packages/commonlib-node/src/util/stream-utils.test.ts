@@ -26,21 +26,20 @@ describe('Stream utils ', () => {
     })
   }
 
-  it('process async throughput in order', async done => {
+  it('process async throughput in order', done => {
     const astr = charStream('abc');
 
     const output: string[] = [];
-    await pipeline(
+    pipeline(
       astr,
       throughFunc(doAsyncStuff),
       tapStream((data: string) => {
         output.push(data);
       })
-    );
-    // prettyPrint({ output });
-    expect(output).toEqual(['a_a', 'b_b', 'c_c']);
-
-    done();
+    ).then(() => {
+      expect(output).toEqual(['a_a', 'b_b', 'c_c']);
+      done();
+    })
   });
 
 
@@ -71,18 +70,21 @@ describe('Stream utils ', () => {
   //   });
   // });
 
-  it('should properly catch pipeline errors', async done => {
-    const astr = charStream('abcde');
-    const pipe = pumpify.obj(astr, prettyPrintTrans('aabb'));
+  // it('should properly catch pipeline errors', done => {
+  //   const astr = charStream('abcde');
+  //   const pipe = pumpify.obj(astr, prettyPrintTrans('next char:'));
 
-    pipe.on('data', (data: string) => {
-      prettyPrint({ data });
-      done();
-    });
-  });
+  //   pipe.on('data', (data: string) => {
+  //     prettyPrint({ data });
+  //   });
+
+  //   pipe.on("end", () => {
+  //     done();
+  //   });
+  // });
 
 
-  it('should turn stream of lines into stanzas (line groups)', async done => {
+  it('should turn stream of lines into stanzas (line groups)', done => {
     // const astr = es.readArray("{ a b c } { d } { e }".split(" "));
     const astr = arrayStream('{ a b c } { d } { e }'.split(' '));
 
