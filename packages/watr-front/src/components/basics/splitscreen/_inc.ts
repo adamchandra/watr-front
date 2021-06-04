@@ -6,6 +6,7 @@ import {
 } from '@nuxtjs/composition-api';
 
 import { Splitpanes, Pane } from 'splitpanes'
+// import 'splitpanes/dist/splitpanes.css'
 
 export default defineComponent({
   components: { Pane, Splitpanes },

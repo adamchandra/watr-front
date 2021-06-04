@@ -12,7 +12,7 @@ export default {
   <story-layout>
 
     <template v-slot:title>
-      Split/Resize Windows
+      Splitscreen split/Resize Windows
     </template>
 
     <template v-slot:description>
@@ -33,14 +33,28 @@ export default {
     <template v-slot:main>
       <StoryComponent >
         <template v-slot:leftside>
-          <span>Hola!</span>
+          <ul>
+            <li v-for="i in 10">
+              <span>{{ i  }}</span>
+            </li>
+          </ul>
         </template>
         <template v-slot:rightside-top>
           <span>Right/Top!</span>
+          <ul>
+            <li v-for="i in 3">
+              <span>{{ i  }}</span>
+            </li>
+          </ul>
         </template>
 
         <template v-slot:rightside-bottom>
           <span>Right/Bottom!</span>
+          <ul>
+            <li v-for="i in 2">
+              <span>{{ i  }}</span>
+            </li>
+          </ul>
         </template>
 
       </StoryComponent>
