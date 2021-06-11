@@ -2,6 +2,8 @@
  * Various helper functions for working with d3.js
  */
 
+import _ from 'lodash';
+
 import {
   Selection,
   BaseType,
@@ -12,18 +14,20 @@ import 'd3-transition';
 
 import { BBox } from '~/lib/coord-sys';
 import { SelectionOrTransition } from 'd3-transition';
+import { formatShape, Shape } from './transcript/shapes';
+import { Label } from './transcript/labels';
 
-export function initRect<GElement extends BaseType, Datum, PElement extends BaseType, PDatum > (
+export function initRect<GElement extends BaseType, Datum, PElement extends BaseType, PDatum>(
   sel: Selection<GElement, Datum, PElement, PDatum>,
   fbbox: (d: any) => BBox
 ) {
-  sel.attr('x'      , d => fbbox(d).x)
-    .attr('y'      , d => fbbox(d).y)
-    .attr('width'  , d => fbbox(d).width)
-    .attr('height' , d => fbbox(d).height);
+  sel.attr('x', d => fbbox(d).x)
+    .attr('y', d => fbbox(d).y)
+    .attr('width', d => fbbox(d).width)
+    .attr('height', d => fbbox(d).height);
 }
 
-export function initStroke <GElement extends BaseType, Datum, PElement extends BaseType, PDatum> (
+export function initStroke<GElement extends BaseType, Datum, PElement extends BaseType, PDatum>(
   sel: Selection<GElement, Datum, PElement, PDatum>,
   stroke: string, strokeWidth: number, strokeOpacity: number
 ) {
@@ -32,7 +36,7 @@ export function initStroke <GElement extends BaseType, Datum, PElement extends B
     .attr('stroke-opacity', strokeOpacity);
 }
 
-export function initFill<GElement extends BaseType, Datum, PElement extends BaseType, PDatum> (
+export function initFill<GElement extends BaseType, Datum, PElement extends BaseType, PDatum>(
   sel: SelectionOrTransition<GElement, Datum, PElement, PDatum>,
   fill: string, fillOpacity: number
 ) {
@@ -40,22 +44,20 @@ export function initFill<GElement extends BaseType, Datum, PElement extends Base
   sel.attr('fill-opacity', fillOpacity);
 }
 
-export function getId(data: any) {
-  const shape = data.type;
 
-  if (data.id !== undefined) {
-    return data.id;
-  }
-  switch (shape) {
-    case 'rect':
-      return `r_${data.x}_${data.y}_${data.width}_${data.height}`;
-    case 'circle':
-      return `c_${data.cx}_${data.cy}_${data.r}`;
-    case 'line':
-      return `l_${data.x1}_${data.y1}_${data.x2}_${data.y2}`;
-    default:
-      return '';
-  }
+export function deriveLabelId(label: Label): string {
+  const rangeShape = _.flatMap(label.range, range => {
+    if (range.unit === 'shape') {
+      return [deriveShapeId(range.at)];
+    }
+    return [];
+  });
+  const rangeStr = rangeShape.join(',')
+  return `${label.name}:${rangeStr}`;
+}
+
+export function deriveShapeId(shape: Shape): string {
+  return formatShape(shape);
 }
 
 export function d3id<GElement extends BaseType>(

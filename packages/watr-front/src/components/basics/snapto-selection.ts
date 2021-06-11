@@ -21,7 +21,6 @@ import {
   watch,
 } from '@nuxtjs/composition-api';
 
-import { StateArgs } from '~/components/basics/component-basics'
 import { EventlibSelect } from '~/components/basics/eventlib-select';
 // import { RTreeIndex } from '~/components/basics/rtree-search';
 // import { tweenBBox } from '~/lib/tweening';
@@ -31,14 +30,12 @@ import { EventlibSelect } from '~/components/basics/eventlib-select';
 export interface SnaptoSelection {
 }
 
-type Args = StateArgs & {
+type Args =  {
   eventlibSelect: EventlibSelect;
-  // rtreeIndex: RTreeIndex<GlyphOverlay>;
 };
 
 
 export function useSnaptoSelection({
-  state,
   eventlibSelect,
   // rtreeIndex,
 }: Args): SnaptoSelection {

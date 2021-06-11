@@ -13,7 +13,7 @@ import {
 
 import RBush, {} from 'rbush';
 
-import { StateArgs, resolveWhen, awaitRef } from '~/components/basics/component-basics'
+import { resolveWhen, awaitRef } from '~/components/basics/component-basics'
 
 import {
   MouseHandlerInit,
@@ -32,7 +32,7 @@ export interface EventlibCore {
   setMouseHandlers: (hs: MouseHandlerInit[]) => void;
 }
 
-type Args = StateArgs & {
+type Args = {
   targetDivRef: Ref<HTMLDivElement|null>;
 };
 

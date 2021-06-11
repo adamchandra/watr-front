@@ -6,10 +6,10 @@ import {
   ref,
 } from '@nuxtjs/composition-api';
 
-import { StateArgs, awaitRef } from '~/components/basics/component-basics'
+import { awaitRef } from '~/components/basics/component-basics'
 
 export const enum ElementTypes {
-  Canvas, Svg, Text, Img
+  Canvas, Svg, Text, Img, Event
 }
 
 export interface OverlayElements {
@@ -17,7 +17,7 @@ export interface OverlayElements {
   canvas?: HTMLCanvasElement;
   svg?: SVGElement;
   textDiv?: HTMLDivElement;
-  eventDiv: HTMLDivElement;
+  eventDiv?: HTMLDivElement;
 }
 
 export interface SuperimposedElements {
@@ -27,26 +27,29 @@ export interface SuperimposedElements {
   setImageSource: (src: string) => void;
 }
 
-type Args = StateArgs & {
+type Args = {
   mountPoint: Ref<HTMLDivElement | null>;
   includeElems: ElementTypes[];
+  // excludeEventDiv: boolean;
 };
 
 export async function useSuperimposedElements({
-  mountPoint, includeElems, state
+  mountPoint, includeElems
 }: Args): Promise<SuperimposedElements> {
 
   const useElem: (et: ElementTypes) => boolean =
     (et) => includeElems.includes(et);
 
-  const eventDiv = document.createElement('div');
-  eventDiv.classList.add('layer');
-  eventDiv.classList.add('event-layer');
-
 
   const overlayElements: OverlayElements = {
-    eventDiv
   };
+
+
+  if (useElem(ElementTypes.Event)) {
+    const el = overlayElements.eventDiv = document.createElement('div');
+    el.classList.add('layer');
+    el.classList.add('event-layer');
+  }
 
   if (useElem(ElementTypes.Img)) {
     const el = overlayElements.img = document.createElement('img');
@@ -79,7 +82,7 @@ export async function useSuperimposedElements({
 
   const overlayContainer = mountPoint.value!;
   overlayContainer.classList.add('layers');
-  const { img, canvas, svg, textDiv } = overlayElements;
+  const { img, canvas, svg, textDiv, eventDiv } = overlayElements;
 
   if (img) {
     img.onload = function() {
@@ -97,8 +100,10 @@ export async function useSuperimposedElements({
   if (textDiv) {
     overlayContainer.append(textDiv);
   }
+  if (eventDiv) {
+    overlayContainer.append(eventDiv);
+  }
 
-  overlayContainer.append(eventDiv);
 
   if (img) {
     watch(imgElemSource, (src) => {
@@ -135,10 +140,10 @@ export async function useSuperimposedElements({
       textDiv.style.width = w;
       textDiv.style.height = h;
     }
-
-    eventDiv.style.width = w;
-    eventDiv.style.height = h;
-
+    if (eventDiv) {
+      eventDiv.style.width = w;
+      eventDiv.style.height = h;
+    }
   });
 
   function setImageSource(src: string) {

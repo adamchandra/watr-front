@@ -10,6 +10,7 @@ export const storyItems: StoryEntry[] = [
   { title: 'Split/Resize Windows', to: '/stories/autogen/splitScreen?' },
   { title: 'App[Image+Stanza+Labels]', to: '/stories/autogen/transcriptViewer?id=austenite.pdf.d' },
   { title: 'Corpus Listing Browser', to: '/stories/autogen/corpusBrowser?' },
+  { title: 'Info Pane / Logging Output', to: '/stories/autogen/infoPane?' },
   { title: 'Eventlib Core', to: '/stories/autogen/eventlibCore' },
   { title: 'Superimposed Elements Story', to: '/stories/autogen/superimposedElementsStory' },
   { title: 'Text Overlay', to: '/stories/autogen/textOverlay' },

@@ -4,7 +4,7 @@
     This is the header
   </div>
 
-  <SplitScreen>
+  <SplitScreen v-bind:rightSidePanes="3">
 
     <template v-slot:leftside>
       <div class="pageImageListFrame">
@@ -12,14 +12,18 @@
       </div>
     </template>
 
-    <template v-slot:rightside-top>
+    <template v-slot:rightside#1>
       <div class="selectionFilterFrame" v-show="showPageOverlays" >
         <NarrowingFilter v-on:items-selected="onItemsSelected" />
         <div ref="selectionFilterDiv" class="selectionFilter" />
       </div>
     </template>
 
-    <template v-slot:rightside-bottom>
+    <template v-slot:rightside#2>
+      <div ref="infoPaneDiv" class="infoPane" />
+    </template>
+
+    <template v-slot:rightside#3>
       <div class="stanzaListFrame">
         <div ref="stanzaListDiv" class="stanzaList" />
       </div>

@@ -45,7 +45,7 @@ export function useGlyphOverlays({
 
   const flashlightRadius = 2;
   const indexKey = `page#${pageNumber}/glyphs`;
-  const flashlight = useFlashlight<any>({
+  const flashlight = useFlashlight({
     transcriptIndex,
     indexKey,
     eventlibCore,
@@ -54,9 +54,11 @@ export function useGlyphOverlays({
 
   const svgLayer = superimposedElements.overlayElements.svg!;
   const svgSelect = d3.select(svgLayer);
-  watch(flashlight.litItemsRef, (litItems) => {
+
+  watch(flashlight.eventTargetRecs.mousemove, (mousemove) => {
+
     const items = _.sortBy(
-      litItems, // _.filter(litItems, (hit) => hit.glyph !== undefined),
+      mousemove, // _.filter(litItems, (hit) => hit.glyph !== undefined),
       (hit) => [hit.minY, hit.minX]
     );
 
@@ -68,7 +70,7 @@ export function useGlyphOverlays({
       .call(initRect, (i: any) => i.primaryRect)
       .call(initStroke, 'blue', 1, 0.8)
       .call(initFill, 'yellow', 0.8);
-  });
+  })
 
   // const setGlyphOverlays: SetGlyphOverlays = (glyphs, geom) => {
   //   const pageGeometry = geom;

@@ -11,7 +11,7 @@ import {
 import * as VC from '@nuxtjs/composition-api'
 
 import { divRef } from '~/lib/vue-composition-lib'
-import { initState, awaitRef } from '~/components/basics/component-basics'
+import { awaitRefTask } from '~/components/basics/component-basics'
 import { usePdfPageViewer } from '~/components/single-pane/page-viewer'
 import { useStanzaViewer } from '~/components/single-pane/stanza-viewer'
 import { TranscriptIndex } from '~/lib/transcript/transcript-index'
@@ -34,10 +34,7 @@ import { useLabelOverlay } from '~/components/single-pane/label-overlay'
 import { getQueryParam } from '~/lib/url-utils'
 
 import SplitScreen from '~/components/basics/splitscreen/index.vue'
-
-// import { Splitpanes, Pane } from 'splitpanes'
-// import 'splitpanes/dist/splitpanes.css'
-
+import { useInfoPane } from '~/components/single-pane/info-pane'
 
 interface AppState {
   showStanzaPane: boolean;
@@ -45,18 +42,43 @@ interface AppState {
   showPageOverlays: boolean;
 }
 
-function awaitRefTask<T>(ref: Ref<T>): TE.TaskEither<never, T> {
-  return () => awaitRef(ref).then(x => E.right(x));
-}
 
-const dbglogKeys = <A>() =>
-  TE.map<A, A>((entries: A) => {
-    const keys = _.keys(entries);
-    const keystr = _.join(keys, ', ');
-    console.log('keys', keystr);
-    return entries;
+const TETap = <A>(tapf: (a: A) => void) =>
+  TE.map<A, A>((a: A) => {
+    tapf(a);
+    return a;
   });
 
+
+const dbglogKeys = <A>() => TETap<A>(entries => {
+  const keys = _.keys(entries);
+  const keystr = _.join(keys, ', ');
+  console.log('keys', keystr);
+});
+
+const progress = <A>() => TETap<A>(entries => {
+  const keys = _.keys(entries);
+  const keystr = _.join(keys, ', ');
+  console.log('keys', keystr);
+});
+
+// const dbglogKeys = <A>() =>
+//   TE.map<A, A>((entries: A) => {
+//     const keys = _.keys(entries);
+//     const keystr = _.join(keys, ', ');
+//     console.log('keys', keystr);
+//     return entries;
+//   });
+
+function isPageRange(r: Range): r is PageRange {
+  return r.unit === 'page';
+}
+
+function getLabelPageNumber(l: Label): number {
+  const pageRange = _.filter(l.range, isPageRange)[0];
+  if (pageRange === undefined || pageRange === null) return -1;
+  return pageRange.at;
+}
 
 export default defineComponent({
   components: { NarrowingFilter, SplitScreen },
@@ -65,7 +87,7 @@ export default defineComponent({
     const pageImageListDiv = divRef()
     const stanzaListDiv = divRef()
     const selectionFilterDiv = divRef()
-    const state = initState()
+    const infoPaneDiv = divRef()
 
     const initChoicesRef: Ref<number> = ref(0);
     provide(ProvidedChoicesTrigger, initChoicesRef);
@@ -74,17 +96,6 @@ export default defineComponent({
     provide(ProvidedChoices, choicesRef);
 
     const pageLabelRefs: Array<Ref<Label[]>> = [];
-
-
-    function isPageRange(r: Range): r is PageRange {
-      return r.unit === 'page';
-    }
-
-    function getLabelPageNumber(l: Label): number {
-      const pageRange = _.filter(l.range, isPageRange)[0];
-      if (pageRange === undefined || pageRange === null) return -1;
-      return pageRange.at;
-    }
 
     const onItemsSelected = (selection: NarrowingChoice<Label[]>[]) => {
       const labels = _.flatMap(selection, choice => _.map(choice.value, l => [l, getLabelPageNumber(l)] as const));
@@ -95,7 +106,6 @@ export default defineComponent({
         const glabels = _.map(group, g => g[0]);
         pageLabelRefs[p].value = glabels;
       });
-
     }
 
     const appStateRef: VC.UnwrapRef<AppState> = VC.reactive({
@@ -106,11 +116,13 @@ export default defineComponent({
 
     const appStateRefs: VC.ToRefs<AppState> = VC.toRefs(appStateRef);
 
-
-
     const run = pipe(
       TE.right({}),
       TE.bind('entryId', ({ }) => TE.fromEither(getQueryParam('id'))),
+      TE.bind('infoPane', ({ }) => () => useInfoPane({ mountPoint: infoPaneDiv }).then(E.right)),
+      TETap(({ infoPane, entryId }) => {
+        // labelInfoPane.showLabel
+      }),
       dbglogKeys(),
       TE.bind('pageImageListDiv', ({ }) => awaitRefTask(pageImageListDiv)),
       TE.bind('stanzaListDiv', ({ }) => awaitRefTask(stanzaListDiv)),
@@ -122,7 +134,8 @@ export default defineComponent({
       TE.bind('transcriptIndex', ({ transcript }) => TE.right(new TranscriptIndex(transcript))),
       dbglogKeys(),
 
-      TE.bind('pageViewers', ({ entryId, pageImageListDiv, transcript, transcriptIndex }) => {
+
+      TE.bind('pageViewers', ({ entryId, pageImageListDiv, transcript, transcriptIndex, infoPane }) => {
 
         const allPageLabels = transcriptIndex.getLabels([])
         const groupedLabels = groupLabelsByNameAndTags(allPageLabels);
@@ -145,13 +158,13 @@ export default defineComponent({
           const mountPoint = divRef()
           mountPoint.value = mount
 
-          return usePdfPageViewer({ mountPoint, transcriptIndex, pageNumber, entryId, state })
+          return usePdfPageViewer({ mountPoint, transcriptIndex, pageNumber, entryId })
             .then(pdfPageViewer => useLabelOverlay({
-              state,
               transcriptIndex,
               pdfPageViewer,
               pageNumber,
-              pageLabelRef: pageLabelRefs[pageNumber]
+              pageLabelRef: pageLabelRefs[pageNumber],
+              infoPane
             }));
         });
 
@@ -165,7 +178,7 @@ export default defineComponent({
           const mountPoint = divRef()
           mountPoint.value = mount
           stanzaListDiv.appendChild(mount)
-          return useStanzaViewer({ mountPoint, state })
+          return useStanzaViewer({ mountPoint })
             .then(stanzaViewer => stanzaViewer.showStanza(transcriptIndex, stanzaNumber));
         });
 
@@ -185,9 +198,14 @@ export default defineComponent({
       pageImageListDiv,
       stanzaListDiv,
       selectionFilterDiv,
+      infoPaneDiv,
       onItemsSelected,
       ...appStateRefs
     }
   }
 
 })
+
+function usInfoPane(arg0: { mountPoint: Ref<HTMLDivElement> }) {
+  throw new Error('Function not implemented.')
+}

@@ -10,8 +10,12 @@ import { Splitpanes, Pane } from 'splitpanes'
 
 export default defineComponent({
   components: { Pane, Splitpanes },
+  props: {
+    rightSidePanes: Number
+  },
 
   setup(_props, _context: SetupContext) {
-    //
+    return {
+    };
   }
 });

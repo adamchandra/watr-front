@@ -354,3 +354,20 @@ export function minMaxToRect(mm: MinMaxBox): Rect {
   const height = maxY - minY;
   return { kind: 'rect', x, y, width, height, };
 }
+
+export function formatShape(shape: Shape): string {
+  switch (shape.kind) {
+      case 'point':
+        return `(${shape.x},${shape.y})`;
+      case 'line':
+        return `l@{${formatShape(shape.p1)}->${formatShape(shape.p2)}}`;
+      case 'rect':
+        return `r@[(${shape.x},${shape.y}); w:${shape.width}; h:${shape.height}]`;
+      case 'circle':
+        return `c@${formatShape(shape.p)}, r:(${shape.r})`;
+      case 'triangle':
+        return `tri@<(${formatShape(shape.p1)}, ${formatShape(shape.p2)}, ${formatShape(shape.p3)}>`;
+      case 'trapezoid':
+        return `trap@<${formatShape(shape.topLeft)}->${shape.topWidth}, ${formatShape(shape.bottomLeft)}->${shape.bottomWidth}>`;
+  };
+}

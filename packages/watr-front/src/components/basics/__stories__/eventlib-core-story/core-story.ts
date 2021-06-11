@@ -3,7 +3,7 @@
  */
 import _ from 'lodash'
 
-import { onMounted, ref, Ref } from '@nuxtjs/composition-api'
+import { ref, Ref } from '@nuxtjs/composition-api'
 import { useEventlibCore } from '~/components/basics/eventlib-core'
 import { useEventlibSelect } from '~/components/basics/eventlib-select'
 import { EMouseEvent, MouseHandlerInit } from '~/lib/EventlibHandlers'
@@ -35,10 +35,11 @@ function setup() {
     }
   }
 
-  useEventlibCore({ targetDivRef: mountPoint, state }).then( async (eventlibCore) => {
+
+  useEventlibCore({ targetDivRef: mountPoint }).then( async (eventlibCore) => {
     const { setMouseHandlers } = eventlibCore
 
-    const superimposedElements = await useSuperimposedElements({ includeElems: [ElementTypes.Img, ElementTypes.Svg], mountPoint, state })
+    const superimposedElements = await useSuperimposedElements({ includeElems: [ElementTypes.Img, ElementTypes.Svg], mountPoint  })
 
     const eventlibSelect = useEventlibSelect({ eventlibCore, superimposedElements, state })
 

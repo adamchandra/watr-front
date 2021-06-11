@@ -10,15 +10,12 @@ import {
 
 import { useSuperimposedElements, ElementTypes } from '~/components/basics/superimposed-elements';
 import { useMeasuredTextOverlay } from '~/components/basics/measured-text-overlay';
-import { initState, awaitRef } from '~/components/basics/component-basics';
+import { awaitRef } from '~/components/basics/component-basics';
 // import chroma from 'chroma-js';
 import { TextStyle } from '~/lib/html-text-metrics';
-// import { BBox } from '~/lib/coord-sys';
 
 export default {
   setup() {
-
-    const state = initState();
 
     const mountPoint: Ref<HTMLDivElement | null> = ref(null);
     const textDimensions = ref('init');
@@ -31,14 +28,14 @@ export default {
     awaitRef(mountPoint)
       .then(() => useSuperimposedElements({
         includeElems: [ElementTypes.Text, ElementTypes.Img, ElementTypes.Svg],
-        mountPoint, state
+        mountPoint
       }))
       .then(superimposedElements => {
 
         // Set text size, print text, overlay canvas or svg rect, print dimensions
         // Set text color, styles, ...
 
-        const textOverlay = useMeasuredTextOverlay({ superimposedElements, state });
+        const textOverlay = useMeasuredTextOverlay({ superimposedElements });
 
         superimposedElements.setDimensions(500, 350);
 

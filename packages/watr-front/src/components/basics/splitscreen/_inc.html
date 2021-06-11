@@ -3,14 +3,15 @@
   <pane>
     <slot name="leftside" />
   </pane>
+
   <pane>
     <splitpanes horizontal :push-other-panes="true">
-      <pane>
-        <slot name="rightside-top" />
+
+      <pane v-for="i in rightSidePanes" :key="i" >
+        <slot :name="'rightside#'+i" />
       </pane>
-      <pane>
-        <slot name="rightside-bottom" />
-      </pane>
+
+
     </splitpanes>
   </pane>
 

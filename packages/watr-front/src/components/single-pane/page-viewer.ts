@@ -8,13 +8,12 @@ import {
   Ref,
 } from '@nuxtjs/composition-api';
 
-import { StateArgs } from '~/components/basics/component-basics'
 import { useEventlibCore, EventlibCore } from '~/components/basics/eventlib-core';
 import { useSuperimposedElements, SuperimposedElements, ElementTypes } from '~/components/basics/superimposed-elements';
 import { resolveCorpusUrl } from '~/lib/axios';
 import { TranscriptIndex } from '~/lib/transcript/transcript-index';
 
-type Args = StateArgs & {
+type Args = {
   mountPoint: Ref<HTMLDivElement | null>;
   transcriptIndex: TranscriptIndex;
   pageNumber: number;
@@ -27,17 +26,17 @@ export interface PdfPageViewer {
 }
 
 export async function usePdfPageViewer({
-  mountPoint, state,
+  mountPoint,
   transcriptIndex,
   entryId,
   pageNumber
 }: Args): Promise<PdfPageViewer> {
 
-  const eventlibCore = await useEventlibCore({ targetDivRef: mountPoint, state });
+  const eventlibCore = await useEventlibCore({ targetDivRef: mountPoint });
 
   const superimposedElements = await useSuperimposedElements({
-    includeElems: [ElementTypes.Img, ElementTypes.Svg],
-    mountPoint, state
+    includeElems: [ElementTypes.Img, ElementTypes.Svg, ElementTypes.Event],
+    mountPoint
   });
 
   const transcriptPage = transcriptIndex.transcript.pages[pageNumber];

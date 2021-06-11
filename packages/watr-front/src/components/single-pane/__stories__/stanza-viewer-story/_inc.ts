@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 import { defineComponent } from '@nuxtjs/composition-api'
 import { useStanzaViewer } from '~/components/single-pane/stanza-viewer'
-import { initState } from '~/components/basics/component-basics'
 import { divRef } from '~/lib/vue-composition-lib'
 import { pipe } from 'fp-ts/lib/function';
 import { TranscriptIndex } from '~/lib/transcript/transcript-index'
@@ -13,10 +12,9 @@ import { fetchAndDecodeTranscript } from '~/lib/data-fetch'
 export default defineComponent({
   components: {},
   setup() {
-    const state = initState()
     const mountPoint = divRef()
 
-    useStanzaViewer({ mountPoint, state }).then((stanzaViewer) => {
+    useStanzaViewer({ mountPoint }).then((stanzaViewer) => {
       const { showStanza } = stanzaViewer;
 
       const entryId = getURLQueryParam('id') || 'missing-id';

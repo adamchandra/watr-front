@@ -21,6 +21,7 @@ export function makeStyleString(style: TextStyle): string {
 
 export interface LineDimensions extends Rect {
   charBounds: Rect[];
+  lineDiv: HTMLDivElement;
 }
 
 export function getTextWidth(ctx: CanvasRenderingContext2D, text: string, font: string): number {
@@ -54,7 +55,8 @@ export function showText0(
     y: 0,
     width: lineWidth,
     height: lineHeight,
-    charBounds: sizes
+    charBounds: sizes,
+    lineDiv: div,
   };
 
   return lineDimensions;
@@ -102,7 +104,8 @@ export function showTextOrig(
     y: 0,
     width: lineWidth,
     height: lineHeight,
-    charBounds: sizes
+    charBounds: sizes,
+    lineDiv: div,
   }
 
   return lineDimensions

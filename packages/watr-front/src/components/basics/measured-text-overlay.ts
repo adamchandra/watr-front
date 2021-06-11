@@ -5,22 +5,21 @@
 
 import _ from 'lodash';
 
-
-import { StateArgs } from '~/components/basics/component-basics'
-import { SuperimposedElements  } from './superimposed-elements';
+import { SuperimposedElements } from './superimposed-elements';
 import { TextStyle, makeStyleString, LineDimensions, showText0 } from '~/lib/html-text-metrics';
 
 type PutText = (style: TextStyle, x: number, y: number, text: string) => LineDimensions;
-type ClearText = () => void;
+type ClearText = () => Promise<void>;
 
 export interface TextOverlay {
   putTextLn: PutText;
   clearText: ClearText;
 }
 
-type Args = StateArgs & {
+type Args = {
   superimposedElements: SuperimposedElements;
 };
+
 
 export function useMeasuredTextOverlay({
   superimposedElements,
@@ -46,11 +45,41 @@ export function useMeasuredTextOverlay({
     return showText0(text, div, x, y, charWidthCache);
   }
 
+
   const clearText: ClearText = () => {
     const textDiv = superimposedElements.overlayElements.textDiv!;
-    if (textDiv) {
-      textDiv.childNodes.forEach(n => n.remove());
-    }
+
+    if (textDiv === undefined) return Promise.resolve();
+    // if (textDiv.childElementCount === 0) return Promise.resolve();
+
+    return new Promise((resolve) => {
+      // const observer = new MutationObserver(function(mutations: MutationRecord[]) {
+      //   mutations.forEach(function(mutation: MutationRecord) {
+      //     console.log('mut> ', mutation);
+      //     const isEmpty = mutation.target.childNodes.length === 0;
+      //     // const isFirstSib = mutation.previousSibling === null;
+      //     // const isLastSib = mutation.nextSibling === null;
+      //     // const isOnlySib = isFirstSib && isLastSib;
+      //     if (isEmpty) {
+      //       console.log('<<disconnecting>>');
+      //       observer.disconnect();
+      //       resolve(undefined);
+      //     }
+      //   });
+      // });
+
+      // const config: MutationObserverInit = {
+      //   attributes: true,
+      //   childList: true,
+      //   characterData: true
+      // };
+
+      // observer.observe(textDiv, config);
+      while (textDiv.firstChild) {
+        textDiv.removeChild(textDiv.firstChild);
+      }
+      resolve();
+    });
   };
 
   return {

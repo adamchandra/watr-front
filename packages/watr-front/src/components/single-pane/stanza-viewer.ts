@@ -2,10 +2,7 @@ import _ from 'lodash';
 
 import { Ref } from '@nuxtjs/composition-api';
 
-import { StateArgs } from '~/components/basics/component-basics'
-import { useEventlibCore } from '~/components/basics/eventlib-core';
 import { useSuperimposedElements, ElementTypes } from '~/components/basics/superimposed-elements';
-import { BBox } from '~/lib/coord-sys';
 import { useMeasuredTextOverlay } from '~/components/basics/measured-text-overlay';
 import { TextStyle } from '~/lib/html-text-metrics';
 
@@ -13,7 +10,7 @@ import { PutTextLn, TranscriptIndex } from '~/lib/transcript/transcript-index';
 
 export type ShowStanza = (transcriptIndex: TranscriptIndex, stanzaId: number) => void;
 
-type Args = StateArgs & {
+type Args = {
   mountPoint: Ref<HTMLDivElement | null>;
 };
 
@@ -22,14 +19,12 @@ export interface StanzaViewer {
 }
 
 export async function useStanzaViewer({
-  mountPoint, state
+  mountPoint
 }: Args): Promise<StanzaViewer> {
 
-  // const eventlibCore = await useEventlibCore({ targetDivRef: mountPoint, state } );
   const superimposedElements = await useSuperimposedElements({
-    includeElems: [ElementTypes.Text, ElementTypes.Svg],
-    mountPoint,
-    state
+    includeElems: [ElementTypes.Text, ElementTypes.Svg, ElementTypes.Event],
+    mountPoint
   });
 
   // const spatialSearch = useSpatialSearch({ state, eventlibCore, superimposedElements });
@@ -42,7 +37,7 @@ export async function useStanzaViewer({
     weight: 'normal'
   };
 
-  const mtext = useMeasuredTextOverlay({ superimposedElements, state });
+  const mtext = useMeasuredTextOverlay({ superimposedElements });
   const textDiv = superimposedElements.overlayElements.textDiv!;
   const pageLeft = 0;
   const putTextLn: PutTextLn = (lineNum: number, text: string) => {

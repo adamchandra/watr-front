@@ -1,0 +1,55 @@
+<story-layout>
+
+  <template v-slot:title>
+    Info Pane
+  </template>
+
+  <template v-slot:description>
+  </template>
+
+  <template v-slot:controls>
+
+    <v-container>
+      <v-row>
+        <v-col justify="space-between" cols="4">
+          <p>
+          Type text,
+            <ul>
+              <li>
+                ' '-character with emit it with putString
+              </li>
+              <li>
+                '.' will emit with putStringLn
+              </li>
+              'clear' will clear screen
+              </li>
+            </ul>
+          </p>
+
+          <v-text-field outlined
+            hide-details
+            class="mt-3"
+            label="Input text"
+            persistent-hint
+            filled
+            v-model="inputText"
+          />
+          <!-- <v-btn v-on:click="onPutStringLn" class="mx-3" small color="primary">putStringLn</v-btn>
+               <v-btn v-on:click="onPutString" class="mx-3" small color="primary">putString</v-btn>
+               <v-btn v-on:click="onClear" class="mx-3" small color="primary">clearScreen</v-btn>
+          -->
+
+        </v-col>
+      </v-row>
+    </v-container>
+  </template>
+
+  <template v-slot:notes>
+    Notes...
+  </template>
+
+  <template v-slot:main>
+    <div ref="infoPaneDiv" />
+  </template>
+
+</story-layout>

@@ -8,6 +8,9 @@ import {
   toRefs,
 } from '@nuxtjs/composition-api';
 
+import * as TE from 'fp-ts/lib/TaskEither';
+import * as E from 'fp-ts/lib/Either';
+
 export interface ComponentState {
 }
 
@@ -31,6 +34,10 @@ export async function awaitRef<T>(tref: Ref<T | null | undefined>): Promise<T> {
   return new Promise((resolve) => {
     watchOnceFor(tref, (t) => resolve(t));
   });
+}
+
+export function awaitRefTask<T>(ref: Ref<T>): TE.TaskEither<never, T> {
+  return () => awaitRef(ref).then(x => E.right(x));
 }
 
 /**

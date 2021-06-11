@@ -8,6 +8,14 @@ export default {
 }
 </script>
 
+<style lang="scss" >
+
+ .panel-content {
+     border: 2px solid yellow;
+     background-color: lightblue;
+ }
+
+</style>
 <template lang="html">
   <story-layout>
 
@@ -31,30 +39,37 @@ export default {
     </template>
 
     <template v-slot:main>
-      <StoryComponent >
+      <StoryComponent v-bind:rightSidePanes="3">
         <template v-slot:leftside>
-          <ul>
-            <li v-for="i in 10">
-              <span>{{ i  }}</span>
-            </li>
-          </ul>
-        </template>
-        <template v-slot:rightside-top>
-          <span>Right/Top!</span>
-          <ul>
-            <li v-for="i in 3">
-              <span>{{ i  }}</span>
-            </li>
-          </ul>
+          <div class="panel-content">
+            <ul>
+              <li v-for="i in 10">
+                <span>{{ i }}</span>
+              </li>
+            </ul>
+          </div>
         </template>
 
-        <template v-slot:rightside-bottom>
-          <span>Right/Bottom!</span>
-          <ul>
-            <li v-for="i in 2">
-              <span>{{ i  }}</span>
-            </li>
-          </ul>
+        <template v-slot:rightside#1>
+          <div class="panel-content">
+            <span>Right/1!</span>
+            <ul>
+              <li v-for="i in 3">
+                <span>{{ i }}</span>
+              </li>
+            </ul>
+          </div>
+        </template>
+
+        <template v-slot:rightside#3>
+          <div class="panel-content">
+            <span>Right/3!</span>
+            <ul>
+              <li v-for="i in 2">
+                <span>{{ i }}</span>
+              </li>
+            </ul>
+          </div>
         </template>
 
       </StoryComponent>
