@@ -52,12 +52,12 @@ export function deriveLabelId(label: Label): string {
     }
     return [];
   });
-  const rangeStr = rangeShape.join(',')
-  return `${label.name}:${rangeStr}`;
+  const rangeStr = rangeShape.join('_')
+  return `${label.name}${rangeStr}`;
 }
 
 export function deriveShapeId(shape: Shape): string {
-  return formatShape(shape);
+  return formatShape(shape).replace(/\W/g, '_');
 }
 
 export function d3id<GElement extends BaseType>(

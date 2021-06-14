@@ -4,7 +4,7 @@ import { Label } from '~/lib/transcript/labels';
 import { ShapeSvg, shapeToSvg } from '~/lib/transcript/shapes';
 import * as d3 from 'd3-selection';
 import { newIdGenerator } from '~/lib/misc-utils';
-
+import { deriveLabelId } from './d3-extras';
 
 export function initSVGDimensions(r: any) {
   const shape = r.node().nodeName.toLowerCase();
@@ -58,19 +58,6 @@ function setSVGClasses(r: any) {
     ;
 }
 
-export function labelRangeToSVG(label: Label): ShapeSvg[] {
-  // const gelem: SVGGElement = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-
-  return _.flatMap(label.range, range => {
-    if (range.unit === 'shape') {
-      const svg = shapeToSvg(range.at);
-      addShapeId(svg);
-      return [svg];
-    }
-    return [];
-  });
-}
-
 export function labelToSVGs(label: Label, parentClasses: string[], forceEval: boolean): ShapeSvg[] {
 
   const classStrings = label?.props?.['class'] || [];
@@ -90,7 +77,6 @@ export function labelToSVGs(label: Label, parentClasses: string[], forceEval: bo
 
   propogatedClasses.push(label.name);
 
-
   const childShapes: ShapeSvg[] = label.children === undefined ? [] :
     _.flatMap(label.children, c => labelToSVGs(c, propogatedClasses, forceEval));
 
@@ -99,7 +85,8 @@ export function labelToSVGs(label: Label, parentClasses: string[], forceEval: bo
       const svg = shapeToSvg(range.at);
       svg.data['rootLabel'] = label;
       svg.classes = _.concat(localClasses, parentClasses, propogatedClasses);
-      addShapeId(svg);
+      const labelId = deriveLabelId(label);
+      svg.id = labelId;
       return [svg];
     }
     return [];
@@ -121,7 +108,8 @@ export function labelToTriggerSVG(label: Label, rootLabel: Label): ShapeSvg {
         const svg = shapeToSvg(range.at);
         svg.data['rootLabel'] = rootLabel;
         svg.classes = localClasses;
-        addShapeId(svg);
+        const labelId = deriveLabelId(label);
+        svg.id = labelId;
         return [svg];
       }
       return [];
@@ -140,7 +128,7 @@ const idgen = newIdGenerator(1);
 
 function addShapeId(shape: ShapeSvg): void {
   if (shape.id === undefined) {
-    shape.id = idgen();
+    shape.id = idgen().toString();
   }
 }
 
@@ -157,7 +145,6 @@ export function updateSvgElement(svgElement: SVGElement, svgShapes: ShapeSvg[]) 
   const dataSelection: d3.Selection<d3.BaseType, ShapeSvg, SVGElement, unknown> = d3.select(svgElement)
     .selectAll('.shape')
     .data(svgShapes, (sh: any) => sh.id);
-
 
   dataSelection.enter()
     .each(function(shape: any) {
@@ -190,3 +177,50 @@ export function updateSvgElement(svgElement: SVGElement, svgShapes: ShapeSvg[]) 
 
 }
 
+export function resetShapesFillStroke(svgElement: SVGElement) {
+  d3.select(svgElement)
+    .selectAll('.shape')
+    .each(function() {
+      const shape = d3.select(this);
+      const shdata = shape.datum();
+      const classes = shdata['classes'] || [];
+      _.each(classes, cls => {
+        const classDefs = OctoAttrs[cls];
+        if (_.isArray(classDefs)) {
+          const [stroke, sop, fill, fop] = OctoAttrs[cls];
+          shape
+            .attr('stroke', () => stroke)
+            .attr('stroke-opacity', () => sop)
+            .attr('fill', () => fill)
+            .attr('fill-opacity', () => fop)
+            ;
+        }
+      })
+    });
+}
+
+export function highlightShapesFillStroke(svgElement: SVGElement, shapeId: string) {
+  dimShapesFillStroke(svgElement);
+  d3.select(svgElement)
+    .select(`#${shapeId}`)
+    .each(function() {
+      d3.select(this)
+        .attr('stroke', () => 'black')
+        .attr('stroke-opacity', () => 1.0)
+        .attr('fill', () => 'blue')
+        .attr('fill-opacity', () => '0.3')
+        ;
+    });
+}
+export function dimShapesFillStroke(svgElement: SVGElement) {
+  d3.select(svgElement)
+    .selectAll('.shape')
+    .attr('stroke', () => 'blue')
+    .attr('stroke-opacity', () => 0.2)
+    .attr('fill', () => '')
+    .attr('fill-opacity', () => 0);
+}
+
+export function toggleShapeClass(svgElement: SVGElement, cls: string, shapeId: string, activate: boolean) {
+  d3.select(svgElement).select(`#${shapeId}`).classed(cls, activate)
+}

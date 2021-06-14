@@ -42,25 +42,11 @@ interface AppState {
   showPageOverlays: boolean;
 }
 
-
-const TETap = <A>(tapf: (a: A) => void) =>
-  TE.map<A, A>((a: A) => {
-    tapf(a);
-    return a;
+const TETap = <E, A>(tapf: (a: A) => unknown|Promise<unknown>) =>
+  TE.chain<E, A, A>((a: A) => {
+    return () => Promise.resolve(tapf(a))
+      .then(() => E.right(a))
   });
-
-
-const dbglogKeys = <A>() => TETap<A>(entries => {
-  const keys = _.keys(entries);
-  const keystr = _.join(keys, ', ');
-  console.log('keys', keystr);
-});
-
-const progress = <A>() => TETap<A>(entries => {
-  const keys = _.keys(entries);
-  const keystr = _.join(keys, ', ');
-  console.log('keys', keystr);
-});
 
 // const dbglogKeys = <A>() =>
 //   TE.map<A, A>((entries: A) => {
@@ -120,20 +106,14 @@ export default defineComponent({
       TE.right({}),
       TE.bind('entryId', ({ }) => TE.fromEither(getQueryParam('id'))),
       TE.bind('infoPane', ({ }) => () => useInfoPane({ mountPoint: infoPaneDiv }).then(E.right)),
-      TETap(({ infoPane, entryId }) => {
-        // labelInfoPane.showLabel
-      }),
-      dbglogKeys(),
+      TETap(({ infoPane, entryId }) => infoPane.putStringLn(`entry: ${entryId}`)),
       TE.bind('pageImageListDiv', ({ }) => awaitRefTask(pageImageListDiv)),
       TE.bind('stanzaListDiv', ({ }) => awaitRefTask(stanzaListDiv)),
-      dbglogKeys(),
       TE.bind('selectionFilterDiv', ({ }) => awaitRefTask(selectionFilterDiv)),
-      dbglogKeys(),
       TE.bind('transcript', ({ entryId }) => fetchAndDecodeTranscript(entryId)),
-      dbglogKeys(),
+      TETap(({ infoPane }) => infoPane.putStringLn('fetched transcript')),
       TE.bind('transcriptIndex', ({ transcript }) => TE.right(new TranscriptIndex(transcript))),
-      dbglogKeys(),
-
+      TETap(({ infoPane }) => infoPane.putStringLn('indexed transcript')),
 
       TE.bind('pageViewers', ({ entryId, pageImageListDiv, transcript, transcriptIndex, infoPane }) => {
 
@@ -171,7 +151,7 @@ export default defineComponent({
         return () => Promise.all(inits).then(E.right);
       }),
 
-      dbglogKeys(),
+      TETap(({ infoPane }) => infoPane.putStringLn('initialized page viewers')),
       TE.bind('stanzaViewers', ({ stanzaListDiv, transcript, transcriptIndex }) => {
         const inits = _.map(transcript.stanzas, (_, stanzaNumber) => {
           const mount = document.createElement('div')
@@ -185,7 +165,7 @@ export default defineComponent({
         return () => Promise.all(inits).then(E.right);
       }),
 
-      dbglogKeys(),
+      TETap(({ infoPane }) => infoPane.putStringLn('initialized stanza viewers')),
       TE.mapLeft(errors => {
         _.each(errors, error => console.log('error', error));
         return errors;

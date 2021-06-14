@@ -170,7 +170,7 @@ export type ShapeKind = Shape['kind'];
 // export type ShapeRepr = RectRepr | PointRepr | TriangleRepr | TrapezoidRepr | LineRepr | CircleRepr;
 
 export interface BaseSvg extends RTreeIndexable {
-  id: number;
+  id: string;
   classes?: string[];
   data: Record<string, any>;
 }

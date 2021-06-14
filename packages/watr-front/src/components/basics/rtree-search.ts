@@ -20,7 +20,7 @@ import { TranscriptIndex, TranscriptIndexable } from '~/lib/transcript/transcrip
  * Minimal interface required for RTree index
  */
 export interface RTreeIndexable extends coords.MinMaxBox {
-  id: number;
+  id: string;
 }
 
 type HitTarget = TranscriptIndexable<any>;
@@ -63,7 +63,6 @@ export function useFlashlight({
     const hits = rtree.search(queryBox)
 
     eventTargetRecs.mousemove.value = hits;
-
   }
 
   const click = (e: EMouseEvent) => {
@@ -73,7 +72,6 @@ export function useFlashlight({
 
     const rtree = transcriptIndex.getKeyedIndex(indexKey);
     const hits = rtree.search(queryBox)
-    console.log('click:hits', hits);
     eventTargetRecs.click.value = hits;
   };
 

@@ -24,7 +24,6 @@ export default defineComponent({
 
     const run = pipe(
       TE.right({}),
-      // TE.bind('infoPaneDiv', ({ }) => awaitRefTask(infoPaneDivRef)),
       TE.bind('infoPane', ({ }) => () => useInfoPane({ mountPoint: infoPaneDiv }).then(E.right)),
       TE.map(({ infoPane }) => {
         const {

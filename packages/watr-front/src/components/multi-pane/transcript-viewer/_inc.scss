@@ -22,6 +22,22 @@
       width: 100%;
       overflow-y: auto;
 
+      // svg.inspecting {
+      //   .shape {
+      //     fill: 'green';
+      //     fill-opacity: 0.2;
+      //     stroke: 'black';
+      //     stroke-opacity: 0.3;
+
+      //   }
+      //   .shape.hovering {
+      //     fill: 'blue';
+      //     fill-opacity: 0.4;
+      //     stroke: 'black';
+      //     stroke-opacity: 1;
+      //   }
+      // }
+
       .pageImageList {
         display: flex;
         flex-direction: column;
@@ -34,12 +50,21 @@
           margin: 0.5em;
           flex: 0 1 auto;
         }
+
       }
     }
 
     .infoPane {
       height: 100%;
       width: 100%;
+      .hoverable {
+        background-color: lightblue;
+      }
+
+      .hovering {
+        background-color: wheat;
+        border-bottom: 1px solid black;
+      }
     }
 
     .selectionFilterFrame {

@@ -4,7 +4,6 @@ import {
   Ref,
 } from '@nuxtjs/composition-api';
 
-// import { UnwrapRef } from '@nuxtjs/composition-api/dist/reactivity';
 import { UnwrapRef } from '@nuxtjs/composition-api';
 
 export function getCursorPosition(elem: Element, event: MouseEvent): EventlibPoint {
@@ -79,8 +78,6 @@ export function setMouseHandlers(
   targetDivRef: Ref<HTMLDivElement | null>,
   handlers: MouseHandlerInit[]
 ): void {
-
-
 
   const targetDiv = targetDivRef.value!;
 

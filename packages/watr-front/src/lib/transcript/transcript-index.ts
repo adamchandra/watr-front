@@ -33,7 +33,7 @@ export interface TranscriptIndexable<T> extends RTreeIndexable {
 export class TranscriptIndex {
   transcript: Transcript;
   indexes: Record<RTreeIndexKey, RBush<TranscriptIndexable<any>>>;
-  indexables: Record<number, TranscriptIndexable<any>>;
+  indexables: Record<string, TranscriptIndexable<any>>;
   nextId: () => number;
 
   constructor(t: Transcript) {
@@ -71,7 +71,7 @@ export class TranscriptIndex {
           primaryKey,
           primaryRect: glyph.rect,
           indexedRects,
-          id: glyph.id,
+          id: glyph.id.toString(),
           minX, minY, maxX, maxY
         };
 
@@ -123,7 +123,7 @@ export class TranscriptIndex {
             primaryKey,
             primaryRect: charDim,
             indexedRects: pageGlyph.indexedRects,
-            id: glyphRef,
+            id: glyphRef.toString(),
             minX, minY, maxX, maxY
           };
           return stanzaIndexable;
@@ -133,7 +133,7 @@ export class TranscriptIndex {
           primaryKey,
           primaryRect: charDim,
           indexedRects: {},
-          id: -this.nextId(),
+          id: (-this.nextId()).toString(),
           minX, minY, maxX, maxY
         };
         return stanzaIndexable;

@@ -10,8 +10,9 @@ import { Label } from '~/lib/transcript/labels';
 import { minMaxToRect, ShapeSvg } from '~/lib/transcript/shapes';
 import { PdfPageViewer } from './page-viewer';
 import { useFlashlight } from '../basics/rtree-search';
-import { labelToSVGs, updateSvgElement } from '~/lib/transcript-rendering';
+import { dimShapesFillStroke, highlightShapesFillStroke, labelToSVGs, resetShapesFillStroke, toggleShapeClass, updateSvgElement } from '~/lib/transcript-rendering';
 import { InfoPane } from './info-pane';
+import * as d3 from 'd3-selection';
 
 type Args = {
   transcriptIndex: TranscriptIndex;
@@ -47,11 +48,13 @@ export async function useLabelOverlay({
 
   const flashlightRadius = 2;
   const flashlight = useFlashlight({ indexKey, transcriptIndex, eventlibCore, flashlightRadius });
+  let freezeFlashlight = false;
+
 
   watch(pageLabelRef, (displayableLabels: Label[]) => {
     if (displayableLabels.length === 0) return;
 
-    console.log('displayableLabels', displayableLabels);
+    infoPane.putStringLn(`Loaded ${displayableLabels.length} labels`);
 
     const shapes = _.flatMap(displayableLabels, (label: Label) => {
       const asSVGs = labelToSVGs(label, [], false);
@@ -72,6 +75,16 @@ export async function useLabelOverlay({
 
     const svgOverlay = superimposedElements.overlayElements.svg!;
 
+    watch(infoPane.reactiveTexts.actions, (actions) => {
+      freezeFlashlight = actions.some(s => s === 'freeze');
+      d3.select(svgOverlay).classed('inspecting', freezeFlashlight);
+      if (freezeFlashlight) {
+        dimShapesFillStroke(svgOverlay);
+      } else {
+        resetShapesFillStroke(svgOverlay);
+      }
+    });
+
     const showAll = false;
     if (showAll) {
       const allSvgs = _.flatMap(shapes, shape => {
@@ -87,10 +100,9 @@ export async function useLabelOverlay({
       updateSvgElement(svgOverlay, allSvgs);
     }
 
-    console.log(`loading ${shapes.length} shapes: 0=`, shapes[0]);
-
     watch(flashlight.eventTargetRecs.mousemove, (mousemove) => {
       if (mousemove === undefined || mousemove.length == 0) return;
+      if (freezeFlashlight) return;
 
       const item = mousemove[0];
       const itemSvg = item.cargo;
@@ -106,17 +118,25 @@ export async function useLabelOverlay({
     });
 
     if (infoPane !== undefined) {
-      console.log('using labelInfoPane');
       watch(flashlight.eventTargetRecs.click, (click) => {
-        console.log('labelInfoPane: click');
         if (click === undefined || click.length == 0) return;
+        if (freezeFlashlight) return;
 
-        console.log('labelInfoPane: click = ', click);
         const item = click[0];
         const rootLabel: Label = item.cargo.data['rootLabel'];
         if (rootLabel !== undefined) {
           infoPane.showLabel(rootLabel);
         }
+      });
+
+      watch(infoPane.reactiveTexts.mouseover, (hoveringId: string) => {
+        if (hoveringId === null) return;
+        // toggleShapeClass(svgOverlay, 'hovering', hoveringId, true);
+        highlightShapesFillStroke(svgOverlay, hoveringId);
+      });
+      watch(infoPane.reactiveTexts.mouseout, (hoveringId: string) => {
+        if (hoveringId === null) return;
+        // toggleShapeClass(svgOverlay, 'hovering', hoveringId, false);
       });
     }
 
