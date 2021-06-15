@@ -59,7 +59,8 @@ export async function useInfoPane({
     actions,
   };
 
-  const size = 13;
+  const size = 9;
+  const lineOffset = size+3;
   const style: TextStyle = {
     size,
     style: 'normal',
@@ -77,11 +78,12 @@ export async function useInfoPane({
     actions.value.push('freeze');
     const lstrings = labelToStringWithIds(l, 0, []);
 
-    const lineDimensions = await putStringLn('>>>== Label ==');
+    const lineDimensions = await putStringLn('>>>== Label (Click here to clear) ==');
     const { lineDiv } = lineDimensions;
     lineDiv.classList.add('hoverable');
     lineDiv.onclick = function() {
       actions.value = actions.value.filter(s => s !== 'freeze');
+      clearScreen();
     }
 
     await Bromise.mapSeries(lstrings, async ([lstr, id]) => {
@@ -92,15 +94,23 @@ export async function useInfoPane({
     await putStringLn('<<<<==');
   }
   const putStringLn = async (str: string, id?: string): Promise<LineDimensions> => {
-    const lineDimensions = await putString(str, id);
-    textTopCurr = textTopCurr + size;
+    const x = textLeftCurr;
+    const y = textTopCurr;
+    textTopCurr = textTopCurr + lineOffset;
     textLeftCurr = textLeftInit;
+    const lineDimensions = await _putString(x, y, str, id);
     return lineDimensions;
   }
 
   const putString = async (str: string, id?: string): Promise<LineDimensions> => {
-    const lineDimensions = mtext.putTextLn(style, textLeftCurr, textTopCurr, str);
+    const x = textLeftCurr;
+    const lineDimensions = await _putString(x, textTopCurr, str, id);
     textLeftCurr = textLeftCurr + lineDimensions.width;
+    return lineDimensions;
+  }
+
+  const _putString = async (x: number, y: number, str: string, id?: string): Promise<LineDimensions> => {
+    const lineDimensions = mtext.putTextLn(style, x, y, str);
     if (id !== undefined) {
       const { lineDiv } = lineDimensions;
 
@@ -120,6 +130,7 @@ export async function useInfoPane({
     }
     return lineDimensions;
   }
+
 
   const clearScreen = async () => {
     await mtext.clearText();

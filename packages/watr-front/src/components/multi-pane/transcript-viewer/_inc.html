@@ -14,7 +14,10 @@
 
     <template v-slot:rightside#1>
       <div class="selectionFilterFrame" v-show="showPageOverlays" >
-        <NarrowingFilter v-on:items-selected="onItemsSelected" />
+        <NarrowingFilter
+          v-on:items-selected="onItemsSelected"
+          v-on:items-reset="onItemsReset"
+        />
         <div ref="selectionFilterDiv" class="selectionFilter" />
       </div>
     </template>

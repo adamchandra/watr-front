@@ -94,6 +94,12 @@ export default defineComponent({
       });
     }
 
+    const onItemsReset = () => {
+      _.each(pageLabelRefs, (refs) => {
+        refs.value = [];
+      })
+    }
+
     const appStateRef: VC.UnwrapRef<AppState> = VC.reactive({
       showStanzaPane: true,
       showPageImagePane: true,
@@ -180,6 +186,7 @@ export default defineComponent({
       selectionFilterDiv,
       infoPaneDiv,
       onItemsSelected,
+      onItemsReset,
       ...appStateRefs
     }
   }

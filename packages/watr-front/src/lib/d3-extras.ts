@@ -53,11 +53,14 @@ export function deriveLabelId(label: Label): string {
     return [];
   });
   const rangeStr = rangeShape.join('_')
-  return `${label.name}${rangeStr}`;
+  const name = label.name.replace(/\W/g, '_');
+  return `${name}${rangeStr}`;
 }
 
 export function deriveShapeId(shape: Shape): string {
-  return formatShape(shape).replace(/\W/g, '_');
+  return formatShape(shape)
+    .replace(/\W/g, '_')
+    ;
 }
 
 export function d3id<GElement extends BaseType>(

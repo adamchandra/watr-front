@@ -124,21 +124,12 @@ export function labelToTriggerSVG(label: Label, rootLabel: Label): ShapeSvg {
   return childShapes[0];
 }
 
-const idgen = newIdGenerator(1);
-
-function addShapeId(shape: ShapeSvg): void {
-  if (shape.id === undefined) {
-    shape.id = idgen().toString();
-  }
-}
-
-// type SVGRootSelection = d3.Selection<d3.BaseType, ShapeSvg, SVGElement, unknown>;
-//
 const OctoAttrs = {
-  FocalRect: ['blue', 0.2, 'lightblue', 0.2],
-  HorizonRect: ['black', 0.1, 'gray', 0.2],
-  SearchArea: ['black', 0.1, 'yellow', 0.2],
-  Found: ['black', 0.50, 'green', 0.50],
+  FocalRect: ['blue', 0.2, 'lightblue', 0.1],
+  HorizonRect: ['black', 0.1, 'gray', 0.1],
+  SearchArea: ['black', 0.1, 'yellow', 0.1],
+  Found: ['black', 0.5, 'green', 0.2],
+  FinalHit: ['black', 0.5, 'green', 0.2],
 }
 
 export function updateSvgElement(svgElement: SVGElement, svgShapes: ShapeSvg[]) {
@@ -197,6 +188,11 @@ export function resetShapesFillStroke(svgElement: SVGElement) {
         }
       })
     });
+}
+export function removeShapes(svgElement: SVGElement) {
+  d3.select(svgElement)
+    .selectAll('.shape')
+    .remove();
 }
 
 export function highlightShapesFillStroke(svgElement: SVGElement, shapeId: string) {

@@ -10,7 +10,7 @@ import { Label } from '~/lib/transcript/labels';
 import { minMaxToRect, ShapeSvg } from '~/lib/transcript/shapes';
 import { PdfPageViewer } from './page-viewer';
 import { useFlashlight } from '../basics/rtree-search';
-import { dimShapesFillStroke, highlightShapesFillStroke, labelToSVGs, resetShapesFillStroke, toggleShapeClass, updateSvgElement } from '~/lib/transcript-rendering';
+import { dimShapesFillStroke, highlightShapesFillStroke, labelToSVGs, removeShapes, resetShapesFillStroke, toggleShapeClass, updateSvgElement } from '~/lib/transcript-rendering';
 import { InfoPane } from './info-pane';
 import * as d3 from 'd3-selection';
 
@@ -52,9 +52,14 @@ export async function useLabelOverlay({
 
 
   watch(pageLabelRef, (displayableLabels: Label[]) => {
-    if (displayableLabels.length === 0) return;
+    const svgOverlay = superimposedElements.overlayElements.svg!;
 
-    infoPane.putStringLn(`Loaded ${displayableLabels.length} labels`);
+    if (displayableLabels.length === 0) {
+      removeShapes(svgOverlay);
+      return;
+    };
+
+    infoPane.putStringLn(`Loaded ${displayableLabels.length} labels on page ${pageNumber}`);
 
     const shapes = _.flatMap(displayableLabels, (label: Label) => {
       const asSVGs = labelToSVGs(label, [], false);
@@ -73,7 +78,6 @@ export async function useLabelOverlay({
 
     transcriptIndex.getKeyedIndex(indexKey).load(shapes);
 
-    const svgOverlay = superimposedElements.overlayElements.svg!;
 
     watch(infoPane.reactiveTexts.actions, (actions) => {
       freezeFlashlight = actions.some(s => s === 'freeze');
@@ -81,7 +85,7 @@ export async function useLabelOverlay({
       if (freezeFlashlight) {
         dimShapesFillStroke(svgOverlay);
       } else {
-        resetShapesFillStroke(svgOverlay);
+        removeShapes(svgOverlay);
       }
     });
 
@@ -131,12 +135,10 @@ export async function useLabelOverlay({
 
       watch(infoPane.reactiveTexts.mouseover, (hoveringId: string) => {
         if (hoveringId === null) return;
-        // toggleShapeClass(svgOverlay, 'hovering', hoveringId, true);
         highlightShapesFillStroke(svgOverlay, hoveringId);
       });
       watch(infoPane.reactiveTexts.mouseout, (hoveringId: string) => {
         if (hoveringId === null) return;
-        // toggleShapeClass(svgOverlay, 'hovering', hoveringId, false);
       });
     }
 
