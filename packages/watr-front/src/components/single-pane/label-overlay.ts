@@ -10,7 +10,8 @@ import { Label } from '~/lib/transcript/labels';
 import { minMaxToRect, ShapeSvg } from '~/lib/transcript/shapes';
 import { PdfPageViewer } from './page-viewer';
 import { useFlashlight } from '../basics/rtree-search';
-import { dimShapesFillStroke, highlightShapesFillStroke, labelToSVGs, removeShapes, resetShapesFillStroke, toggleShapeClass, updateSvgElement } from '~/lib/transcript-rendering';
+
+import { dimShapesFillStroke, highlightShapesFillStroke, labelToSVGs, removeShapes, updateSvgElement } from '~/lib/transcript-rendering';
 import { InfoPane } from './info-pane';
 import * as d3 from 'd3-selection';
 
@@ -51,15 +52,41 @@ export async function useLabelOverlay({
   let freezeFlashlight = false;
 
 
+  let once = true;
   watch(pageLabelRef, (displayableLabels: Label[]) => {
     const svgOverlay = superimposedElements.overlayElements.svg!;
 
+    if (once) {
+      once = false
+
+      d3.select(svgOverlay)
+        .append('defs')
+        .append('linearGradient')
+        .attr('id', 'grad1')
+        .append('stop')
+        .attr('offset', '0%')
+        .attr('stop-opacity', '1.0')
+        .attr('stop-color', 'blue')
+        .append('stop')
+        .attr('offset', '50%')
+        .attr('stop-opacity', '0.5')
+        .attr('stop-color', 'blue')
+        .append('stop')
+        .attr('offset', '100%')
+        .attr('stop-opacity', '0.1')
+        .attr('stop-color', 'blue')
+        ;
+    }
+
+
     if (displayableLabels.length === 0) {
       removeShapes(svgOverlay);
+      transcriptIndex.getKeyedIndex(indexKey).clear();
       return;
     };
 
-    infoPane.putStringLn(`Loaded ${displayableLabels.length} labels on page ${pageNumber}`);
+    // console.log(`Loaded ${displayableLabels.length} labels on page ${pageNumber}`, displayableLabels[0]);
+    infoPane.putStringLn(`Loaded ${displayableLabels.length} labels on page ${pageNumber}: [0]= ${displayableLabels[0]}`);
 
     const shapes = _.flatMap(displayableLabels, (label: Label) => {
       const asSVGs = labelToSVGs(label, [], false);
@@ -79,16 +106,6 @@ export async function useLabelOverlay({
     transcriptIndex.getKeyedIndex(indexKey).load(shapes);
 
 
-    watch(infoPane.reactiveTexts.actions, (actions) => {
-      freezeFlashlight = actions.some(s => s === 'freeze');
-      d3.select(svgOverlay).classed('inspecting', freezeFlashlight);
-      if (freezeFlashlight) {
-        dimShapesFillStroke(svgOverlay);
-      } else {
-        removeShapes(svgOverlay);
-      }
-    });
-
     const showAll = false;
     if (showAll) {
       const allSvgs = _.flatMap(shapes, shape => {
@@ -104,45 +121,60 @@ export async function useLabelOverlay({
       updateSvgElement(svgOverlay, allSvgs);
     }
 
-    watch(flashlight.eventTargetRecs.mousemove, (mousemove) => {
-      if (mousemove === undefined || mousemove.length == 0) return;
-      if (freezeFlashlight) return;
 
-      const item = mousemove[0];
-      const itemSvg = item.cargo;
-      const rootLabel: Label = itemSvg.data['rootLabel'];
-      const items = [itemSvg];
-
-      if (rootLabel) {
-        const svgs = labelToSVGs(rootLabel, [], true);
-        items.push(...svgs);
-      }
-
-      updateSvgElement(svgOverlay, items);
-    });
-
-    if (infoPane !== undefined) {
-      watch(flashlight.eventTargetRecs.click, (click) => {
-        if (click === undefined || click.length == 0) return;
-        if (freezeFlashlight) return;
-
-        const item = click[0];
-        const rootLabel: Label = item.cargo.data['rootLabel'];
-        if (rootLabel !== undefined) {
-          infoPane.showLabel(rootLabel);
-        }
-      });
-
-      watch(infoPane.reactiveTexts.mouseover, (hoveringId: string) => {
-        if (hoveringId === null) return;
-        highlightShapesFillStroke(svgOverlay, hoveringId);
-      });
-      watch(infoPane.reactiveTexts.mouseout, (hoveringId: string) => {
-        if (hoveringId === null) return;
-      });
-    }
 
   });
+  watch(flashlight.eventTargetRecs.mousemove, (mousemove) => {
+    if (mousemove === undefined || mousemove.length == 0) return;
+    if (freezeFlashlight) return;
+    const svgOverlay = superimposedElements.overlayElements.svg!;
+
+    const item = mousemove[0];
+    const itemSvg = item.cargo;
+    const rootLabel: Label = itemSvg.data['rootLabel'];
+    const items = [itemSvg];
+
+    if (rootLabel) {
+      const svgs = labelToSVGs(rootLabel, [], true);
+      items.push(...svgs);
+    }
+
+    updateSvgElement(svgOverlay, items);
+  });
+
+  watch(infoPane.reactiveTexts.actions, (actions) => {
+    const svgOverlay = superimposedElements.overlayElements.svg!;
+    freezeFlashlight = actions.some(s => s === 'freeze');
+    d3.select(svgOverlay).classed('inspecting', freezeFlashlight);
+    if (freezeFlashlight) {
+      dimShapesFillStroke(svgOverlay);
+    } else {
+      removeShapes(svgOverlay);
+    }
+  });
+  if (infoPane !== undefined) {
+    watch(flashlight.eventTargetRecs.click, (click) => {
+      if (click === undefined || click.length == 0) return;
+      if (freezeFlashlight) return;
+      console.log('clicked!')
+
+      const item = click[0];
+      const rootLabel: Label = item.cargo.data['rootLabel'];
+      if (rootLabel !== undefined) {
+        infoPane.showLabel(rootLabel);
+      }
+    });
+
+    watch(infoPane.reactiveTexts.mouseover, (hoveringId: string) => {
+      const svgOverlay = superimposedElements.overlayElements.svg!;
+      if (hoveringId === null) return;
+      highlightShapesFillStroke(svgOverlay, hoveringId);
+    });
+    watch(infoPane.reactiveTexts.mouseout, (hoveringId: string) => {
+      if (hoveringId === null) return;
+    });
+  }
+
 
   return {};
 }

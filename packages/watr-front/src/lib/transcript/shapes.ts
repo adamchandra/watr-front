@@ -202,6 +202,11 @@ export interface PathSvg extends BaseSvg {
   d: string;
 }
 
+// export interface GroupSvg extends BaseSvg {
+//   type: 'g';
+//   children: ShapeSvg[];
+// }
+
 export type ShapeSvg = PointSvg | LineSvg | RectSvg | PathSvg;
 
 export function shapeToSvg(shape: Shape): ShapeSvg {
