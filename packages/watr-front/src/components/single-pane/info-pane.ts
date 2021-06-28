@@ -26,7 +26,7 @@ export interface ReactiveTexts {
   actions: Ref<string[]>;
 }
 
-export type ShowLabel = (l: Label) => Promise<void>;
+export type ShowLabel = (l: Label, doFreeze: boolean) => Promise<void>;
 export type PutStringLn = (str: string, id?: string) => Promise<LineDimensions>;
 export type PutString = (str: string, id?: string) => Promise<LineDimensions>;
 export type ClearScreen = () => Promise<void>;
@@ -60,7 +60,7 @@ export async function useInfoPane({
   };
 
   const size = 9;
-  const lineOffset = size+3;
+  const lineOffset = size + 3;
   const style: TextStyle = {
     size,
     style: 'normal',
@@ -73,9 +73,11 @@ export async function useInfoPane({
   let textTopCurr = textTopInit;
 
 
-  const showLabel = async (l: Label) => {
+  const showLabel = async (l: Label, doFreeze: boolean) => {
     await clearScreen();
-    actions.value.push('freeze');
+    if (doFreeze) {
+      actions.value.push('freeze');
+    }
     const lstrings = labelToStringWithIds(l, 0, []);
 
     const lineDimensions = await putStringLn('>>>== Label (Click here to clear) ==');
@@ -151,7 +153,14 @@ type TupleStrStr = readonly [string, string];
 
 function labelToStringWithIds(label: Label, level: number, _parentClasses: string[]): TupleStrStr[] {
 
-  const classStrings = label?.props?.['class'] || [];
+  const allProps: Record<string, string[]> = label?.props || {};
+
+  const classStrings = allProps['class'] || [];
+
+  const kvalStrings = _.join(_.map(
+    _.toPairs(allProps), ([key, value]) => {
+      return `${key}=${_.join(value, ', ')}`;
+    }), '; ');
 
 
   const localClasses = _.filter(classStrings, c => c.startsWith('='))
@@ -175,7 +184,7 @@ function labelToStringWithIds(label: Label, level: number, _parentClasses: strin
   });
   const shapestr = localShapes.join(', ')
 
-  const header = `${label.name} [${shapestr}] .${localClasses.join('.')} >${propogatedClasses.join('.')}`;
+  const header = `${label.name} [${shapestr}] ${kvalStrings} .${localClasses.join('.')} >${propogatedClasses.join('.')}`;
   const labelId = deriveLabelId(label);
   const ret: TupleStrStr = [header, labelId];
 

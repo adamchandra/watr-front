@@ -18,6 +18,7 @@ import { Label } from '~/lib/transcript/labels';
 export default {
   setup() {
     const mountPoint: Ref<HTMLDivElement | null> = ref(null)
+    const showAllLabels: Ref<boolean> = ref(false);
 
     const entryId = getURLQueryParam('id') || 'missing-id';
     const pageNumber = 1;
@@ -45,6 +46,7 @@ export default {
         transcriptIndex,
         pageNumber,
         pageLabelRef: pageLabelRefs[pageNumber],
+        showAllLabels,
       }).then(x => E.right(x))),
 
       TE.mapLeft(errors => {

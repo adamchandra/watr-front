@@ -7,8 +7,30 @@
   <SplitScreen v-bind:rightSidePanes="3">
 
     <template v-slot:leftside>
+
       <div class="pageImageListFrame">
-        <div ref="pageImageListDiv" class="pageImageList" />
+
+        <v-card
+          class="controlsx d-flex justify-start"
+          color="black"
+        >
+
+          <v-switch
+            value="primary"
+            color="blue"
+            v-model="showAllLabels"
+            dense
+            hide-details
+          />
+
+        </v-card>
+
+
+
+
+        <div class="pageImageListOuter">
+          <div ref="pageImageListDiv" class="pageImageListInner" />
+        </div>
       </div>
     </template>
 

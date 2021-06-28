@@ -16,41 +16,34 @@
     height: 92%;
 
     .pageImageListFrame {
-      border: 3px solid white;
-      margin-right: 1em;
-      height: 100vh;
-      width: 100%;
-      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
 
-      // svg.inspecting {
-      //   .shape {
-      //     fill: 'green';
-      //     fill-opacity: 0.2;
-      //     stroke: 'black';
-      //     stroke-opacity: 0.3;
+      .controlsx {
+        background-color: wheat;
+      }
 
-      //   }
-      //   .shape.hovering {
-      //     fill: 'blue';
-      //     fill-opacity: 0.4;
-      //     stroke: 'black';
-      //     stroke-opacity: 1;
-      //   }
-      // }
+      .pageImageListOuter {
+        border: 3px solid white;
+        margin-right: 1em;
+        height: 100vh;
+        width: 100%;
+        overflow-y: auto;
 
-      .pageImageList {
-        display: flex;
-        flex-direction: column;
-        align-items: left;
-        background: $base1;
-        color: black;
+        .pageImageListInner {
+          display: flex;
+          flex-direction: column;
+          align-items: left;
+          background: $base1;
+          color: black;
 
-        .layers {
-          background: $base2;
-          margin: 0.5em;
-          flex: 0 1 auto;
+          .layers {
+            background: $base2;
+            margin: 0.5em;
+            flex: 0 1 auto;
+          }
+
         }
-
       }
     }
 

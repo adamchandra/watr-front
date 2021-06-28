@@ -27,7 +27,10 @@ export function initSVGDimensions(r: any) {
         .attr('y1', (d: any) => d.y1)
         .attr('x2', (d: any) => d.x2)
         .attr('y2', (d: any) => d.y2)
-        .attr('id', (d: any) => d.id);
+        .attr('id', (d: any) => d.id)
+        .attr('marker-start', () => 'url(#arrow)')
+        .attr('marker-end', () => 'url(#arrow)')
+      ;
     case 'path':
       return r.attr('d', (d: any) => d.d)
         .attr('id', (d: any) => d.id);

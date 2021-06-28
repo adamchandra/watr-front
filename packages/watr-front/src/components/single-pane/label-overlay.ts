@@ -21,6 +21,7 @@ type Args = {
   pageNumber: number;
   infoPane?: InfoPane;
   pageLabelRef: Ref<Label[]>;
+  showAllLabels: Ref<boolean>;
 };
 
 export interface LabelOverlay {
@@ -39,7 +40,8 @@ export async function useLabelOverlay({
   pageLabelRef,
   transcriptIndex,
   pageNumber,
-  infoPane
+  infoPane,
+  showAllLabels
 }: Args): Promise<LabelOverlay> {
   const { superimposedElements, eventlibCore } = pdfPageViewer;
 
@@ -59,8 +61,11 @@ export async function useLabelOverlay({
     if (once) {
       once = false
 
-      d3.select(svgOverlay)
+      const defs = d3.select(svgOverlay)
         .append('defs')
+      ;
+
+      defs
         .append('linearGradient')
         .attr('id', 'grad1')
         .append('stop')
@@ -76,6 +81,32 @@ export async function useLabelOverlay({
         .attr('stop-opacity', '0.1')
         .attr('stop-color', 'blue')
         ;
+
+
+      defs
+        .append('marker')
+        .attr('id', 'arrow')
+        .attr('viewBox', '0 0 10 10')
+        .attr('refX', '0')
+        .attr('refY', '5')
+        .attr('markerWidth', '6')
+        .attr('markerHeight', '6')
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M 0 0 L 10 5 L 0 5 z')
+
+      defs
+        .append('marker')
+        .attr('id', 'arrow-rear')
+        .attr('viewBox', '0 0 10 10')
+        .attr('refX', '0')
+        .attr('refY', '5')
+        .attr('markerWidth', '6')
+        .attr('markerHeight', '6')
+        .attr('orient', 'auto-start-reverse')
+        .append('path')
+        .attr('d', 'M 0 0 L 10 5 L 0 5 z')
+
     }
 
 
@@ -85,8 +116,7 @@ export async function useLabelOverlay({
       return;
     };
 
-    // console.log(`Loaded ${displayableLabels.length} labels on page ${pageNumber}`, displayableLabels[0]);
-    infoPane.putStringLn(`Loaded ${displayableLabels.length} labels on page ${pageNumber}: [0]= ${displayableLabels[0]}`);
+    infoPane.putStringLn(`Loaded ${displayableLabels.length} labels on page ${pageNumber}`);
 
     const shapes = _.flatMap(displayableLabels, (label: Label) => {
       const asSVGs = labelToSVGs(label, [], false);
@@ -106,7 +136,7 @@ export async function useLabelOverlay({
     transcriptIndex.getKeyedIndex(indexKey).load(shapes);
 
 
-    const showAll = false;
+    const showAll = showAllLabels.value;
     if (showAll) {
       const allSvgs = _.flatMap(shapes, shape => {
         const itemSvg = shape.cargo;
@@ -137,6 +167,9 @@ export async function useLabelOverlay({
     if (rootLabel) {
       const svgs = labelToSVGs(rootLabel, [], true);
       items.push(...svgs);
+
+
+      infoPane.showLabel(rootLabel, false);
     }
 
     updateSvgElement(svgOverlay, items);
@@ -156,12 +189,11 @@ export async function useLabelOverlay({
     watch(flashlight.eventTargetRecs.click, (click) => {
       if (click === undefined || click.length == 0) return;
       if (freezeFlashlight) return;
-      console.log('clicked!')
 
       const item = click[0];
       const rootLabel: Label = item.cargo.data['rootLabel'];
       if (rootLabel !== undefined) {
-        infoPane.showLabel(rootLabel);
+        infoPane.showLabel(rootLabel, true);
       }
     });
 

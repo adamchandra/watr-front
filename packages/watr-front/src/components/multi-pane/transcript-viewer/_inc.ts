@@ -75,6 +75,8 @@ export default defineComponent({
     const selectionFilterDiv = divRef()
     const infoPaneDiv = divRef()
 
+    const showAllLabels: Ref<boolean> = ref(false);
+
     const initChoicesRef: Ref<number> = ref(0);
     provide(ProvidedChoicesTrigger, initChoicesRef);
 
@@ -150,7 +152,8 @@ export default defineComponent({
               pdfPageViewer,
               pageNumber,
               pageLabelRef: pageLabelRefs[pageNumber],
-              infoPane
+              infoPane,
+              showAllLabels,
             }));
         });
 
@@ -187,6 +190,7 @@ export default defineComponent({
       infoPaneDiv,
       onItemsSelected,
       onItemsReset,
+      showAllLabels,
       ...appStateRefs
     }
   }
