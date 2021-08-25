@@ -75,7 +75,8 @@ export default defineComponent({
     const selectionFilterDiv = divRef()
     const infoPaneDiv = divRef()
 
-    const showAllLabels: Ref<boolean> = ref(false);
+    const showAllLabels: Ref<boolean> = ref(true);
+
 
     const initChoicesRef: Ref<number> = ref(0);
     provide(ProvidedChoicesTrigger, initChoicesRef);

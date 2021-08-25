@@ -3,6 +3,8 @@
  */
 import _ from 'lodash';
 import * as d3 from 'd3-selection';
+import { Selection } from 'd3-selection';
+import { SelectionOrTransition } from 'd3-transition';
 
 
 import {
@@ -52,7 +54,7 @@ export function useEventlibSelect({
   const svgLayer = superimposedElements.overlayElements.svg!;
   const svgSelect = d3.select(svgLayer);
 
-  let currSvgRect: d3.Selection<SVGRectElement, BBox, SVGElement, unknown>;
+  let currSvgRect: SelectionOrTransition<SVGRectElement, BBox, SVGElement, unknown>;
 
   const { setMouseHandlers } = eventlibCore;
 
@@ -73,8 +75,11 @@ export function useEventlibSelect({
       .call(initStroke, 'blue', 1, 0.8)
       .call(initFill, 'yellow', 0.8)
     ;
+
+
     updateCurrentRect();
   }
+
 
   function updateCurrentRect() {
     currBBox = pointsToRect(originPt, currentPt);

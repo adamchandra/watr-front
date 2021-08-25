@@ -27,8 +27,8 @@ export function configAxios(): AxiosInstance {
 
 export function resolveCorpusUrl(entryId: string, ...artifactPaths: string[]): string {
   const fullPath = resolveCorpusPath(entryId, ...artifactPaths)
-  const base = 'http://localhost:3100/'
-  return base + fullPath
+  const base = 'http://localhost:3100';
+  return base + fullPath;
 }
 
 export function resolveCorpusPath(entryId: string, ...artifactPaths: string[]): string {

@@ -86,7 +86,8 @@ export async function resolveArtifact(
 }
 
 function withTrailingSegments(p: string): string {
-  return p + '/([^/]+)((/[^/]+)|/)*';
+  // return p + '/([^/]+)((/[^/]+)|/)*';
+  return p + '(/[^/]+)+';
 }
 
 function getTrailingSegments(leadingPath:string, urlPath: string): string[] {
@@ -119,6 +120,7 @@ export function initFileBasedRoutes(corpusRootPath: string): Router {
     })
     .get(regex(withTrailingSegments('/api/corpus/entry')), async (ctx: Context, next) => {
       const p = ctx.path;
+      putStrLn(`Serving ${p}`);
 
       try {
         const [entryId, ...remainingPath] = getTrailingSegments('/api/corpus/entry', p);
@@ -135,6 +137,11 @@ export function initFileBasedRoutes(corpusRootPath: string): Router {
         putStrLn(`server: could not serve ${p}`);
       }
 
+      return next();
+    })
+    .get(regex('.*'), async (ctx: Context, next) => {
+      const p = ctx.path;
+      putStrLn(`Could not resolve path ${p}`);
       return next();
     })
     ;

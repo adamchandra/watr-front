@@ -18,7 +18,7 @@ import { formatShape, Shape } from './transcript/shapes';
 import { Label } from './transcript/labels';
 
 export function initRect<GElement extends BaseType, Datum, PElement extends BaseType, PDatum>(
-  sel: Selection<GElement, Datum, PElement, PDatum>,
+  sel: SelectionOrTransition<GElement, Datum, PElement, PDatum>,
   fbbox: (d: any) => BBox
 ) {
   sel.attr('x', d => fbbox(d).x)
@@ -28,7 +28,7 @@ export function initRect<GElement extends BaseType, Datum, PElement extends Base
 }
 
 export function initStroke<GElement extends BaseType, Datum, PElement extends BaseType, PDatum>(
-  sel: Selection<GElement, Datum, PElement, PDatum>,
+  sel: SelectionOrTransition<GElement, Datum, PElement, PDatum>,
   stroke: string, strokeWidth: number, strokeOpacity: number
 ) {
   sel.attr('stroke', stroke)
