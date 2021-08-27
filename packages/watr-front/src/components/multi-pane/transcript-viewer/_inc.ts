@@ -21,7 +21,6 @@ import NarrowingFilter from '~/components/single-pane/narrowing-filter/index.vue
 import {
   NarrowingChoice,
   ProvidedChoices,
-  ProvidedChoicesTrigger
 } from '~/components/single-pane/narrowing-filter/_inc'
 
 import { groupLabelsByNameAndTags } from '~/lib/transcript/tracelogs'
@@ -78,8 +77,7 @@ export default defineComponent({
     const showAllLabels: Ref<boolean> = ref(true);
 
 
-    const initChoicesRef: Ref<number> = ref(0);
-    provide(ProvidedChoicesTrigger, initChoicesRef);
+    // const initChoicesRef: Ref<number> = ref(0);
 
     const choicesRef: Array<NarrowingChoice<Label[]>> = [];
     provide(ProvidedChoices, choicesRef);
@@ -133,8 +131,8 @@ export default defineComponent({
         const choices = _.map(labelKeys, (key, index) => ({
           index, key, value: groupedLabels[key]
         }));
-        choicesRef.push(...choices);
-        initChoicesRef.value += 1;
+        // choicesRef.push(...choices);
+        // initChoicesRef.value += 1;
 
         pageLabelRefs.push(..._.map(transcript.pages, () => {
           const pageLabelRef: Ref<Label[]> = ref([]);

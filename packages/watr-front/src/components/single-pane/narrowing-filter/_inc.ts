@@ -1,14 +1,14 @@
 import _ from 'lodash';
 
-import { ref, watch, Ref, defineComponent, inject, SetupContext } from '@nuxtjs/composition-api';
-import { watchOnceFor } from '~/components/basics/component-basics';
+import { ref, watch, Ref, defineComponent, inject, SetupContext, shallowRef } from '@nuxtjs/composition-api';
 
 export const ProvidedChoices = 'ProvidedChoices';
-export const ProvidedChoicesTrigger = 'ProvidedChoicesTrigger';
+// export const ProvidedChoicesTrigger = 'ProvidedChoicesTrigger';
 
 export interface NarrowingChoice<T> {
   index: number;
-  key: string;
+  display: string;
+  tags: string;
   value: T;
 }
 
@@ -19,8 +19,8 @@ export default defineComponent({
     const currSelectionRef = ref([] as NarrowingChoice<unknown>[])
     const queryTextRef = ref('');
 
-    const initChoicesRef: Ref<number | null> = inject(ProvidedChoicesTrigger, ref(null));
-    const choicesRef: Array<NarrowingChoice<unknown>> | null = inject(ProvidedChoices, null);
+    const choicesRef: Ref<Array<NarrowingChoice<unknown>> | null> = inject(ProvidedChoices, shallowRef(null));
+
 
     const onSubmit = () => {
       emit('items-selected', currSelectionRef.value);
@@ -31,11 +31,11 @@ export default defineComponent({
       emit('items-reset');
     };
 
-    watch(initChoicesRef, (choicesReady: number | null) => {
-      if (choicesReady === null) return;
-      const choices = choicesRef;
+    watch(choicesRef, (choices) => {
+      if (choices === null) return;
+      // const choices = choicesRef;
 
-      const choicesLC = choices.map(c => [c, c.key.toLowerCase()] as const);
+      const choicesLC = choices.map(c => [c, c.display.toLowerCase()] as const);
       currSelectionRef.value = choices;
 
       const updateSelection = (query: string) => {

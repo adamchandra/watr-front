@@ -37,6 +37,9 @@ export class TranscriptIndex {
   nextId: () => number;
 
   constructor(t: Transcript) {
+    const p0l0 = t.pages[0].labels[0];
+    console.log('page0/label0', p0l0);
+
     this.transcript = t;
     this.indexes = {};
     this.indexables = {};

@@ -3,10 +3,8 @@ import * as E from 'fp-ts/lib/Either';
 import * as TE from 'fp-ts/lib/TaskEither';
 import { PathReporter } from 'io-ts/lib/PathReporter'
 import { getArtifactData, getEntryList } from './axios';
-import { Tracelog } from './transcript/tracelogs';
 import * as io from 'io-ts'
 import { Transcript } from './transcript/transcript';
-import { prettyPrint } from '@watr/commonlib-shared';
 
 export function fetchAndDecode<A, IO>(
   ioType: io.Type<A, IO, IO>,
@@ -25,15 +23,6 @@ export function fetchAndDecode<A, IO>(
       })
     ))),
   );
-}
-
-export const fetchAndDecodeTracelog = (entryId: string): TE.TaskEither<string[], Tracelog> => {
-  const fetcher = () => getArtifactData<any>(entryId, 'tracelog', 'tracelog')
-    .then(data => data === undefined ?
-      E.left([`could not fetch tracelog ${entryId}`])
-      : E.right(data));
-
-  return fetchAndDecode(Tracelog, fetcher);
 }
 
 export const fetchAndDecodeTranscript = (entryId: string): TE.TaskEither<string[], Transcript> => {

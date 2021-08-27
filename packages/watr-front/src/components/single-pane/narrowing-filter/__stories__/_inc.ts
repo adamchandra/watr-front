@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-import { ref, defineComponent, provide, Ref } from '@nuxtjs/composition-api'
+import { defineComponent, provide, Ref, shallowRef } from '@nuxtjs/composition-api'
 import NarrowingFilter from '../index.vue'
 import { NarrowingChoice, ProvidedChoices  } from '../_inc'
 import { groupLabelsByNameAndTags } from '~/lib/transcript/tracelogs'
@@ -16,7 +16,8 @@ export default defineComponent({
     NarrowingFilter
   },
   setup() {
-    const choicesRef: Ref<Array<NarrowingChoice<Label[]>> | null> = ref(null)
+
+    const choicesRef: Ref<Array<NarrowingChoice<Label[]>> | null> = shallowRef(null);
 
     provide(ProvidedChoices, choicesRef)
 
@@ -32,12 +33,32 @@ export default defineComponent({
       TE.bind('transcript', ({ entryId }) => fetchAndDecodeTranscript(entryId)),
       TE.bind('transcriptIndex', ({ transcript }) => TE.right(new TranscriptIndex(transcript))),
       TE.map(({ transcriptIndex }) => {
-        const allPageLabels = transcriptIndex.getLabels([])
-        const groupedLabels = groupLabelsByNameAndTags(allPageLabels);
-        const labelKeys = _.keys(groupedLabels);
-        const choices = _.map(labelKeys, (key, index) => ({
-          index, key, value: groupedLabels[key]
-        }));
+        const allPageLabels = transcriptIndex.getLabels([]);
+        const groupedLabels: Map<string, Map<string, Label[]>> =
+          groupLabelsByNameAndTags(allPageLabels);
+
+        console.log('groupedLabels', groupedLabels);
+
+        const outlineKeys = Array.from(groupedLabels.keys());
+        console.log('outlineKeys', outlineKeys);
+
+        const choices: Array<NarrowingChoice<Label[]>> = _.map(outlineKeys, (outlineKey, index) => {
+          const innerMap: Map<string, Label[]> = groupedLabels.get(outlineKey);
+          console.log('outlineKey', outlineKey);
+
+          const innerTags = Array.from(innerMap.keys());
+          const innerTagKey = _.join(innerTags, ' ');
+          const innerLabels = Array.from(innerMap.values());
+          const labelList = _.flatten(innerLabels);
+
+          return {
+            index,
+            display: outlineKey,
+            tags: innerTagKey,
+            value: labelList
+          };
+        });
+        console.log('choices', choices);
         choicesRef.value = choices;
       }),
       TE.mapLeft(errors => {
@@ -48,7 +69,8 @@ export default defineComponent({
 
     return {
       onItemsSelected,
-      choicesRef
+      choicesRef,
+      // providedChoicesTrigger
     }
   }
 })
