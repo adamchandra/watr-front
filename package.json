@@ -1,6 +1,6 @@
 {
-  "name": "ts-monorepo",
-  "description": "Template for setting up a TypeScript monorepo",
+  "name": "WatrFront",
+  "description": "WatrWorks Frontend(s)",
   "private": true,
   "workspaces": [
     "packages/*"
@@ -12,9 +12,9 @@
     "pub": "lerna publish",
     "test": "lerna run test",
     "deps:check": "lerna --concurrency 1 exec --stream -- ncu",
+    "deps:update": "lerna --concurrency 1 exec --stream -- ncu -iu && lerna bootstrap",
     "ui:run": "lerna --concurrency 2 run --stream ui:run",
-    "ui:dev": "lerna --concurrency 2 run --stream ui:dev",
-    "deps:update": "lerna --concurrency 1 exec --stream -- ncu -u && lerna bootstrap"
+    "ui:dev": "lerna --concurrency 2 run --stream ui:dev"
   },
   "devDependencies": {
     "@nighttrax/eslint-config-tsx": "~8.0.0",

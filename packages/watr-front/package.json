@@ -21,6 +21,7 @@
     "@nuxtjs/dotenv": "^1.4.1",
     "@watr/commonlib-shared": "*",
     "animejs": "^3.2.1",
+    "bitset": "^5.1.1",
     "bluebird": "^3.7.2",
     "chroma-js": "^2.1.2",
     "d3-selection": "^3.0.0",
@@ -32,7 +33,7 @@
     "nuxt": "^2.15.8",
     "rbush": "^3.0.1",
     "splitpanes": "^2.3.8",
-    "ts-loader": "^9.2.5"
+    "ts-loader": "^8.0.17"
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^2.1.0",

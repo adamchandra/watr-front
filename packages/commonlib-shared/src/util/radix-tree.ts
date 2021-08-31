@@ -1,86 +1,89 @@
 import _ from 'lodash';
-import { prettyPrint } from './pretty-print';
 
-export type Radix<T> = { [s: string]: Radix<T> | T };
-export type RadixPath = string[];
-
-const RadixValKey = '_$';
-
-export const createRadix = <T>(): Radix<T> => ({} as Radix<T>);
-
-function cleanPath(p: string | string[]): string[] {
-  let pathParts: string[];
-  if (typeof p === 'string') {
-    pathParts = p.split('.');
-  } else {
-    pathParts = p;
-  }
-  return _.map(pathParts, pp => {
-    const part = pp.trim();
-    if (/^(\d+|_[$])$/.test(part)) {
-      return `_${part}`;
-    }
-    return part;
-  }).filter(p => p.length > 0);
+export interface Radix<D> {
+  data: D | undefined;
+  children: Map<string, Radix<D>>;
 }
 
+type RadixPath = string[];
+
+export const createRadix = <D>(): Radix<D> => ({
+  data: undefined,
+  children: new Map()
+});
+
+function cleanPath(p: string | string[]): string[] {
+  if (typeof p === 'string') {
+    return p.split('.');
+  }
+  return p;
+}
+
+function radSet<T>(
+  radix: Radix<T>,
+  path: string | string[],
+  data: T
+): T | undefined {
+
+  let radCurr = radix;
+  _.each(path, p => {
+    const nextChild = radCurr.children.get(p);
+    if (nextChild === undefined) {
+      const child = createRadix<T>()
+      radCurr.children.set(p, child);
+      radCurr = child;
+      return;
+    }
+    radCurr = nextChild;
+  });
+
+  const oldData = radCurr.data;
+  radCurr.data = data;
+  return oldData;
+}
+function radGet<T>(
+  radix: Radix<T>,
+  path: string | string[]
+): T | undefined {
+
+  let radCurr = radix;
+  _.each(path, p => {
+    const nextChild = radCurr.children.get(p);
+    if (nextChild === undefined) {
+      return undefined;
+    }
+    radCurr = nextChild;
+  });
+
+  return radCurr.data;
+}
 
 export const radUpsert = <T>(
   radix: Radix<T>,
   path: string | string[],
   f: (t?: T) => T,
 ): void => {
-  const valpath = _.concat(cleanPath(path), [RadixValKey])
-  const prior = _.get(radix, valpath);
+  const valpath = cleanPath(path);
+  const prior = radGet(radix, valpath);
   const upVal = f(prior);
-  _.set(radix, valpath, upVal);
+  radSet(radix, valpath, upVal);
 };
-
-export const radUpsertOrGraft = <T>(
-  radix: Radix<T>,
-  path: string | string[],
-  f: (t?: T) => T | Radix<T>,
-): void => {
-  const valpath = _.concat(cleanPath(path), [RadixValKey])
-  const prior = _.get(radix, valpath);
-  const upVal = f(prior);
-  _.set(radix, valpath, upVal);
-};
-
 
 
 export const radInsert = <T>(radix: Radix<T>, path: string | string[], t: T): void =>
   radUpsert(radix, path, () => t);
 
-export const radGet = <T>(
-  radix: Radix<T>,
-  path: string | string[],
-): T | undefined => {
-  const valpath = _.concat(cleanPath(path), [RadixValKey])
-  const v: T | undefined = _.get(radix, valpath);
-  return v;
-};
-
-
 export const radTraverseDepthFirst = <T>(
   radix: Radix<T>,
-  f: (path: RadixPath, t?: T, childCount?: number) => void,
+  f: (path: RadixPath, t?: T, childCount?: number, node?: Radix<T>) => void,
 ): void => {
   function _loop(rad: Radix<T>, lpath: string[]) {
-    const kvs = _.toPairs(rad);
-    const childKVs = kvs.filter(([k,]) => k !== RadixValKey);
+    const childCount = rad.children.size;
+    f(lpath, rad.data, childCount, rad);
 
-
-    const valueEntry = kvs.find(([k,]) => k === RadixValKey);
-    if (valueEntry === undefined) {
-      f(lpath, undefined, childKVs.length)
-    } else {
-      f(lpath, valueEntry[1] as T, childKVs.length)
-    }
-
-    _.each(childKVs, ([k, v]) => {
-      const newpath = _.concat(lpath, k);
-      _loop(v as Radix<T>, newpath);
+    rad.children.forEach((childRad, childKey) => {
+      const newpath = _.concat(lpath, childKey);
+      _loop(childRad, newpath);
     });
   }
   _loop(radix, []);
@@ -100,7 +103,7 @@ export const radUnfold = <T, U>(
   f: (path: RadixPath, t?: T) => U | undefined,
 ): Array<U> => {
   const res: U[] = [];
-  radTraverseDepthFirst(radix, (path, maybeT, childCount) => {
+  radTraverseDepthFirst(radix, (path, maybeT, _childCount) => {
     const u = f(path, maybeT);
     if (u !== undefined) {
       res.push(u);
@@ -114,25 +117,26 @@ export interface FoldArgs<T, U> {
   index: number;
   nodeData?: T;
   childResults: U[];
+  node: Radix<T>;
 }
+
 
 export const radFoldUp = <T, U>(
   radix: Radix<T>,
-  // f: (path: RadixPath, t: T | undefined, childRes: U[]) => U,
   f: (path: RadixPath, args: FoldArgs<T, U>) => U,
 ): U => {
-  const rstack: [string[], T | undefined, number][] = [];
+  const rstack: [string[], T | undefined, number, Radix<T>][] = [];
 
-  radTraverseDepthFirst(radix, (path, maybeT, childCount) => {
-    rstack.push([path, maybeT, childCount]);
+  radTraverseDepthFirst(radix, (path, maybeT, childCount, node) => {
+    rstack.push([path, maybeT, childCount, node]);
   });
 
   const ustack: U[] = [];
   let index = 0;
   while (rstack.length > 0) {
-    const [ipath, nodeData, ichildCount] = rstack.pop();
+    const [ipath, nodeData, ichildCount, node] = rstack.pop();
     const childResults = ustack.splice(0, ichildCount);
-    const ures = f(ipath, { nodeData, index, childResults });
+    const ures = f(ipath, { nodeData, index, childResults, node });
     ustack.push(ures);
     index += 1;
     // prettyPrint({ rstack, ustack, uargs, ures, ipath, ival, ichildCount })
