@@ -2,80 +2,42 @@ import _ from 'lodash';
 
 import { Label } from './labels';
 
-// import * as io from 'io-ts';
-// const LogHeaders = io.type({
-//   tags: io.string,
-//   name: io.string,
-//   callSite: io.string,
-//   timestamp: io.number
-// }, 'LogHeaders');
+import {
+  Radix,
+  createRadix,
+  radUpsert,
+} from '@watr/commonlib-shared';
 
-// export type LogHeaders = io.TypeOf<typeof LogHeaders>;
-// const LogBody = io.union([
-//   io.array(Label),
-//   io.array(io.unknown),
-// ], 'LogBody')
-
-// const LogEntry = io.type({
-//   headers: LogHeaders,
-//   body: LogBody,
-//   logType: io.string,
-//   page: io.number
-// }, 'LogEntry');
-
-// export type LogEntry = io.TypeOf<typeof LogEntry>;
-
-// export const Tracelog = io.array(LogEntry);
-// export type Tracelog = io.TypeOf<typeof Tracelog>;
-
-// export interface LogEntryGroup {
-//   groupKey: string;
-//   logEntries: LogEntry[];
-// }
-
-// export interface LabelGroup {
-//   groupKey: string;
-//   labels: Label[];
-// }
-
-// outline -> tags -> label[]
-export function groupLabelsByNameAndTags(labels: Label[]): Map<string, Map<string, Label[]>> {
-  const outlineMap = new Map();
+export interface LabelSelection {
+  labels: Label[];
+  showLabels: boolean[];
+  tags: Set<string>;
+}
+export function createLabelRadix(labels: Label[]): Radix<LabelSelection> {
+  const labelRadix = createRadix<LabelSelection>();
   _.each(labels, (label) => {
     const outline = getLabelProp(label, 'outline');
-    const tags = getLabelProp(label, 'tags');
-    const tagKey = tags.join(' ');
-    const outlineKey = outline.join(' ');
-    let innerMap: Map<string, Label[]> = outlineMap.get(outlineKey);
-    if (innerMap === undefined) {
-      innerMap = new Map();
-      outlineMap.set(outlineKey, innerMap);
-    }
-    let labelArr: Label[] = innerMap.get(tagKey);
-    if (labelArr === undefined) {
-      labelArr = [];
-      innerMap.set(tagKey, labelArr)
-    }
-    labelArr.unshift(label);
-  });
-
-  return outlineMap;
-}
-
-
-export function groupLabelsByNameAndTagsold(labels: Label[]): Record<string, Label[]> {
-  const grouped = _.groupBy(labels, (label) => {
     const { name } = label;
-    const outline = getLabelProp(label, 'outline');
-    const tags = getLabelProp(label, 'tags');
-    const outlineKey = outline.join(' ');
-    return `${outlineKey} : ${name}`
-  })
-
-  return grouped;
+    const path = _.concat([], outline, [name]);
+    const ltags = getLabelProp(label, 'tags');
+    radUpsert(labelRadix, path, (prevSel) => {
+        if (prevSel) {
+          prevSel.labels.push(label);
+          prevSel.showLabels.push(true);
+          ltags.forEach(t => prevSel.tags.add(t));
+          return prevSel;
+        }
+        return {
+          labels: [label],
+          showLabels: [true],
+          tags: new Set<string>(ltags),
+        };
+    });
+  });
+  return labelRadix;
 }
 
-function getLabelProp(label: Label, propname: string): string[] {
+export function getLabelProp(label: Label, propname: string): string[] {
 
   const localTags = label?.props?.[propname] || [];
   const children = label.children || [];

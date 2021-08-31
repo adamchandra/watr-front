@@ -6,6 +6,7 @@ import {
   provide,
   Ref,
   ref,
+  shallowRef
 } from '@nuxtjs/composition-api'
 
 import * as VC from '@nuxtjs/composition-api'
@@ -23,7 +24,7 @@ import {
   ProvidedChoices,
 } from '~/components/single-pane/narrowing-filter/_inc'
 
-import { groupLabelsByNameAndTags } from '~/lib/transcript/tracelogs'
+// import { groupLabelsByNameAndTags } from '~/lib/transcript/tracelogs'
 
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';
@@ -34,6 +35,8 @@ import { getQueryParam } from '~/lib/url-utils'
 
 import SplitScreen from '~/components/basics/splitscreen/index.vue'
 import { useInfoPane } from '~/components/single-pane/info-pane'
+import { createLabelRadix, LabelSelection } from '~/lib/transcript/tracelogs'
+import { Radix, } from '@watr/commonlib-shared';
 
 interface AppState {
   showStanzaPane: boolean;
@@ -41,7 +44,7 @@ interface AppState {
   showPageOverlays: boolean;
 }
 
-const TETap = <E, A>(tapf: (a: A) => unknown|Promise<unknown>) =>
+const TETap = <E, A>(tapf: (a: A) => unknown | Promise<unknown>) =>
   TE.chain<E, A, A>((a: A) => {
     return () => Promise.resolve(tapf(a))
       .then(() => E.right(a))
@@ -79,8 +82,10 @@ export default defineComponent({
 
     // const initChoicesRef: Ref<number> = ref(0);
 
-    const choicesRef: Array<NarrowingChoice<Label[]>> = [];
-    provide(ProvidedChoices, choicesRef);
+    // const choicesRef: Array<NarrowingChoice<Label[]>> = [];
+    // provide(ProvidedChoices, choicesRef);
+    const choicesRef: Ref<Radix<LabelSelection> | null> = shallowRef(null);
+    provide(ProvidedChoices, choicesRef)
 
     const pageLabelRefs: Array<Ref<Label[]>> = [];
 
@@ -125,14 +130,8 @@ export default defineComponent({
       TE.bind('pageViewers', ({ entryId, pageImageListDiv, transcript, transcriptIndex, infoPane }) => {
 
         const allPageLabels = transcriptIndex.getLabels([])
-        const groupedLabels = groupLabelsByNameAndTags(allPageLabels);
-        const labelKeys = _.keys(groupedLabels);
-
-        const choices = _.map(labelKeys, (key, index) => ({
-          index, key, value: groupedLabels[key]
-        }));
-        // choicesRef.push(...choices);
-        // initChoicesRef.value += 1;
+        const labelRadix = createLabelRadix(allPageLabels);
+        choicesRef.value = labelRadix;
 
         pageLabelRefs.push(..._.map(transcript.pages, () => {
           const pageLabelRef: Ref<Label[]> = ref([]);

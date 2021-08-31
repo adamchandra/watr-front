@@ -16,13 +16,17 @@
 
   </div>
   <div class="selection-frame">
-    <div class="selection">
-      <ul >
-        <li v-for="(item, i) in currSelectionRef"
-          :key="i">
-          {{item.key}}
-        </li>
-      </ul>
+    <div class="selection d-flex flex-column" >
+      <span :class="item.indent" v-for="(item, i) in currSelectionRef" :key="i">
+        {{item.display}}
+        <span v-if="item.count > 0">
+          count={{item.count}}
+        </span>
+
+        <span class="" v-for="(tag, i) in item.tags" :key="i">
+          {{tag}}
+        </span>
+      </span>
 
     </div>
 

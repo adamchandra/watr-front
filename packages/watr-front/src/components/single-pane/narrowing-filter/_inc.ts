@@ -2,15 +2,27 @@ import _ from 'lodash';
 
 import { ref, watch, Ref, defineComponent, inject, SetupContext, shallowRef } from '@nuxtjs/composition-api';
 
+
+import {
+  radFoldUp,
+  Radix,
+  radTraverseValues,
+  radUnfold
+} from '@watr/commonlib-shared';
+
 export const ProvidedChoices = 'ProvidedChoices';
-// export const ProvidedChoicesTrigger = 'ProvidedChoicesTrigger';
 
 export interface NarrowingChoice<T> {
   index: number;
+  count: number;
+  indent: string;
   display: string;
-  tags: string;
+  tags: string[];
   value: T;
 }
+
+import { getLabelProp, LabelSelection } from '~/lib/transcript/tracelogs';
+import { Label } from '~/lib/transcript/labels';
 
 export default defineComponent({
   setup(_props, ctx: SetupContext) {
@@ -19,11 +31,10 @@ export default defineComponent({
     const currSelectionRef = ref([] as NarrowingChoice<unknown>[])
     const queryTextRef = ref('');
 
-    const choicesRef: Ref<Array<NarrowingChoice<unknown>> | null> = inject(ProvidedChoices, shallowRef(null));
-
+    const choicesRef: Ref<Radix<LabelSelection> | null> = inject(ProvidedChoices, shallowRef(null));
 
     const onSubmit = () => {
-      emit('items-selected', currSelectionRef.value);
+      emit('items-selected', []);
     };
 
     const onReset = () => {
@@ -33,29 +44,33 @@ export default defineComponent({
 
     watch(choicesRef, (choices) => {
       if (choices === null) return;
-      // const choices = choicesRef;
 
-      const choicesLC = choices.map(c => [c, c.display.toLowerCase()] as const);
-      currSelectionRef.value = choices;
+      const finalChoices = labelRadToDisplayables(choices)
+      currSelectionRef.value = finalChoices;
 
       const updateSelection = (query: string) => {
         const terms = query.split(/[ ]+/g);
-        const hits = _.filter(choicesLC, ([, choice]) => {
-          const lc = choice.toLowerCase();
-          return _.every(terms, term => lc.includes(term))
+        const allHitLabels = radFoldUp(choices, (path, { nodeData, childResults }) => {
+          const hitLabels = _.filter(nodeData.labels, l => {
+            const tags = getLabelProp(l, 'tags')
+            const tagMatch = _.some(terms, term => _.some(tags, tag => tag.includes(term)))
+            const pathMatch = _.some(terms, term => _.some(path, pseg => pseg.includes(term)))
+            return tagMatch || pathMatch;
+          })
+
+          return _.concat(childResults, hitLabels);
         });
-
-        currSelectionRef.value = _.map(hits, ([ch,]) => ch);
       }
-      const debounced = _.debounce(updateSelection, 300);
+      // const debounced = _.debounce(updateSelection, 300);
 
-      watch(queryTextRef, (queryText) => {
-        debounced(queryText);
-      });
+      // watch(queryTextRef, (queryText) => {
+      //   debounced(queryText);
+      // });
 
     });
 
     return {
+      choicesRef,
       currSelectionRef,
       queryTextRef,
       onSubmit,
@@ -64,3 +79,26 @@ export default defineComponent({
 
   }
 });
+
+function labelRadToDisplayables(labelRadix: Radix<LabelSelection>): Array<NarrowingChoice<Label[]>> {
+  const unfolded: NarrowingChoice<Label[]>[] = radUnfold(labelRadix, (path, labelSelection) => {
+    if (path.length === 0) {
+      return undefined;
+    }
+    const outlineHeader = _.last(path);
+    const tags = labelSelection ? Array.from(labelSelection.tags) : [];
+    const labels = labelSelection ? labelSelection.labels : [];
+    return {
+      index: 0,
+      indent: `pl-${(path.length - 1) * 3}`,
+      display: outlineHeader,
+      value: labels,
+      count: labels.length,
+      tags
+    };
+  });
+  const finalChoices = _.filter(unfolded, v => v !== undefined);
+
+
+  return finalChoices;
+}

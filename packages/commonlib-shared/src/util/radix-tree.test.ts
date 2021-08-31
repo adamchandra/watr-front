@@ -1,5 +1,3 @@
-import 'chai';
-
 import _ from 'lodash';
 import { prettyPrint } from './pretty-print';
 
@@ -8,6 +6,9 @@ import {
   radUpsert,
   radInsert,
   radTraverseValues,
+  radTraverseDepthFirst,
+  radUnfold,
+  radFoldUp,
 } from './radix-tree';
 
 describe('Radix Tree Tests', () => {
@@ -16,7 +17,7 @@ describe('Radix Tree Tests', () => {
     i: number;
   }
 
-  it('should create and traverse a tree', () => {
+  it('should create a tree', () => {
     const radTree = createRadix<Foo>();
 
     expect(radTree).toMatchObject({});
@@ -28,7 +29,9 @@ describe('Radix Tree Tests', () => {
     });
 
     radUpsert(radTree, 'a.$.12._$.b', prev => {
-      return prev ? { ...prev, s: 'hey yourself' } : { i: 42, s: 'hey yourself' };
+      return prev ? _.merge({}, prev, { s: 'hey yourself' })
+        : { i: 42, s: 'hey yourself' }
+        ;
     });
 
     expect(radTree).toMatchObject({
@@ -38,7 +41,9 @@ describe('Radix Tree Tests', () => {
     });
 
     radUpsert(radTree, 'a.blah.b', prev => {
-      return prev ? { ...prev, s: 'child data' } : { i: 103, s: 'new blah data' };
+      return prev ? _.merge({}, prev, { s: 'child data' })
+        : { i: 103, s: 'new blah data' }
+        ;
     });
 
     expect(radTree).toMatchObject({
@@ -80,4 +85,62 @@ describe('Radix Tree Tests', () => {
       expect(pathVal).toStrictEqual(tval);
     });
   });
+
+
+  it('should traverse all paths depth first', () => {
+    const radTree = createRadix<Foo>();
+
+    radInsert(radTree, 'a.b', { s: 'ab-val', i: 123 });
+    radInsert(radTree, 'd.e.f', { s: 'def-val', i: 345 });
+
+    radTraverseDepthFirst(radTree, (path, maybeVal) => {
+      prettyPrint({ path, maybeVal });
+    });
+
+  });
+
+  it('should unfold all paths', () => {
+    const radTree = createRadix<Foo>();
+
+    radInsert(radTree, 'a.b', { s: 'ab-val', i: 123 });
+    radInsert(radTree, 'd.e.f', { s: 'def-val', i: 345 });
+
+    const unfolded = radUnfold(radTree, (path, maybeVal) => {
+      return [
+        path.join(''),
+        maybeVal !== undefined
+      ];
+    });
+    const expected = [
+      ['', false],
+      ['a', false],
+      ['ab', true],
+      ['d', false],
+      ['de', false],
+      ['def', true],
+    ]
+
+    expect(unfolded).toStrictEqual(expected);
+
+  });
+
+
+  it('should foldRight', () => {
+    const radTree = createRadix<Foo>();
+
+    radInsert(radTree, 'a', { s: 'd0', i: 123 });
+    radInsert(radTree, 'a.b.c', { s: 'd1', i: 345 });
+    radInsert(radTree, 'a.d.e', { s: 'd1', i: 345 });
+
+    const foldedResult = radFoldUp(radTree, (path, { nodeData, childResults, index}) => {
+
+      const d = nodeData? '!' : '';
+      const ch = childResults.length > 0? `(${childResults.join(', ')})`: '';
+      const self = path.length > 0? path.join('/') : 'root= ';
+      return `${self}#${index}${d}${ch}`;
+    })
+    const expected = 'root= #5(a#4!(a/b/c#2!, a/b#3(a/d#1(a/d/e#0!))))'
+    expect(foldedResult).toStrictEqual(expected);
+  });
+
 });

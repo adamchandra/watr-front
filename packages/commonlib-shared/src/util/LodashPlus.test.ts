@@ -1,4 +1,3 @@
-
 /* tslint:disable: no-console */
 
 import { sortedUniqCountBy } from './LodashPlus';

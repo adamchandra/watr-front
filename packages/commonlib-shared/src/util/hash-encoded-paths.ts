@@ -22,7 +22,7 @@ export function makeHashEncodedPath(source: string, depth: number): HashEncodedP
     leadingSegments,
     toPath() {
       const leaf = `${hashedSource}.d`
-      return path.join(...leadingSegments, leaf);
+      return path.join(leadingSegments.join('/'), leaf);
     },
   }
 }
