@@ -2,9 +2,6 @@ import _ from 'lodash';
 
 import { ref, watch, Ref, defineComponent, inject, SetupContext, shallowRef } from '@nuxtjs/composition-api';
 
-import Bitset from 'bitset';
-
-
 import {
   radFoldUp,
   Radix,
