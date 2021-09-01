@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { prettyPrint } from './pretty-print';
 
 export interface Radix<D> {
   data: D | undefined;
@@ -41,21 +42,19 @@ function radSet<T>(
   radCurr.data = data;
   return oldData;
 }
+
 function radGet<T>(
   radix: Radix<T>,
   path: string | string[]
 ): T | undefined {
-
+  const pathCurr = _.concat(path);
   let radCurr = radix;
-  _.each(path, p => {
-    const nextChild = radCurr.children.get(p);
-    if (nextChild === undefined) {
-      return undefined;
-    }
-    radCurr = nextChild;
-  });
+  while (pathCurr.length > 0 && radCurr !== undefined) {
+    const p = pathCurr.shift();
+    radCurr = radCurr.children.get(p);
+  }
 
-  return radCurr.data;
+  return radCurr? radCurr.data : undefined;
 }
 
 export const radUpsert = <T>(
@@ -139,7 +138,6 @@ export const radFoldUp = <T, U>(
     const ures = f(ipath, { nodeData, index, childResults, node });
     ustack.push(ures);
     index += 1;
-    // prettyPrint({ rstack, ustack, uargs, ures, ipath, ival, ichildCount })
   }
 
   return ustack[0];

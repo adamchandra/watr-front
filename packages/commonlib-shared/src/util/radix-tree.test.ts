@@ -18,6 +18,7 @@ function expectKeyVals<T>(rad: Radix<T>, expected: [string, T | undefined][]) {
       maybeVal
     ];
   });
+  // prettyPrint({ unfolded })
   expect(unfolded).toStrictEqual(expected);
 }
 
@@ -31,6 +32,47 @@ function foo(n: number): Foo {
     s: `hey#${n}`,
     i: n
   };
+}
+
+function foos(f1: Foo, f2: Foo): Foo {
+  return {
+    s: `${f1.s} & ${f2.s}`,
+    i: f1.i + f2.i
+  }
+}
+
+function insertAndTest<T>(
+  examples: Array<[string, T]>,
+  expected: Array<[string, T | undefined]>
+) {
+  const radTree = createRadix<T>();
+  _.each(examples, e => {
+    const [path, tval] = e;
+    radInsert(radTree, path, tval);
+  });
+  // prettyPrint({ radTree })
+
+  expectKeyVals(radTree, expected);
+}
+
+function upsertAndTest(
+  examples: Array<[string, Foo]>,
+  expected: Array<[string, Foo | undefined]>
+) {
+  const radTree = createRadix<Foo>();
+  _.each(examples, e => {
+    const [path, fooVal] = e;
+    radUpsert(radTree, path, (priorFoo?) => {
+      if (priorFoo) {
+        return foos(priorFoo, fooVal);
+      }
+      return fooVal;
+    });
+    // prettyPrint({ msg: 'upserting..', path, radTree })
+  });
+  // prettyPrint({ msg: 'upsert:done', radTree })
+
+  expectKeyVals(radTree, expected);
 }
 
 describe('Radix Tree Tests', () => {
@@ -83,7 +125,30 @@ describe('Radix Tree Tests', () => {
       ['a.$.12._$.b', foo(20)],
       ['a.$.12._$.q', foo(21)],
     ]);
+
   });
+
+  it.only('should pass misc examples', () => {
+    upsertAndTest([
+      ['a', foo(1)],
+      ['a.b.c', foo(2)]
+    ], [
+      ['', undefined],
+      ['a', foo(1)],
+      ['a.b', undefined],
+      ['a.b.c', foo(2)],
+    ]);
+
+    upsertAndTest([
+      ['a.b', foo(1)],
+      ['a.b', foo(2)]
+    ], [
+      ['', undefined],
+      ['a', undefined],
+      ['a.b', foos(foo(1), foo(2))],
+    ]);
+  });
+
 
   it('should traverse all paths depth first', () => {
     const radTree = createRadix<Foo>();
@@ -140,24 +205,6 @@ describe('Radix Tree Tests', () => {
     const expected = 'root= #5(a#4!(a/b/c#2!, a/b#3(a/d#1(a/d/e#0!))))'
     expect(foldedResult).toStrictEqual(expected);
 
-  });
-
-  interface DisplayData {
-    displayableChildCount: number;
-    displayableSelfCount: number;
-    displayItems?: string[];
-  }
-
-  function displayData(items: string[]): DisplayData {
-    return {
-      displayableChildCount: 0,
-      displayableSelfCount: items.length,
-      displayItems: items
-    };
-  }
-
-  it('should represent a displayable item tree', () => {
-    const radTree = createRadix<DisplayData>();
   });
 
 });

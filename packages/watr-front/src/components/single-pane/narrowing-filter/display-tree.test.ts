@@ -1,16 +1,12 @@
-import { createRadix, prettyPrint } from '@watr/commonlib-shared';
+import { prettyPrint } from '@watr/commonlib-shared';
 import _ from 'lodash';
-import { NodeLabel, createDisplayTree, queryAndUpdateDisplayTree } from './display-tree';
+import { createDisplayTree, queryAndUpdateDisplayTree, renderDisplayTree, span, RenderedItem } from './display-tree';
 
 interface Item {
   path: string[];
   title: string;
   tags: string[];
 }
-
-// interface ItemGroup {
-//   items: Item[];
-// }
 
 function item(p: string, title: string, tags: string): Item {
   return {
@@ -23,7 +19,7 @@ function item(p: string, title: string, tags: string): Item {
 describe('Display Trees', () => {
   it('should define a tree', () => {
     const items = [
-      item('a', 'A.Item', 'AT'),
+      item('a', 'A.Item', 'AT A0'),
       // item('a.b', 'A.B.Item', 'AT BT'),
       item('a.b.c', 'A.B.C.Item', 'AT BT CT'),
       // item('a.d', 'A.D.Item', 'AT DT')
@@ -35,24 +31,24 @@ describe('Display Trees', () => {
 
     queryAndUpdateDisplayTree(
       displayItemTree,
-      'at',
+      'ct',
       function getItemTerms(item: Item): string[] {
         return _.concat(item.tags, item.title);
       }
     );
 
-    prettyPrint({ displayItemTree }, { depth: 12, getters: 'set' });
+    prettyPrint({ displayItemTree }, { depth: 12 });
 
-    // const finalChoices = queryDisplayTree<Item>(
-    //   displayItemTree,
-    //   function getQueryTerms(data: any): string[] {
-    //     return [];
-    //   },
-    //   function queryData(data: any, qterms: string[]): void {
-    //     //
-    //   },
-    //   'query string'
-    // )
+    const rendered = renderDisplayTree(
+      displayItemTree,
+      function renderDataNode(items: Item[]): RenderedItem {
+        const rs = items.map(it => span(it.title, 'li title'))
+        return span('', 'ul items', ...rs)
+      }
+    );
+
+
+    prettyPrint({ rendered })
 
   });
 });

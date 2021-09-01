@@ -12,13 +12,6 @@ import {
   // prettyPrint,
 } from '@watr/commonlib-shared';
 
-export interface NarrowingChoice<T> {
-  count: number;
-  indent: string;
-  display: string;
-  tags: string[];
-  value: T;
-}
 
 class VisibleCount {
   private _visibleFlags: Bitset | undefined;
@@ -66,7 +59,40 @@ class VisibleCount {
     return this.ownVisible() + this.descendantVis;
   }
 
+  filter<A>(items: A[]): A[] {
+    return _.filter(items, (_item, i) => {
+      return this._visibleFlags.get(i) === 1;
+    });
+  }
 }
+
+export interface RenderedItem {
+  tag: string;
+  text: string;
+  classes: string[];
+  children: RenderedItem[];
+}
+
+export interface RenderedGroup<T> {
+  level: number;
+  renderedItem: RenderedItem;
+  nodeData: T | undefined;
+}
+
+export function span(
+  text: string,
+  cls: string,
+  ...childs: RenderedItem[]
+): RenderedItem {
+  return {
+    tag: 'span',
+    text,
+    classes: cls.split(/ +/g),
+    children: childs
+  }
+}
+
+
 
 interface Node {
   visibleCount: VisibleCount;
@@ -145,7 +171,6 @@ export function queryAndUpdateDisplayTree<ItemT>(
   displayTree: Radix<NodeLabel<ItemGroup<ItemT>>>,
   queryString: string,
   getItemTerms: (item: ItemT) => string[],
-  // queryData: (data: GroupT, qterms: string[]) => void,
 ): void {
   type GroupT = ItemGroup<ItemT>;
   type NodeT = NodeLabel<GroupT>;
@@ -160,10 +185,6 @@ export function queryAndUpdateDisplayTree<ItemT>(
 
     if (nodeData.kind === 'DataNode') {
       const { data: { items }, visibleCount } = nodeData;
-      // const allTerms = _.flatMap(items, item => getItemTerms(item)).map(s => s.toLowerCase());
-      // const termSet = new Set(allTerms)
-      // queryData(nodeData.data, queryTerms);
-      // const { labels, showLabels } = nodeData.data;
       if (showAll) {
         visibleCount.setAllVisible(true);
       } else {
@@ -181,94 +202,52 @@ export function queryAndUpdateDisplayTree<ItemT>(
       }
     }
 
-
     return nodeData.visibleCount.totalVisible();
   });
 }
 
-// export function queryDisplayTree<GroupT>(
-//   displayTree: Radix<NodeLabel<GroupT>>,
-//   getQueryTerms: (data: GroupT) => string[],
-//   queryData: (data: GroupT, qterms: string[]) => void,
-//   queryString: string
-// ): Array<NarrowingChoice<GroupT[]>> {
-//   type NodeT = NodeLabel<GroupT>;
+export function renderDisplayTree<ItemT>(
+  displayTree: Radix<NodeLabel<ItemGroup<ItemT>>>,
+  renderDataNode: (items: ItemT[]) => RenderedItem,
+): Array<RenderedGroup<ItemGroup<ItemT>>> {
+  type GroupT = ItemGroup<ItemT>;
 
-//   const queryTerms = queryString.trim().split(/[ ]+/g).map(t => t.toLowerCase());
-//   // const showAll = queryTerms.length === 0;
-//   radFoldUp<NodeT, number>(displayTree, (path, { nodeData, childResults }) => {
-//     const childShowableCount = _.sum(_.concat(childResults, 0));
-//     nodeData.visibleCount.childs = childShowableCount;
+  const renderedGroups: RenderedGroup<GroupT>[][] = radUnfold(displayTree, (path, nodeData) => {
+    if (nodeData === undefined) return undefined;
+    const { visibleCount } = nodeData;
 
-//     if (nodeData.kind === 'EmptyNode') {
-//       return nodeData.visibleCount.childs;
-//     }
+    if (path.length === 0) return undefined;
+    if (visibleCount.totalVisible() === 0) return undefined;
 
-//     // const nodeTerms = getQueryTerms(nodeData.data);
-//     queryData(nodeData.data, queryTerms);
+    const level = path.length - 1;
 
-//     // const { labels, showLabels } = nodeData.data;
-//     // const pathLC = path.map(s => s.toLowerCase());
-//     // if (showAll) {
-//     //   showLabels.setRange(0, labels.length, 1);
-//     // } else {
-//     //   // showLabels.setRange(0, labels.length, 0);
-//     //   _.each(labels, (l, i) => {
-//     //     const tags = getLabelProp(l, 'tags').map(s => s.toLowerCase());
-//     //     const tagMatch = _.some(terms, term => _.some(tags, tag => tag.includes(term)));
-//     //     const pathMatch = _.some(terms, term => _.some(pathLC, pseg => pseg.includes(term)));
-//     //     const setBit = tagMatch || pathMatch ? 1 : 0;
-//     //     nodeData.data.showLabels.set(i, setBit);
-//     //   });
-//     // }
+    const outlineHeader = _.last(path);
+    const outlineRender = span(outlineHeader, `header-${level}`)
 
-//     // nodeData.selfDisplayableCount = nodeData.data.showLabels.cardinality()
+    const showOutline = {
+      level,
+      renderedItem: outlineRender,
+      nodeData: undefined,
+    };
 
-//     return nodeData.visibleCount.total();
-//   });
+    if (nodeData.kind === 'DataNode' && visibleCount.ownVisible() > 0) {
+      const { items } = nodeData.data;
+
+      const visibleItems = visibleCount.filter(items);
+
+      const nodeRender = {
+        level,
+        renderedItem: renderDataNode(visibleItems),
+        nodeData: nodeData.data,
+      };
+      return [showOutline, nodeRender];
+    }
+    return [showOutline];
+  });
 
 
-//   const unfolded: NarrowingChoice<GroupT[]>[] = radUnfold(displayTree, (path, labelSelection) => {
-//     if (path.length === 0) {
-//       return undefined;
-//     }
-//     if (labelSelection === undefined) return undefined;
-
-//     const childC = labelSelection.visibleCount.childs;
-//     const selfC = labelSelection.visibleCount.own();
-//     if (childC + selfC === 0) {
-//       return undefined;
-//     }
-
-//     const outlineHeader = _.last(path);
-//     if (labelSelection.kind === 'DataNode') {
-//       // const { labels, showLabels, tags } = labelSelection.data;
-//       // const tagDisplay = labelSelection ? Array.from(tags) : [];
-//       // const labels = labelSelection ? labelSelection.data.labels : [];
-//       // labelSelection.data.labels.filter((l, li) =>  )
-//       // const showables = labels.filter((_l, i) => showLabels.get(i) !== 0);
-
-//       return {
-//         indent: `pl-${(path.length - 1) * 3}`,
-//         display: outlineHeader,
-//         value: undefined,
-//         count: 0,
-//         tags: []
-//         // value: showables,
-//         // count: showables.length,
-//         // tags: tagDisplay
-//       };
-//     }
-//     return {
-//       indent: `pl-${(path.length - 1) * 3}`,
-//       display: outlineHeader,
-//       value: undefined,
-//       count: 0,
-//       tags: []
-//     };
-//   });
-//   const finalChoices = _.filter(unfolded, v => v !== undefined);
-
-
-//   return finalChoices;
-// }
+  return _.filter(
+    _.flatten(renderedGroups),
+    v => v !== undefined
+  );
+}
