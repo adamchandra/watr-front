@@ -16,6 +16,8 @@ function item(p: string, title: string, tags: string): Item {
   };
 }
 
+import Bitset from 'bitset';
+
 describe('Display Trees', () => {
   it('should define a tree', () => {
     const items = [
@@ -47,9 +49,8 @@ describe('Display Trees', () => {
       }
     );
 
-
     prettyPrint({ rendered })
-
   });
+
 });
 

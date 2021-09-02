@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { prettyPrint } from './pretty-print';
+// import { prettyPrint } from './pretty-print';
 
 export interface Radix<D> {
   data: D | undefined;
@@ -133,10 +133,12 @@ export const radFoldUp = <T, U>(
   const ustack: U[] = [];
   let index = 0;
   while (rstack.length > 0) {
+    // prettyPrint({ currRStack: rstack.map(el => ({path: el[0], tval: el[1] })), ustack })
     const [ipath, nodeData, ichildCount, node] = rstack.pop();
     const childResults = ustack.splice(0, ichildCount);
     const ures = f(ipath, { nodeData, index, childResults, node });
-    ustack.push(ures);
+    // prettyPrint({ childResultsArgs: childResults, result: ures })
+    ustack.unshift(ures);
     index += 1;
   }
 

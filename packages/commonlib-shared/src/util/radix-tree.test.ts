@@ -128,7 +128,7 @@ describe('Radix Tree Tests', () => {
 
   });
 
-  it.only('should pass misc examples', () => {
+  it('should pass misc examples', () => {
     upsertAndTest([
       ['a', foo(1)],
       ['a.b.c', foo(2)]
@@ -148,7 +148,6 @@ describe('Radix Tree Tests', () => {
       ['a.b', foos(foo(1), foo(2))],
     ]);
   });
-
 
   it('should traverse all paths depth first', () => {
     const radTree = createRadix<Foo>();
@@ -188,7 +187,7 @@ describe('Radix Tree Tests', () => {
   });
 
 
-  it('should foldUp', () => {
+  it.only('should foldUp', () => {
     const radTree = createRadix<Foo>();
 
     radInsert(radTree, 'a', { s: 'd0', i: 123 });
@@ -196,13 +195,13 @@ describe('Radix Tree Tests', () => {
     radInsert(radTree, 'a.d.e', { s: 'd1', i: 345 });
 
     const foldedResult = radFoldUp(radTree, (path, { nodeData, childResults, index }) => {
-
       const d = nodeData ? '!' : '';
       const ch = childResults.length > 0 ? `(${childResults.join(', ')})` : '';
-      const self = path.length > 0 ? path.join('/') : 'root= ';
+      const self = path.length > 0 ? path.join('.') : '';
       return `${self}#${index}${d}${ch}`;
-    })
-    const expected = 'root= #5(a#4!(a/b/c#2!, a/b#3(a/d#1(a/d/e#0!))))'
+    });
+
+    const expected =  '#5(a#4!(a.b#3(a.b.c#2!), a.d#1(a.d.e#0!)))'
     expect(foldedResult).toStrictEqual(expected);
 
   });

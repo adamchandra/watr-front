@@ -2,11 +2,10 @@ import _ from 'lodash';
 
 import { ref, watch, Ref, defineComponent, inject, SetupContext, shallowRef } from '@nuxtjs/composition-api';
 
+import Bluebird from 'bluebird';
+
 import {
-  radFoldUp,
   Radix,
-  radTraverseValues,
-  radUnfold
 } from '@watr/commonlib-shared';
 
 export const ProvidedChoices = 'ProvidedChoices';
@@ -20,20 +19,68 @@ export interface NarrowingChoice<T> {
   value: T;
 }
 
-import { getLabelProp, LabelSelection } from '~/lib/transcript/tracelogs';
 import { Label } from '~/lib/transcript/labels';
+import {
+  ItemGroup, NodeLabel, queryAndUpdateDisplayTree, renderDisplayTree, RenderedGroup, RenderedItem, span
+} from './display-tree';
+import { getLabelProp } from '~/lib/transcript/tracelogs';
+
+type DisplayTreeT = Radix<NodeLabel<ItemGroup<Label>>>;
+type RenderedGroupT = RenderedGroup<Label[]>;
+
+
+function getLabelTerms(label: Label): string[] {
+  const tags = getLabelProp(label, 'tags');
+  return _.concat(tags, label.name);
+}
+
+function renderLabelGroup(labels: Label[]): RenderedItem {
+  const head = labels[0];
+  const allTags = _.flatten(labels.map(l => getLabelProp(l, 'tags')));
+  const tagSet = new Set<string>(allTags);
+  const name = head ? head.name : '???'
+
+  const tagList = _.join(Array.from(tagSet), ', ');
+  const nameDisp = `${name}   ${tagList}`;
+  return span(nameDisp, 'label')
+}
+
+
+async function updateDisplay(
+  choices: DisplayTreeT,
+  query: string,
+  renderedRef: Ref<RenderedGroupT[]>,
+  priorAttempt?: Bluebird<void>
+): Bluebird<void> {
+  const delay = priorAttempt ? priorAttempt : Bluebird.resolve(undefined);
+
+  return delay.then(() => {
+    queryAndUpdateDisplayTree(choices, query, (label) => {
+      return getLabelTerms(label);
+    });
+    const renderedChoices = renderDisplayTree(choices, renderLabelGroup);
+
+    renderedRef.value = renderedChoices;
+  });
+}
 
 export default defineComponent({
   setup(_props, ctx: SetupContext) {
     const { emit } = ctx;
 
-    const currSelectionRef = ref([] as NarrowingChoice<unknown>[])
+    const currSelectionRef = ref([] as RenderedGroupT[])
     const queryTextRef = ref('');
 
-    const choicesRef: Ref<Radix<LabelSelection> | null> = inject(ProvidedChoices, shallowRef(null));
+    const choicesRef: Ref<DisplayTreeT | null> = inject(ProvidedChoices, shallowRef(null));
 
     const onSubmit = () => {
-      emit('items-selected', []);
+
+      const items = _.flatMap(
+        currSelectionRef.value, v => {
+          return v.nodeData ? v.nodeData : []
+        }
+      )
+      emit('items-selected', items);
     };
 
     const onReset = () => {
@@ -44,11 +91,10 @@ export default defineComponent({
     watch(choicesRef, (choices) => {
       if (choices === null) return;
 
-      const finalChoices = labelRadToDisplayables(choices, '')
-      currSelectionRef.value = finalChoices;
+      let currUpdate: Bluebird<void> = updateDisplay(choices, '', currSelectionRef, undefined);
 
       const updateSelection = (query: string) => {
-        currSelectionRef.value = labelRadToDisplayables(choices, query);
+        currUpdate = updateDisplay(choices, query, currSelectionRef, currUpdate);
       }
       const debounced = _.debounce(updateSelection, 300);
 
@@ -68,83 +114,3 @@ export default defineComponent({
 
   }
 });
-
-function labelRadToDisplayables(
-  labelRadix: Radix<LabelSelection>,
-  query: string
-): Array<NarrowingChoice<Label[]>> {
-
-  const terms = query.trim().split(/[ ]+/g).map(t => t.toLowerCase());
-  const showAll = terms.length === 0;
-  radFoldUp<LabelSelection, number>(labelRadix, (path, { nodeData, childResults }) => {
-    const childShowableCount = _.sum(_.concat(childResults, 0));
-    nodeData.childDisplayableCount = childShowableCount;
-
-    if (nodeData.kind === 'EmptyNode') {
-      return nodeData.childDisplayableCount;
-    }
-
-    const { labels, showLabels } = nodeData.data;
-    const pathLC = path.map(s => s.toLowerCase());
-    if (showAll) {
-      showLabels.setRange(0, labels.length, 1);
-    } else {
-      // showLabels.setRange(0, labels.length, 0);
-      _.each(labels, (l, i) => {
-        const tags = getLabelProp(l, 'tags').map(s => s.toLowerCase());
-        const tagMatch = _.some(terms, term => _.some(tags, tag => tag.includes(term)));
-        const pathMatch = _.some(terms, term => _.some(pathLC, pseg => pseg.includes(term)));
-        const setBit = tagMatch || pathMatch ? 1 : 0;
-        nodeData.data.showLabels.set(i, setBit);
-      });
-    }
-
-    nodeData.selfDisplayableCount = nodeData.data.showLabels.cardinality()
-
-    return nodeData.childDisplayableCount + nodeData.selfDisplayableCount
-  });
-
-
-  const unfolded: NarrowingChoice<Label[]>[] = radUnfold(labelRadix, (path, labelSelection) => {
-    if (path.length === 0) {
-      return undefined;
-    }
-    if (labelSelection === undefined) return undefined;
-
-    const childC = labelSelection.childDisplayableCount;
-    const selfC = labelSelection.selfDisplayableCount;
-    if (childC + selfC === 0) {
-      return undefined;
-    }
-
-    const outlineHeader = _.last(path);
-    if (labelSelection.kind === 'DataNode') {
-      const { labels, showLabels, tags } = labelSelection.data;
-      const tagDisplay = labelSelection ? Array.from(tags) : [];
-      // const labels = labelSelection ? labelSelection.data.labels : [];
-      // labelSelection.data.labels.filter((l, li) =>  )
-      const showables = labels.filter((_l, i) => showLabels.get(i) !== 0);
-
-      return {
-        index: 0,
-        indent: `pl-${(path.length - 1) * 3}`,
-        display: outlineHeader,
-        value: showables,
-        count: showables.length,
-        tags: tagDisplay
-      };
-    }
-    return {
-      index: 0,
-      indent: `pl-${(path.length - 1) * 3}`,
-      display: outlineHeader,
-      value: undefined,
-      count: 0,
-      tags: []
-    };
-  });
-  const finalChoices = _.filter(unfolded, v => v !== undefined);
-
-
-  return finalChoices;
-}

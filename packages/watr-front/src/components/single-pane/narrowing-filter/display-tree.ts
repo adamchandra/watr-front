@@ -22,20 +22,21 @@ class VisibleCount {
   constructor(visibleFlags?: Bitset) {
     this.descendantVis = 0;
     this._visibleFlags = visibleFlags;
+    this._size = 0;
   }
 
-  set size(n: number) {
+  public set size(n: number) {
     this._size = n;
     this.setAllVisible(true);
   }
-  get size() {
+  public get size() {
     return this._size;
   }
 
-  set descendantVis(n: number) {
+  public set descendantVis(n: number) {
     this._descendantVis = n;
   }
-  get descendantVis() {
+  public get descendantVis() {
     return this._descendantVis;
   }
 
@@ -48,15 +49,15 @@ class VisibleCount {
   setAllVisible(b: boolean) {
     if (this._visibleFlags !== undefined) {
       this._visibleFlags.clear();
-      this._visibleFlags.setRange(0, this.size, b ? 1 : 0);
+      this._visibleFlags.setRange(0, this.size-1, b ? 1 : 0);
     }
   }
-  ownVisible(): number {
+  public get ownVisible(): number {
     return this._visibleFlags ? this._visibleFlags.cardinality() : 0;
   };
 
-  totalVisible(): number {
-    return this.ownVisible() + this.descendantVis;
+  public get totalVisible(): number {
+    return this.ownVisible + this.descendantVis;
   }
 
   filter<A>(items: A[]): A[] {
@@ -161,6 +162,8 @@ export function createDisplayTree<ItemT>(
         kind: 'EmptyNode',
         visibleCount: new VisibleCount()
       };
+    } else if (data.kind === 'DataNode') {
+      data.visibleCount.size = data.data.items.length;
     }
   });
 
@@ -179,69 +182,78 @@ export function queryAndUpdateDisplayTree<ItemT>(
   const showAll = queryTerms.length === 0;
 
   radFoldUp<NodeT, number>(displayTree, (path, { nodeData, childResults }) => {
-    nodeData.visibleCount.descendantVis = _.sum(_.concat(childResults, 0));
-
-    const pathTerms = path.map(s => s.toLowerCase());
+    const {  visibleCount } = nodeData;
+    visibleCount.descendantVis = _.sum(_.concat(childResults, 0));
 
     if (nodeData.kind === 'DataNode') {
-      const { data: { items }, visibleCount } = nodeData;
+      const { data: { items } } = nodeData;
       if (showAll) {
         visibleCount.setAllVisible(true);
       } else {
+        const pathTerms = path.map(s => s.toLowerCase());
+        const attrQuery = queryTerms.filter(t => t.startsWith(':')).map(t => t.slice(1));
+        const pathQuery = queryTerms.filter(t => !t.startsWith(':'));
         _.each(items, (item, i) => {
           const itemTerms = getItemTerms(item).map(s => s.toLowerCase());
-          const termMatch = _.some(queryTerms, qt => {
+          const termMatch = attrQuery.length===0 || _.every(attrQuery, qt => {
             return _.some(itemTerms, it => it.includes(qt));
           });
-          const pathMatch = _.some(queryTerms, qt => {
+          const pathMatch = pathQuery.length===0 || _.every(pathQuery, qt => {
             return _.some(pathTerms, it => it.includes(qt));
           });
-          const setBit = termMatch || pathMatch;
+          const setBit = termMatch && pathMatch;
           visibleCount.setVisible(i, setBit);
         });
       }
     }
 
-    return nodeData.visibleCount.totalVisible();
+    return visibleCount.totalVisible;
   });
 }
 
 export function renderDisplayTree<ItemT>(
   displayTree: Radix<NodeLabel<ItemGroup<ItemT>>>,
   renderDataNode: (items: ItemT[]) => RenderedItem,
-): Array<RenderedGroup<ItemGroup<ItemT>>> {
-  type GroupT = ItemGroup<ItemT>;
+): Array<RenderedGroup<ItemT[]>> {
+  // type GroupT = ItemGroup<ItemT>;
 
-  const renderedGroups: RenderedGroup<GroupT>[][] = radUnfold(displayTree, (path, nodeData) => {
-    if (nodeData === undefined) return undefined;
+  const renderedGroups: RenderedGroup<ItemT[]>[][] = radUnfold(displayTree, (path, nodeData) => {
     const { visibleCount } = nodeData;
 
-    if (path.length === 0) return undefined;
-    if (visibleCount.totalVisible() === 0) return undefined;
+    // console.log({ msg: 'radUnfold', path, nodeData, vis: visibleCount.totalVisible})
 
-    const level = path.length - 1;
+    if (path.length === 0) return [];
+    if (visibleCount.totalVisible === 0) return [];
+
+    const childVis = visibleCount.descendantVis;
+    const ownVis = visibleCount.ownVisible;
+
+    const leveln = (path.length - 1) * 2;
 
     const outlineHeader = _.last(path);
-    const outlineRender = span(outlineHeader, `header-${level}`)
+    const outlineDisplay = `> ${outlineHeader} (${ownVis}/${childVis})`;
+    const outlineRender = span(outlineDisplay, `header-${leveln}`)
 
     const showOutline = {
-      level,
+      level: leveln,
       renderedItem: outlineRender,
       nodeData: undefined,
     };
 
-    if (nodeData.kind === 'DataNode' && visibleCount.ownVisible() > 0) {
+    if (nodeData.kind === 'DataNode' && visibleCount.ownVisible > 0) {
       const { items } = nodeData.data;
 
       const visibleItems = visibleCount.filter(items);
 
       const nodeRender = {
-        level,
+        level: leveln+1,
         renderedItem: renderDataNode(visibleItems),
-        nodeData: nodeData.data,
+        nodeData: visibleItems,
       };
+      // console.log({ msg: 'radUnfolded', showOutline, nodeRender  })
       return [showOutline, nodeRender];
     }
+    // console.log({ msg: 'radUnfolded', showOutline  })
     return [showOutline];
   });
 
