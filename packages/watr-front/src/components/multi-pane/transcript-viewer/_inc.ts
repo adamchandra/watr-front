@@ -24,7 +24,6 @@ import {
   ProvidedChoices,
 } from '~/components/single-pane/narrowing-filter/_inc'
 
-// import { groupLabelsByNameAndTags } from '~/lib/transcript/tracelogs'
 
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';
@@ -35,8 +34,9 @@ import { getQueryParam } from '~/lib/url-utils'
 
 import SplitScreen from '~/components/basics/splitscreen/index.vue'
 import { useInfoPane } from '~/components/single-pane/info-pane'
-import { createLabelRadix, LabelSelection } from '~/lib/transcript/tracelogs'
+import { getLabelProp  } from '~/lib/transcript/tracelogs'
 import { Radix, } from '@watr/commonlib-shared';
+import { createDisplayTree, ItemGroup, NodeLabel } from '~/components/single-pane/narrowing-filter/display-tree'
 
 interface AppState {
   showStanzaPane: boolean;
@@ -49,14 +49,6 @@ const TETap = <E, A>(tapf: (a: A) => unknown | Promise<unknown>) =>
     return () => Promise.resolve(tapf(a))
       .then(() => E.right(a))
   });
-
-// const dbglogKeys = <A>() =>
-//   TE.map<A, A>((entries: A) => {
-//     const keys = _.keys(entries);
-//     const keystr = _.join(keys, ', ');
-//     console.log('keys', keystr);
-//     return entries;
-//   });
 
 function isPageRange(r: Range): r is PageRange {
   return r.unit === 'page';
@@ -79,18 +71,16 @@ export default defineComponent({
 
     const showAllLabels: Ref<boolean> = ref(true);
 
-
-    // const initChoicesRef: Ref<number> = ref(0);
-
-    // const choicesRef: Array<NarrowingChoice<Label[]>> = [];
-    // provide(ProvidedChoices, choicesRef);
-    const choicesRef: Ref<Radix<LabelSelection> | null> = shallowRef(null);
+    type DisplayTreeT = Radix<NodeLabel<ItemGroup<Label>>>;
+    const choicesRef: Ref<DisplayTreeT | null> = shallowRef(null);
     provide(ProvidedChoices, choicesRef)
 
     const pageLabelRefs: Array<Ref<Label[]>> = [];
 
-    const onItemsSelected = (selection: NarrowingChoice<Label[]>[]) => {
-      const labels = _.flatMap(selection, choice => _.map(choice.value, l => [l, getLabelPageNumber(l)] as const));
+
+    const onItemsSelected = (selection: Label[]) => {
+      // const labels = _.flatMap(selection, choice => _.map(choice.value, l => [l, getLabelPageNumber(l)] as const));
+      const labels = _.map(selection, l => [l, getLabelPageNumber(l)] as const);
       const grouped = _.groupBy(labels, l => l[1]);
       const pageNumbers = _.keys(grouped);
       _.each(pageNumbers, p => {
@@ -130,8 +120,15 @@ export default defineComponent({
       TE.bind('pageViewers', ({ entryId, pageImageListDiv, transcript, transcriptIndex, infoPane }) => {
 
         const allPageLabels = transcriptIndex.getLabels([])
-        const labelRadix = createLabelRadix(allPageLabels);
-        choicesRef.value = labelRadix;
+
+        const displayTree = createDisplayTree<Label>(
+          allPageLabels,
+          (label: Label) => {
+            return _.concat(getLabelProp(label, 'outline'), 'LB.'+label.name);
+          }
+        );
+
+        choicesRef.value = displayTree;
 
         pageLabelRefs.push(..._.map(transcript.pages, () => {
           const pageLabelRef: Ref<Label[]> = ref([]);
@@ -190,11 +187,6 @@ export default defineComponent({
       onItemsReset,
       showAllLabels,
       ...appStateRefs
-    }
+    };
   }
-
-})
-
-function usInfoPane(arg0: { mountPoint: Ref<HTMLDivElement> }) {
-  throw new Error('Function not implemented.')
-}
+});

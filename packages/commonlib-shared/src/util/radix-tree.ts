@@ -1,5 +1,4 @@
 import _ from 'lodash';
-// import { prettyPrint } from './pretty-print';
 
 export interface Radix<D> {
   data: D | undefined;

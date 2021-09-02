@@ -93,8 +93,6 @@ export function span(
   }
 }
 
-
-
 interface Node {
   visibleCount: VisibleCount;
 }
@@ -156,7 +154,7 @@ export function createDisplayTree<ItemT>(
 
   });
 
-  radTraverseDepthFirst<NodeT>(labelRadix, (path, data, childCount, node) => {
+  radTraverseDepthFirst<NodeT>(labelRadix, (_path, data, _childCount, node) => {
     if (data === undefined) {
       node.data = {
         kind: 'EmptyNode',
@@ -215,12 +213,9 @@ export function renderDisplayTree<ItemT>(
   displayTree: Radix<NodeLabel<ItemGroup<ItemT>>>,
   renderDataNode: (items: ItemT[]) => RenderedItem,
 ): Array<RenderedGroup<ItemT[]>> {
-  // type GroupT = ItemGroup<ItemT>;
 
   const renderedGroups: RenderedGroup<ItemT[]>[][] = radUnfold(displayTree, (path, nodeData) => {
     const { visibleCount } = nodeData;
-
-    // console.log({ msg: 'radUnfold', path, nodeData, vis: visibleCount.totalVisible})
 
     if (path.length === 0) return [];
     if (visibleCount.totalVisible === 0) return [];
@@ -250,10 +245,10 @@ export function renderDisplayTree<ItemT>(
         renderedItem: renderDataNode(visibleItems),
         nodeData: visibleItems,
       };
-      // console.log({ msg: 'radUnfolded', showOutline, nodeRender  })
+
       return [showOutline, nodeRender];
     }
-    // console.log({ msg: 'radUnfolded', showOutline  })
+
     return [showOutline];
   });
 

@@ -10,15 +10,6 @@ import {
 
 export const ProvidedChoices = 'ProvidedChoices';
 
-export interface NarrowingChoice<T> {
-  index: number;
-  count: number;
-  indent: string;
-  display: string;
-  tags: string[];
-  value: T;
-}
-
 import { Label } from '~/lib/transcript/labels';
 import {
   ItemGroup, NodeLabel, queryAndUpdateDisplayTree, renderDisplayTree, RenderedGroup, RenderedItem, span
