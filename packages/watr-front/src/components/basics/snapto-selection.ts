@@ -44,7 +44,7 @@ export function useSnaptoSelection({
   // const pixiJsApp = pixiJsAppRef.value!;
 
   watch(selectionRef, () => {
-    const selection = selectionRef.value!;
+    // const selection = selectionRef.value!;
     // search for glyphs in selection box...
     // const selectedGlyphs = rtreeIndex.search(selection);
     // const minBounds = queryHitsMBR(selectedGlyphs);

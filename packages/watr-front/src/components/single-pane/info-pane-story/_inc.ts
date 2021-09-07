@@ -30,7 +30,6 @@ export default defineComponent({
           putString,
           putStringLn,
           clearScreen,
-          showLabel
         } = infoPane;
 
         putStringLn('Hello From Storyland!');

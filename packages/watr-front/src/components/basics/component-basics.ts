@@ -11,25 +11,6 @@ import {
 import * as TE from 'fp-ts/lib/TaskEither';
 import * as E from 'fp-ts/lib/Either';
 
-export interface ComponentState {
-}
-
-export type StateArgs = {
-  state: ComponentState;
-};
-
- /**
-  * Currently unused.
-  * Implemented to track the init state of components, but I went with another
-  * implementation. I'm leaving it here because I think it may be useful for other
-  * things soon.
-  */
-export function initState(): ComponentState {
-  const st = {
-  }
-
-  return st;
-}
 export async function awaitRef<T>(tref: Ref<T | null | undefined>): Promise<T> {
   return new Promise((resolve) => {
     watchOnceFor(tref, (t) => resolve(t));

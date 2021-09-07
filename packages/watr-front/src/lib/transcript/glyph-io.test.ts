@@ -1,7 +1,6 @@
 import 'chai/register-should';
 
 import _ from 'lodash';
-import { Transcript } from './transcript';
 import { isIsomorphic } from '~/lib/codec-utils';
 import { GlyphRepr, Glyph, GlyphPropsRepr, GlyphProps } from './glyph';
 

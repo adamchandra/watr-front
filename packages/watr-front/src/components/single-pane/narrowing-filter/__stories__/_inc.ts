@@ -13,7 +13,7 @@ import * as TE from 'fp-ts/lib/TaskEither';
 import {
   Radix,
 } from '@watr/commonlib-shared';
-import { createDisplayTree, ItemGroup, NodeLabel } from '../display-tree'
+import { createDisplayTree, TreeNode } from '../display-tree'
 import { Label } from '~/lib/transcript/labels'
 
 export default defineComponent({
@@ -22,7 +22,7 @@ export default defineComponent({
   },
   setup() {
 
-    type DisplayTreeT = Radix<NodeLabel<ItemGroup<Label>>>;
+    type DisplayTreeT = Radix<TreeNode<Label[]>>;
     const choicesRef: Ref<DisplayTreeT | null> = shallowRef(null);
 
     provide(ProvidedChoices, choicesRef)

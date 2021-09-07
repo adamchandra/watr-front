@@ -7,7 +7,7 @@ import {
 import { UnwrapRef } from '@nuxtjs/composition-api';
 
 export function getCursorPosition(elem: Element, event: MouseEvent): EventlibPoint {
-  const rect: DOMRect | ClientRect = elem.getBoundingClientRect()
+  const rect: DOMRect = elem.getBoundingClientRect()
   const x = event.clientX - rect.left
   const y = event.clientY - rect.top
   return { x, y };

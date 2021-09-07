@@ -12,11 +12,11 @@ export const ProvidedChoices = 'ProvidedChoices';
 
 import { Label } from '~/lib/transcript/labels';
 import {
-  ItemGroup, NodeLabel, queryAndUpdateDisplayTree, renderDisplayTree, RenderedGroup, RenderedItem, span
+  TreeNode, queryAndUpdateDisplayTree, renderDisplayTree, RenderedGroup, RenderedItem, span
 } from './display-tree';
 import { getLabelProp } from '~/lib/transcript/tracelogs';
 
-type DisplayTreeT = Radix<NodeLabel<ItemGroup<Label>>>;
+type DisplayTreeT = Radix<TreeNode<Label[]>>;
 type RenderedGroupT = RenderedGroup<Label[]>;
 
 

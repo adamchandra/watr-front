@@ -42,7 +42,7 @@ export function showText0(
 
   const lineWidth = div.offsetWidth;
   const lineHeight = div.offsetHeight;
-  const sizes: Rect[] = _.map(text, (char, i) => {
+  const sizes: Rect[] = _.map(text, (_char, i) => {
     const charWidth = 10;
     const currX = atX + (i * charWidth);
 
@@ -79,7 +79,7 @@ export function showTextOrig(
   for (let i = 0; i < text.length; i++) {
     const char = text.charAt(i);
     // init += char;
-    const width = charWidthCache[char];
+    // const width = charWidthCache[char];
     // if (_.isNumber(width)) {
     //   const charWidth = width;
     //   const size: Rect = { kind: 'rect', x: currX, y: atY, width: charWidth, height: lineHeight };

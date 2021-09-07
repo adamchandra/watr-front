@@ -10,7 +10,6 @@ import {
 
 import * as d3 from 'd3-selection';
 
-import { StateArgs } from '~/components/basics/component-basics'
 import { EventlibCore } from '~/components/basics/eventlib-core';
 import { SuperimposedElements } from '~/components/basics/superimposed-elements';
 
@@ -26,7 +25,7 @@ export interface GlyphOverlays {
   // setGlyphOverlays: SetGlyphOverlays;
 }
 
-type Args = StateArgs & {
+type Args = {
   eventlibCore: EventlibCore;
   superimposedElements: SuperimposedElements;
   transcriptIndex: TranscriptIndex;

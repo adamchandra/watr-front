@@ -1,6 +1,6 @@
 import { prettyPrint } from '@watr/commonlib-shared';
 import _ from 'lodash';
-import { createDisplayTree, queryAndUpdateDisplayTree, renderDisplayTree, span, RenderedItem } from './display-tree';
+import { createDisplayTree, queryAndUpdateDisplayTree, renderDisplayTree, span, RenderedItem, renderItemTo } from './display-tree';
 
 interface Item {
   path: string[];
@@ -16,6 +16,16 @@ function item(p: string, title: string, tags: string): Item {
   };
 }
 
+const itemToString = (r0: RenderedItem) => renderItemTo<string[]>(
+  r0, (ri: RenderedItem, childs: string[][]) => {
+    const indented = _.flatMap(childs, c => '  ' + c);
+    return _.concat(
+      [`${ri.tag}${ri.text}`],
+      indented,
+    );
+  }
+);
+
 describe('Display Trees', () => {
   it('should define a tree', () => {
     const items = [
@@ -29,15 +39,16 @@ describe('Display Trees', () => {
       (it) => it.path,
     );
 
+    prettyPrint({ displayItemTree }, { depth: 12 });
+
     queryAndUpdateDisplayTree(
       displayItemTree,
-      'ct',
+      ':ct',
       function getItemTerms(item: Item): string[] {
         return _.concat(item.tags, item.title);
       }
     );
 
-    prettyPrint({ displayItemTree }, { depth: 12 });
 
     const rendered = renderDisplayTree(
       displayItemTree,
@@ -47,7 +58,8 @@ describe('Display Trees', () => {
       }
     );
 
-    prettyPrint({ rendered })
+    const rstr = rendered.map(t => itemToString(t.renderedItem))
+    prettyPrint({ rendered, rstr })
   });
 
 });

@@ -301,7 +301,7 @@ export function boxCenteredAt(p: Point, width: number, height: number) {
 }
 
 export function fromFigure(fig: any): AnyShape {
-  let shape;
+  let shape: AnyShape;
 
   if (fig.LTBounds) {
     shape = mk.fromArray(fig.LTBounds);

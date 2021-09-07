@@ -17,8 +17,8 @@ describe('Component Basics', () => {
 
     watch(dep1, (_nv, _ov, onCleanup: any) => {
       // this should not be triggered by dep2
-      const d1 = dep1.value
-      const d2 = dep2.value
+      // const d1 = dep1.value
+      // const d2 = dep2.value
       // putStrLn(`explicit watch(d1) triggered! dep1=${d1} dep2=${d2}`)
       onCleanup(() => {
         // Called just before the body of this watch is re-called
@@ -31,8 +31,8 @@ describe('Component Basics', () => {
 
     const stopD2 = watch(dep2, () => {
       // this should not be triggered by dep1
-      const d1 = dep1.value
-      const d2 = dep2.value
+      // const d1 = dep1.value
+      // const d2 = dep2.value
       // putStrLn(`explicit watch(d2) triggered! dep1=${d1} dep2=${d2}`)
     })
 
@@ -40,15 +40,15 @@ describe('Component Basics', () => {
     dep1.value = 10
 
     watchEffect(() => {
-      const d1 = dep1.value
-      const d2 = dep2.value
+      // const d1 = dep1.value
+      // const d2 = dep2.value
       // putStrLn(`implicit watch triggered! dep1=${d1} dep2=${d2}`)
     })
 
     watch(dep1, () => {
       // this should not be triggered by dep2
-      const d1 = dep1.value
-      const d2 = dep2.value
+      // const d1 = dep1.value
+      // const d2 = dep2.value
       // putStrLn(`explicit watch(d1)+options triggered! dep1=${d1} dep2=${d2}`)
       stopD2()
 
@@ -97,7 +97,7 @@ describe('Component Basics', () => {
       dep3.value = d3 + 1
 
       onCleanup(() => {
-        const dd3 = dep3.value
+        // const dd3 = dep3.value
         // putStrLn(`1. Cleanup on explicit watch(d3=${dd3}) triggered!`)
       })
     }, {

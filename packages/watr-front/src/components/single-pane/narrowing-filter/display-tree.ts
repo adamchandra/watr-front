@@ -9,63 +9,8 @@ import {
   radUnfold,
   radTraverseDepthFirst,
   radFoldUp,
-  // prettyPrint,
+  prettyPrint,
 } from '@watr/commonlib-shared';
-
-
-class VisibleCount {
-  private _visibleFlags: Bitset | undefined;
-  private _size: number;
-  private _descendantVis: number;
-
-
-  constructor(visibleFlags?: Bitset) {
-    this.descendantVis = 0;
-    this._visibleFlags = visibleFlags;
-    this._size = 0;
-  }
-
-  public set size(n: number) {
-    this._size = n;
-    this.setAllVisible(true);
-  }
-  public get size() {
-    return this._size;
-  }
-
-  public set descendantVis(n: number) {
-    this._descendantVis = n;
-  }
-  public get descendantVis() {
-    return this._descendantVis;
-  }
-
-  setVisible(i: number, b: boolean) {
-    if (this._visibleFlags !== undefined) {
-      this._visibleFlags.set(i, b ? 1 : 0);
-    }
-  }
-
-  setAllVisible(b: boolean) {
-    if (this._visibleFlags !== undefined) {
-      this._visibleFlags.clear();
-      this._visibleFlags.setRange(0, this.size-1, b ? 1 : 0);
-    }
-  }
-  public get ownVisible(): number {
-    return this._visibleFlags ? this._visibleFlags.cardinality() : 0;
-  };
-
-  public get totalVisible(): number {
-    return this.ownVisible + this.descendantVis;
-  }
-
-  filter<A>(items: A[]): A[] {
-    return _.filter(items, (_item, i) => {
-      return this._visibleFlags.get(i) === 1;
-    });
-  }
-}
 
 export interface RenderedItem {
   tag: string;
@@ -80,6 +25,7 @@ export interface RenderedGroup<T> {
   nodeData: T | undefined;
 }
 
+
 export function span(
   text: string,
   cls: string,
@@ -93,61 +39,102 @@ export function span(
   }
 }
 
-interface Node {
-  visibleCount: VisibleCount;
+abstract class Node {
+  visibleDescendantCount: number;
+
+  constructor() {
+    this.visibleDescendantCount = 0;
+  }
+
+  abstract get ownVisible(): number;
+
+  abstract get isDataNode(): boolean;
+  get isEmptyNode(): boolean { return !this.isDataNode; }
+
+  public get totalVisible(): number {
+    return this.ownVisible + this.visibleDescendantCount;
+  }
 }
 
-export interface DataNode<D> extends Node {
-  readonly kind: 'DataNode';
-  data: D;
+export class DataNode<D> extends Node {
+  // public readonly kind: 'DataNode';
+  private _flags: Bitset;
+  private _itemCount: number;
+  public data: D;
+
+  constructor(d: D) {
+    super();
+    this._flags = new Bitset;
+    this._itemCount = 0;
+    this.data = d;
+  }
+  setVisible(i: number, b: boolean) {
+    this._flags.set(i, b ? 1 : 0);
+  }
+  setAllVisible(b: boolean) {
+    this._flags.clear();
+    this._flags.setRange(0, this._itemCount - 1, b ? 1 : 0);
+  }
+
+  public get ownVisible(): number {
+    return this._flags.cardinality();
+  };
+
+  public set itemCount(n: number) {
+    this._itemCount = n;
+    this.setAllVisible(true);
+  }
+  public get itemCount() {
+    return this._itemCount;
+  }
+
+  filter<A>(items: A[]): A[] {
+    return _.filter(items, (_item, i) => {
+      return this._flags.get(i) === 1;
+    });
+  }
+
+  get isDataNode(): boolean {
+    return true;
+  }
 }
-export interface EmptyNode extends Node {
-  readonly kind: 'EmptyNode';
+export class EmptyNode extends Node {
+  // public readonly kind: 'EmptyNode';
+
+  constructor() {
+    super();
+  }
+
+  public get ownVisible(): number {
+    return 0;
+  };
+  get isDataNode(): boolean {
+    return false;
+  }
 }
 
-export type NodeLabel<D> = EmptyNode | DataNode<D>;
-
-
-export interface ItemGroup<ItemT> {
-  items: ItemT[];
-}
-
+export type TreeNode<D> = EmptyNode | DataNode<D>;
 
 export function createDisplayTree<ItemT>(
   items: ItemT[],
   itemPath: (a: ItemT) => string[],
-): Radix<NodeLabel<ItemGroup<ItemT>>> {
-  type GroupT = ItemGroup<ItemT>;
-  type NodeT = NodeLabel<GroupT>;
+): Radix<TreeNode<ItemT[]>> {
+  type GroupT = ItemT[];
+  type NodeT = TreeNode<GroupT>;
 
   const labelRadix = createRadix<NodeT>();
   _.each(items, (item) => {
     const path = itemPath(item);
-    // const ltags = getLabelProp(label, 'tags');
 
     radUpsert<NodeT>(labelRadix, path, (prevSel?: NodeT) => {
-      if (prevSel === undefined) {
-        const visibleFlags = new Bitset;
-        return {
-          kind: 'DataNode',
-          data: {
-            items: [item],
-          },
-          visibleCount: new VisibleCount(visibleFlags)
-        };
-      }
-      if (prevSel.kind === 'EmptyNode') {
-        const visibleFlags = new Bitset;
-        return {
-          kind: 'DataNode',
-          data: {
-            items: [item],
-          },
-          visibleCount: new VisibleCount(visibleFlags)
-        };
+      if (prevSel === undefined || prevSel.isEmptyNode) {
+        return new DataNode<ItemT[]>([item]);
       }
 
-      prevSel.data.items.push(item);
+      if (prevSel.isDataNode) {
+
+      prevSel.data.push(item);
+      }
 
       return prevSel;
     });
@@ -155,13 +142,12 @@ export function createDisplayTree<ItemT>(
   });
 
   radTraverseDepthFirst<NodeT>(labelRadix, (_path, data, _childCount, node) => {
+    prettyPrint({ msg: 'traversing', data, node })
     if (data === undefined) {
-      node.data = {
-        kind: 'EmptyNode',
-        visibleCount: new VisibleCount()
-      };
+      node.data = new EmptyNode();
     } else if (data.kind === 'DataNode') {
-      data.visibleCount.size = data.data.items.length;
+      console.log('setting item count')
+      data.itemCount = data.data.length;
     }
   });
 
@@ -169,59 +155,57 @@ export function createDisplayTree<ItemT>(
 }
 
 export function queryAndUpdateDisplayTree<ItemT>(
-  displayTree: Radix<NodeLabel<ItemGroup<ItemT>>>,
+  displayTree: Radix<TreeNode<ItemT[]>>,
   queryString: string,
   getItemTerms: (item: ItemT) => string[],
 ): void {
-  type GroupT = ItemGroup<ItemT>;
-  type NodeT = NodeLabel<GroupT>;
+  type GroupT = ItemT[];
+  type NodeT = TreeNode<GroupT>;
 
   const queryTerms = queryString.trim().split(/[ ]+/g).map(t => t.toLowerCase());
   const showAll = queryTerms.length === 0;
 
   radFoldUp<NodeT, number>(displayTree, (path, { nodeData, childResults }) => {
-    const {  visibleCount } = nodeData;
-    visibleCount.descendantVis = _.sum(_.concat(childResults, 0));
+    nodeData.visibleDescendantCount = _.sum(_.concat(childResults, 0));
 
     if (nodeData.kind === 'DataNode') {
-      const { data: { items } } = nodeData;
+      const { data } = nodeData;
       if (showAll) {
-        visibleCount.setAllVisible(true);
+        nodeData.setAllVisible(true);
       } else {
         const pathTerms = path.map(s => s.toLowerCase());
         const attrQuery = queryTerms.filter(t => t.startsWith(':')).map(t => t.slice(1));
         const pathQuery = queryTerms.filter(t => !t.startsWith(':'));
-        _.each(items, (item, i) => {
+        _.each(data, (item, i) => {
           const itemTerms = getItemTerms(item).map(s => s.toLowerCase());
-          const termMatch = attrQuery.length===0 || _.every(attrQuery, qt => {
+          const termMatch = attrQuery.length === 0 || _.every(attrQuery, qt => {
             return _.some(itemTerms, it => it.includes(qt));
           });
-          const pathMatch = pathQuery.length===0 || _.every(pathQuery, qt => {
+          const pathMatch = pathQuery.length === 0 || _.every(pathQuery, qt => {
             return _.some(pathTerms, it => it.includes(qt));
           });
           const setBit = termMatch && pathMatch;
-          visibleCount.setVisible(i, setBit);
+          nodeData.setVisible(i, setBit);
         });
       }
     }
 
-    return visibleCount.totalVisible;
+    return nodeData.totalVisible;
   });
 }
 
 export function renderDisplayTree<ItemT>(
-  displayTree: Radix<NodeLabel<ItemGroup<ItemT>>>,
+  displayTree: Radix<TreeNode<ItemT[]>>,
   renderDataNode: (items: ItemT[]) => RenderedItem,
 ): Array<RenderedGroup<ItemT[]>> {
 
   const renderedGroups: RenderedGroup<ItemT[]>[][] = radUnfold(displayTree, (path, nodeData) => {
-    const { visibleCount } = nodeData;
 
     if (path.length === 0) return [];
-    if (visibleCount.totalVisible === 0) return [];
+    if (nodeData.totalVisible === 0) return [];
 
-    const childVis = visibleCount.descendantVis;
-    const ownVis = visibleCount.ownVisible;
+    const childVis = nodeData.visibleDescendantCount;
+    const ownVis = nodeData.ownVisible;
 
     const leveln = (path.length - 1) * 2;
 
@@ -235,13 +219,13 @@ export function renderDisplayTree<ItemT>(
       nodeData: undefined,
     };
 
-    if (nodeData.kind === 'DataNode' && visibleCount.ownVisible > 0) {
-      const { items } = nodeData.data;
+    if (nodeData.kind === 'DataNode' && nodeData.ownVisible > 0) {
+      const items = nodeData.data;
 
-      const visibleItems = visibleCount.filter(items);
+      const visibleItems = nodeData.filter(items);
 
       const nodeRender = {
-        level: leveln+1,
+        level: leveln + 1,
         renderedItem: renderDataNode(visibleItems),
         nodeData: visibleItems,
       };
@@ -257,4 +241,28 @@ export function renderDisplayTree<ItemT>(
     _.flatten(renderedGroups),
     v => v !== undefined
   );
+}
+
+export function renderItemTo<U>(
+  ritem: RenderedItem, f: (ritem: RenderedItem, uchilds: U[]) => U
+): U {
+  function traverseDF(init: RenderedItem, f: (ri: RenderedItem, rchildCount: number) => void): void {
+    function _loop(rcurr: RenderedItem) {
+      f(rcurr, rcurr.children.length);
+      rcurr.children.forEach(rchild => _loop(rchild));
+    }
+    _loop(init);
+  };
+  const rstack: [RenderedItem, number][] = [];
+
+  traverseDF(ritem, (ri, rchilds) => rstack.push([ri, rchilds]));
+  const ustack: U[] = [];
+  while (rstack.length > 0) {
+    const [rtop, rchilds] = rstack.pop();
+    const childResults = ustack.splice(0, rchilds);
+    const ures = f(rtop, childResults);
+    ustack.unshift(ures);
+  }
+
+  return ustack[0];
 }

@@ -7,14 +7,12 @@ import { ref, Ref } from '@nuxtjs/composition-api'
 import { useEventlibCore } from '~/components/basics/eventlib-core'
 import { useEventlibSelect } from '~/components/basics/eventlib-select'
 import { EMouseEvent, MouseHandlerInit } from '~/lib/EventlibHandlers'
-import { initState } from '~/components/basics/component-basics'
 
 import { useSuperimposedElements, ElementTypes } from '~/components/basics/superimposed-elements'
 import { BBox } from '~/lib/coord-sys'
 
 function setup() {
   const mountPoint = ref(null)
-  const state = initState()
   const mouseActivity = ref('<none>')
   const mouseActivityLog = ref(['<none>'])
   let selectionRef: Ref<BBox|null> = ref(null)
@@ -41,7 +39,7 @@ function setup() {
 
     const superimposedElements = await useSuperimposedElements({ includeElems: [ElementTypes.Img, ElementTypes.Svg], mountPoint  })
 
-    const eventlibSelect = useEventlibSelect({ eventlibCore, superimposedElements, state })
+    const eventlibSelect = useEventlibSelect({ eventlibCore, superimposedElements });
 
     selectionRef = eventlibSelect.selectionRef
 

@@ -1,38 +1,37 @@
 import _ from 'lodash'
-import { prettyPrint } from '@watr/commonlib-shared';
-import { makeGlyphReprs } from './gen-testdata';
+// import { makeGlyphReprs } from './gen-testdata';
 import { Transcript } from './transcript'
 import { isIsomorphic } from '~/lib/codec-utils'
 
 
 describe('Transcripts', () => {
 
-  const pageTexts = [[
-    'H2O I+',
-    'eﬃcient'
-  ], [
-    'Fourscore And',
-    'Seven Years'
-  ]]
+  // const pageTexts = [[
+  //   'H2O I+',
+  //   'eﬃcient'
+  // ], [
+  //   'Fourscore And',
+  //   'Seven Years'
+  // ]]
 
-  const page1 = {
-    page: 1,
-    bounds: [0, 0, 100, 200],
-    // text: pageTexts[0],
+  // const page1 = {
+  //   page: 1,
+  //   bounds: [0, 0, 100, 200],
+  //   // text: pageTexts[0],
 
-    glyphs: _.map(pageTexts[0], textLine => makeGlyphReprs(textLine)),
+  //   glyphs: _.map(pageTexts[0], textLine => makeGlyphReprs(textLine)),
 
-    fonts: [
-      [['font-id3', [0, 3]], ['font-id2', [4, 1]], ['font-id0', [5, 1]]]
-    ]
-  };
+  //   fonts: [
+  //     [['font-id3', [0, 3]], ['font-id2', [4, 1]], ['font-id0', [5, 1]]]
+  //   ]
+  // };
 
-  const sampleTranscript = {
-    documentId: 'doc-25-id',
-    pages: [page1],
-    stanzas: [],
-    labels: []
-  };
+  // const sampleTranscript = {
+  //   documentId: 'doc-25-id',
+  //   pages: [page1],
+  //   stanzas: [],
+  //   labels: []
+  // };
 
   // de-hyphenated text e.g., "in-" "tend" with line break
   //   TODO: should this be handled within glyph class?
@@ -48,17 +47,17 @@ describe('Transcripts', () => {
   });
 
   it('links between text sections', () => {
-    const bodyGlyphs = [
-      4,
-      { kind: 'link', ref: 32 },
-      5, 6,
-      { kind: '/link' },
-      7,
-    ];
-    const referenceGlyphs = [
-      { kind: 'anchor/', id: 32 },
-      5, 6, 7,
-    ];
+    // const bodyGlyphs = [
+    //   4,
+    //   { kind: 'link', ref: 32 },
+    //   5, 6,
+    //   { kind: '/link' },
+    //   7,
+    // ];
+    // const referenceGlyphs = [
+    //   { kind: 'anchor/', id: 32 },
+    //   5, 6, 7,
+    // ];
     // Link body text to reference
     // Link from body text to separate stanza representing inset math
   });
@@ -68,29 +67,29 @@ describe('Transcripts', () => {
   });
   it('tracelog shapes', () => {
     // base/top/midline, left/right column points/lines
-    const glyphLineLabel = {
-      name: 'GlyphLine', range: [{ unit: 'page', at: 3 }], children: [
-        {
-          name: 'OuterRect', range: [{ unit: 'shape', at: [10, 10, 40, 8] }], children: [
-            { name: 'TopLine', range: [{ unit: 'shape', at: [[10, 10], [40, 10]] }] },
-            { name: 'MidLine', range: [{ unit: 'shape', at: [[10, 20], [40, 20]] }] },
-            { name: 'Glyphs', range: [{ unit: 'text:glyph', at: [23, 24, 12, 34, 22] }] },
-          ]
-        }
-      ]
-    };
+    // const glyphLineLabel = {
+    //   name: 'GlyphLine', range: [{ unit: 'page', at: 3 }], children: [
+    //     {
+    //       name: 'OuterRect', range: [{ unit: 'shape', at: [10, 10, 40, 8] }], children: [
+    //         { name: 'TopLine', range: [{ unit: 'shape', at: [[10, 10], [40, 10]] }] },
+    //         { name: 'MidLine', range: [{ unit: 'shape', at: [[10, 20], [40, 20]] }] },
+    //         { name: 'Glyphs', range: [{ unit: 'text:glyph', at: [23, 24, 12, 34, 22] }] },
+    //       ]
+    //     }
+    //   ]
+    // };
 
-    const leftColEvidence = {
-      name: 'LeftColEvidence', range: [{ unit: 'page', at: 3 }], children: [
-        {
-          name: 'ColEvidence', range: [
-            { unit: 'shape', at: [10, 10] },
-            { unit: 'shape', at: [20, 12] },
-            { unit: 'shape', at: [30, 14] },
-          ]
-        },
-      ]
-    };
+    // const leftColEvidence = {
+    //   name: 'LeftColEvidence', range: [{ unit: 'page', at: 3 }], children: [
+    //     {
+    //       name: 'ColEvidence', range: [
+    //         { unit: 'shape', at: [10, 10] },
+    //         { unit: 'shape', at: [20, 12] },
+    //         { unit: 'shape', at: [30, 14] },
+    //       ]
+    //     },
+    //   ]
+    // };
   });
   it('hierarchical labels over spans of text (textgrid functionality)', () => {
   });

@@ -10,9 +10,9 @@ describe('Tweening support', () => {
   it('tweens bbox', async () => {
     const b1 = coords.mk.fromLtwh(10, 10, 100, 200)
     const b2 = coords.mk.fromLtwh(20, 30, 40, 40)
-    const p = tweenBBox(b1, b2, (curr) => {
+    const p = tweenBBox(b1, b2, (_curr) => {
       // prettyPrint({ m: 'Current', curr })
-    }).then((b) => {
+    }).then((_b) => {
       // prettyPrint({ m: 'Ending', b })
     })
 
@@ -36,7 +36,7 @@ describe('Tweening support', () => {
     const fini = anim0.finished
     anim0.play()
 
-    function doUpdate(obj: any, target: object) {
+    function doUpdate(_obj: any, _target: object) {
       // prettyPrint({ m: 'update', obj, target })
       return true
     }

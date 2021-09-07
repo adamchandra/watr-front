@@ -3,7 +3,6 @@
  */
 import _ from 'lodash';
 import * as d3 from 'd3-selection';
-import { Selection } from 'd3-selection';
 import { SelectionOrTransition } from 'd3-transition';
 
 
@@ -19,7 +18,6 @@ import { EMouseEvent, MouseHandlerInit } from '~/lib/EventlibHandlers';
 import { EventlibCore } from './eventlib-core';
 import { BBox, Point } from '~/lib/coord-sys';
 import * as d3x from '~/lib/d3-extras';
-import { StateArgs } from '~/components/basics/component-basics'
 const { initStroke, initFill, initRect } = d3x;
 
 import { SuperimposedElements } from './superimposed-elements';
@@ -38,7 +36,7 @@ export interface EventlibSelect {
   clickedPointRef: Ref<Point|null>;
 }
 
-type Args = StateArgs & {
+type Args = {
   superimposedElements: SuperimposedElements;
   eventlibCore: EventlibCore;
 };

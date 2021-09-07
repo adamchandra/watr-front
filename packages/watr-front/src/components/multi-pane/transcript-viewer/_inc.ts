@@ -20,7 +20,6 @@ import { Label, PageRange, Range } from '~/lib/transcript/labels'
 
 import NarrowingFilter from '~/components/single-pane/narrowing-filter/index.vue'
 import {
-  NarrowingChoice,
   ProvidedChoices,
 } from '~/components/single-pane/narrowing-filter/_inc'
 
@@ -36,7 +35,7 @@ import SplitScreen from '~/components/basics/splitscreen/index.vue'
 import { useInfoPane } from '~/components/single-pane/info-pane'
 import { getLabelProp  } from '~/lib/transcript/tracelogs'
 import { Radix, } from '@watr/commonlib-shared';
-import { createDisplayTree, ItemGroup, NodeLabel } from '~/components/single-pane/narrowing-filter/display-tree'
+import { createDisplayTree, TreeNode } from '~/components/single-pane/narrowing-filter/display-tree'
 
 interface AppState {
   showStanzaPane: boolean;
@@ -71,7 +70,7 @@ export default defineComponent({
 
     const showAllLabels: Ref<boolean> = ref(true);
 
-    type DisplayTreeT = Radix<NodeLabel<ItemGroup<Label>>>;
+    type DisplayTreeT = Radix<TreeNode<Label[]>>;
     const choicesRef: Ref<DisplayTreeT | null> = shallowRef(null);
     provide(ProvidedChoices, choicesRef)
 
@@ -135,7 +134,7 @@ export default defineComponent({
           return pageLabelRef;
         }));
 
-        const inits = _.map(transcript.pages, (_, pageNumber) => {
+        const inits = _.map(transcript.pages, async (_, pageNumber) => {
           const mount = document.createElement('div')
           pageImageListDiv.appendChild(mount)
           const mountPoint = divRef()
@@ -157,7 +156,7 @@ export default defineComponent({
 
       TETap(({ infoPane }) => infoPane.putStringLn('initialized page viewers')),
       TE.bind('stanzaViewers', ({ stanzaListDiv, transcript, transcriptIndex }) => {
-        const inits = _.map(transcript.stanzas, (_, stanzaNumber) => {
+        const inits = _.map(transcript.stanzas, async (_, stanzaNumber) => {
           const mount = document.createElement('div')
           const mountPoint = divRef()
           mountPoint.value = mount

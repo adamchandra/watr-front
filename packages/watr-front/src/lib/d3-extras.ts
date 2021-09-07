@@ -21,6 +21,7 @@ export function initRect<GElement extends BaseType, Datum, PElement extends Base
   sel: SelectionOrTransition<GElement, Datum, PElement, PDatum>,
   fbbox: (d: any) => BBox
 ) {
+
   sel.attr('x', d => fbbox(d).x)
     .attr('y', d => fbbox(d).y)
     .attr('width', d => fbbox(d).width)
