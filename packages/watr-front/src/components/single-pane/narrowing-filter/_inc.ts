@@ -1,10 +1,21 @@
 import _ from 'lodash';
 
-import { ref, watch, Ref, defineComponent, inject, SetupContext, shallowRef } from '@nuxtjs/composition-api';
+import {
+  ref,
+  watch,
+  Ref,
+  defineComponent,
+  inject,
+  SetupContext,
+  shallowRef
+} from '@nuxtjs/composition-api';
 
 import Bluebird from 'bluebird';
 
 import {
+  createRadix,
+  radFoldUp,
+  radInsert,
   Radix,
 } from '@watr/commonlib-shared';
 
@@ -12,8 +23,14 @@ export const ProvidedChoices = 'ProvidedChoices';
 
 import { Label } from '~/lib/transcript/labels';
 import {
-  TreeNode, queryAndUpdateDisplayTree, renderDisplayTree, RenderedGroup, RenderedItem, span
+  TreeNode,
+  queryAndUpdateDisplayTree,
+  renderDisplayTree,
+  RenderedGroup,
+  RenderedItem,
+  span
 } from './display-tree';
+
 import { getLabelProp } from '~/lib/transcript/tracelogs';
 
 type DisplayTreeT = Radix<TreeNode<Label[]>>;
@@ -22,13 +39,15 @@ type RenderedGroupT = RenderedGroup<Label[]>;
 
 function getLabelTerms(label: Label): string[] {
   const tags = getLabelProp(label, 'tags');
-  return _.concat(tags, label.name);
+  const fonts = getLabelProp(label, 'Fonts').map(s => s.toLowerCase());
+  return _.concat(tags, fonts, [label.name]);
 }
 
 function renderLabelGroup(labels: Label[]): RenderedItem {
   const head = labels[0];
   const allTags = _.flatten(labels.map(l => getLabelProp(l, 'tags')));
-  const tagSet = new Set<string>(allTags);
+  const allFonts = _.flatten(labels.map(l => getLabelProp(l, 'Fonts')));
+  const tagSet = new Set<string>(_.concat(allTags, allFonts));
   const name = head ? head.name : '???'
 
   const tagList = _.join(Array.from(tagSet), ', ');
@@ -36,6 +55,23 @@ function renderLabelGroup(labels: Label[]): RenderedItem {
   return span(nameDisp, 'label')
 }
 
+function renderAbbrevString(strings: string[]): string[] {
+  const abbrevRadix = createRadix<string>()
+  _.each(strings, str => {
+    const chars = str.split('');
+    radInsert(abbrevRadix, chars, str);
+  });
+
+  radFoldUp<boolean, string[]>(abbrevRadix, (path, { nodeData, childResults }) => {
+    const childAbbrev = `{${childResults.join('|')}}`
+    if (typeof nodeData === 'string') {
+      return [nodeData];
+    }
+  });
+
+
+  return [];
+}
 
 async function updateDisplay(
   choices: DisplayTreeT,
