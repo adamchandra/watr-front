@@ -7,7 +7,7 @@ import { SelectionOrTransition } from 'd3-transition';
 
 
 import {
-  ref,
+  ref as deepRef,
   Ref,
   reactive,
   toRefs,
@@ -46,8 +46,8 @@ export function useEventlibSelect({
   eventlibCore,
 }: Args) {
 
-  const selectionRef: Ref<BBox|null> = ref(null);
-  const clickedPointRef: Ref<Point|null> = ref(null);
+  const selectionRef: Ref<BBox|null> = deepRef(null);
+  const clickedPointRef: Ref<Point|null> = deepRef(null);
 
   const svgLayer = superimposedElements.overlayElements.svg!;
   const svgSelect = d3.select(svgLayer);

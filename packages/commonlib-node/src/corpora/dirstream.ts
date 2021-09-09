@@ -45,7 +45,7 @@ export function getDirWalkerStream(
     return emptyStream;
   }
 
-  const stack: DirStackEntry[] = [{ fullpath: root, expanded: false, files: [] }];
+  let stack: DirStackEntry[] = [{ fullpath: root, expanded: false, files: [] }];
 
   function expand(): DirStackEntry | undefined {
     let top = _.last(stack)
@@ -75,8 +75,10 @@ export function getDirWalkerStream(
         .value();
 
       top.expanded = true;
-      top.files.push(...fileNames)
-      stack.push(...dirNames);
+      // top.files.push(...fileNames)
+      top.files = _.concat(top.files, fileNames);
+      // stack.push(...dirNames);
+      stack = _.concat(stack, dirNames);
       top = _.last(stack)
     }
     const next = stack.pop();

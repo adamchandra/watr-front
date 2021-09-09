@@ -17,6 +17,12 @@ import { Label } from './labels';
 
 type RTreeIndexKey = string;
 
+export type RenderStanzaOpts = {
+  indexGranularity: 'char' | 'line' | 'none',
+  lineBegin?: number,
+  lineCount?: number
+};
+
 export interface TranscriptIndexable<T> extends RTreeIndexable {
   cargo: T;
   // cross-ref for other indexed rects corresponding to this one
@@ -38,7 +44,6 @@ export class TranscriptIndex {
 
   constructor(t: Transcript) {
     const p0l0 = t.pages[0].labels[0];
-    console.log('page0/label0', p0l0);
 
     this.transcript = t;
     this.indexes = {};
@@ -51,7 +56,7 @@ export class TranscriptIndex {
   initPageRTrees(): void {
     const { pages } = this.transcript;
     _.each(pages, (page, pageNumber) => {
-      _.each(page.labels, l => l.range.unshift({unit: 'page', at: pageNumber}));
+      _.each(page.labels, l => l.range.unshift({ unit: 'page', at: pageNumber }));
       const primaryKey = `page#${page.page}/glyphs`;
       const rtree = new RBush<TranscriptIndexable<Glyph>>()
       this.indexes[primaryKey] = rtree;
@@ -60,7 +65,7 @@ export class TranscriptIndex {
   initIndexables(): void {
     const { pages } = this.transcript;
     _.each(pages, (page, pageNumber) => {
-      _.each(page.labels, l => l.range.unshift({unit: 'page', at: pageNumber}));
+      _.each(page.labels, l => l.range.unshift({ unit: 'page', at: pageNumber }));
 
       const primaryKey = `page#${page.page}/glyphs`;
       const pageIndexables = _.map(page.glyphs, (glyph) => {
@@ -99,8 +104,16 @@ export class TranscriptIndex {
     return matchingLabels;
   }
 
-  public indexStanza(stanzaIndex: number, putTextLn: PutTextLn): Rect {
+  public indexStanza(
+    stanzaIndex: number,
+    putTextLn: PutTextLn,
+    opts: RenderStanzaOpts
+  ): Rect {
+    const { indexGranularity, lineBegin, lineCount } = opts;
     const stanza = this.transcript.stanzas[stanzaIndex];
+
+    const lbegin = lineBegin === undefined ? 0 : lineBegin;
+    const lend = lineCount === undefined ? stanza.lines.length : lbegin + lineCount;
 
     const primaryKey = `stanza#${stanzaIndex}`;
     const rtree = new RBush<TranscriptIndexable<string | number>>()
@@ -108,6 +121,9 @@ export class TranscriptIndex {
     let maxWidth = 0;
     let totalHeight = 0;
     _.each(stanza.lines, (line, lineNum) => {
+      const lineInRange = lbegin <= lineNum && lineNum < lend;
+      if (!lineInRange) return;
+
       const lineDimensions = putTextLn(lineNum, line.text);
       maxWidth = Math.max(maxWidth, lineDimensions.width);
       totalHeight += lineDimensions.height;

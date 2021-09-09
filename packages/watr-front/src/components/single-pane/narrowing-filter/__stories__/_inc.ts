@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-import { defineComponent, provide, Ref, shallowRef } from '@nuxtjs/composition-api'
+import { defineComponent, provide, Ref, shallowRef,  markRaw } from '@nuxtjs/composition-api'
 import NarrowingFilter from '../index.vue'
 import { ProvidedChoices } from '../_inc'
 import { getLabelProp } from '~/lib/transcript/tracelogs'
@@ -23,12 +23,15 @@ export default defineComponent({
   setup() {
 
     type DisplayTreeT = Radix<TreeNode<Label[]>>;
-    const choicesRef: Ref<DisplayTreeT | null> = shallowRef(null);
+    const choicesRef: Ref<DisplayTreeT | null > = shallowRef(null);
+    const selectionRef: Ref<Label[]> = shallowRef([]);
 
     provide(ProvidedChoices, choicesRef)
 
     const onItemsSelected = (selection: any[]) => {
       console.log('we got items!', selection)
+      markRaw(selection);
+      selectionRef.value = selection;
     }
 
     const entryId = 'austenite.pdf.d';
@@ -46,6 +49,8 @@ export default defineComponent({
           }
         );
 
+        markRaw(displayTree);
+
         choicesRef.value = displayTree;
       }),
       TE.mapLeft(errors => {
@@ -57,6 +62,7 @@ export default defineComponent({
     return {
       onItemsSelected,
       choicesRef,
+      selectionRef
     }
   }
 })

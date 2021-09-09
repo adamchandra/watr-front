@@ -1,5 +1,5 @@
 import {
-  ref,
+  ref as deepRef,
   Ref
 } from '@nuxtjs/composition-api'
 
@@ -17,8 +17,8 @@ import { Label } from '~/lib/transcript/labels';
 
 export default {
   setup() {
-    const mountPoint: Ref<HTMLDivElement | null> = ref(null)
-    const showAllLabels: Ref<boolean> = ref(false);
+    const mountPoint: Ref<HTMLDivElement | null> = deepRef(null)
+    const showAllLabels: Ref<boolean> = deepRef(false);
 
     const entryId = getURLQueryParam('id') || 'missing-id';
     const pageNumber = 1;

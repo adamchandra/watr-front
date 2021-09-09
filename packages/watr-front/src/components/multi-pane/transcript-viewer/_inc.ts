@@ -5,7 +5,7 @@ import {
   SetupContext,
   provide,
   Ref,
-  ref,
+  ref as deepRef,
   shallowRef
 } from '@nuxtjs/composition-api'
 
@@ -33,7 +33,7 @@ import { getQueryParam } from '~/lib/url-utils'
 
 import SplitScreen from '~/components/basics/splitscreen/index.vue'
 import { useInfoPane } from '~/components/single-pane/info-pane'
-import { getLabelProp  } from '~/lib/transcript/tracelogs'
+import { getLabelProp } from '~/lib/transcript/tracelogs'
 import { Radix, } from '@watr/commonlib-shared';
 import { createDisplayTree, TreeNode } from '~/components/single-pane/narrowing-filter/display-tree'
 
@@ -68,7 +68,7 @@ export default defineComponent({
     const selectionFilterDiv = divRef()
     const infoPaneDiv = divRef()
 
-    const showAllLabels: Ref<boolean> = ref(true);
+    const showAllLabels: Ref<boolean> = deepRef(true);
 
     type DisplayTreeT = Radix<TreeNode<Label[]>>;
     const choicesRef: Ref<DisplayTreeT | null> = shallowRef(null);
@@ -85,7 +85,7 @@ export default defineComponent({
       _.each(pageNumbers, p => {
         const group = grouped[p];
         const glabels = _.map(group, g => g[0]);
-        pageLabelRefs[p].value = glabels;
+        pageLabelRefs[p].value = VC.markRaw(glabels);
       });
     }
 
@@ -118,19 +118,20 @@ export default defineComponent({
 
       TE.bind('pageViewers', ({ entryId, pageImageListDiv, transcript, transcriptIndex, infoPane }) => {
 
-        const allPageLabels = transcriptIndex.getLabels([])
+        const allPageLabels = transcriptIndex.getLabels([]);
 
         const displayTree = createDisplayTree<Label>(
           allPageLabels,
           (label: Label) => {
-            return _.concat(getLabelProp(label, 'outline'), 'LB.'+label.name);
+            return _.concat(getLabelProp(label, 'outline'), 'LB.' + label.name);
           }
         );
+        VC.markRaw(displayTree);
 
         choicesRef.value = displayTree;
 
         pageLabelRefs.push(..._.map(transcript.pages, () => {
-          const pageLabelRef: Ref<Label[]> = ref([]);
+          const pageLabelRef: Ref<Label[]> = shallowRef([]);
           return pageLabelRef;
         }));
 
@@ -162,7 +163,13 @@ export default defineComponent({
           mountPoint.value = mount
           stanzaListDiv.appendChild(mount)
           return useStanzaViewer({ mountPoint })
-            .then(stanzaViewer => stanzaViewer.showStanza(transcriptIndex, stanzaNumber));
+            .then(stanzaViewer => stanzaViewer.showStanza(
+              transcriptIndex,
+              stanzaNumber, {
+              indexGranularity: 'none',
+              lineBegin: 0,
+              lineCount: 10
+            }));
         });
 
         return () => Promise.all(inits).then(E.right);

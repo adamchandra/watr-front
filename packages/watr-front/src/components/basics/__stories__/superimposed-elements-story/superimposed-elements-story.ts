@@ -1,5 +1,5 @@
 import {
-  ref,
+  ref as deepRef,
   Ref
 } from '@nuxtjs/composition-api'
 
@@ -7,7 +7,7 @@ import { useSuperimposedElements, ElementTypes } from '~/components/basics/super
 
 export default {
   setup() {
-    const mountPoint: Ref<HTMLDivElement|null> = ref(null)
+    const mountPoint: Ref<HTMLDivElement|null> = deepRef(null)
 
     const run = async() => {
       const elemOverlay = await useSuperimposedElements({

@@ -1,19 +1,22 @@
-import 'chai/register-should'
 import _ from 'lodash'
 
 import {
-  ref,
+  ref as deepRef,
   watchEffect,
-  watch
+  watch,
+  Ref,
+  isReactive,
+  markRaw
 } from '@nuxtjs/composition-api'
 
 import { watchAll } from './component-basics'
+import { prettyPrint } from '@watr/commonlib-shared';
 
 describe('Component Basics', () => {
 
-  it('testing watch', () => {
-    const dep1 = ref(1)
-    const dep2 = ref(2)
+  it('should testing watch', () => {
+    const dep1 = deepRef(1)
+    const dep2 = deepRef(2)
 
     watch(dep1, (_nv, _ov, onCleanup: any) => {
       // this should not be triggered by dep2
@@ -65,7 +68,7 @@ describe('Component Basics', () => {
 
   it('watchAll should signal the truthiness of all inputs', () => {
     const ns = _.range(0, 4)
-    const rs = _.map(ns, () => ref(false))
+    const rs = _.map(ns, () => deepRef(false))
 
     const allDone = watchAll(rs)
 
@@ -84,7 +87,7 @@ describe('Component Basics', () => {
   })
 
   it('testing watch with self-stopping, only works with lazy=true', () => {
-    const dep3 = ref(3)
+    const dep3 = deepRef(3)
     // self-stopping?
     const stopMe = watch(dep3, (_nv, _ov, onCleanup: any) => {
       // this should not be triggered by dep2
@@ -105,9 +108,53 @@ describe('Component Basics', () => {
       immediate: false,
       deep: false
       // flush: 'pre',
-    })
+    });
 
     dep3.value = 1
-  })
+  });
+
+  interface Foo {
+    n: number;
+    s: string;
+  }
+
+  function foo(n: number, s: string): Foo {
+    return { n, s };
+  }
+
+  it.only('should ensure that shallow refs do not walk arrays/objects', (done) => {
+
+    const ary = [foo(1, 'one'), foo(2, 'two')];
+
+    prettyPrint({
+      ary,
+      isReactive: isReactive(ary)
+    });
+
+
+    markRaw(ary)
+    const aryRef: Ref<Foo[]> = deepRef([]);
+
+    prettyPrint({
+      ary,
+      isReactive: isReactive(ary)
+    });
+
+    watch(aryRef, (ary0) => {
+      // if (ary0 === null) return;
+
+      prettyPrint({
+        msg: 'inside watch',
+        ary,
+        ary0,
+        isReactive: isReactive(ary),
+        isReactive0: isReactive(ary0)
+      });
+
+      done();
+    });
+
+    aryRef.value = ary;
+  });
 
 });

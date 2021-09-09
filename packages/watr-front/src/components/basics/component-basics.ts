@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import {
   Ref,
-  ref,
+  ref as deepRef,
   watch,
   reactive,
   toRefs,
@@ -54,7 +54,7 @@ export function watchAll(rs?: Ref<any>[]): any {
   }));
 
   const curr = rs;
-  const next = ref(0);
+  const next = deepRef(0);
   const state = toRefs(reactive({
     done: false,
     len: rs.length,
@@ -68,7 +68,7 @@ export function watchAll(rs?: Ref<any>[]): any {
       return;
     }
 
-    const startFlag = ref(false);
+    const startFlag = deepRef(false);
     const rhead = curr.shift()!;
 
     const stopInner = watch([rhead, startFlag], () => {
@@ -90,7 +90,6 @@ export function watchAll(rs?: Ref<any>[]): any {
 
   return state;
 }
-
 
 export async function resolveWhen<T>(t: T, ...refs: Ref<any>[]): Promise<T> {
   return new Promise((resolve) => {

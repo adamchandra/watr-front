@@ -6,7 +6,7 @@ import _ from 'lodash'
 import {
   reactive,
   Ref,
-  ref,
+  ref as deepRef,
   watch,
   UnwrapRef
 } from '@nuxtjs/composition-api';
@@ -21,9 +21,8 @@ import {
   EventlibPoint,
   getCursorPosition,
 } from '~/lib/EventlibHandlers';
+
 import { RTreeIndexable } from './rtree-search';
-
-
 
 export interface EventlibCore {
   mousePosRef: UnwrapRef<EventlibPoint>;
@@ -45,7 +44,7 @@ export async function useEventlibCore({
   })
 
   const eventRTree: RBush<RTreeIndexable> = new RBush<RTreeIndexable>()
-  const handlerQueue: Ref<MouseHandlerInit[]> = ref([])
+  const handlerQueue: Ref<MouseHandlerInit[]> = deepRef([])
 
   const targetDiv = await awaitRef(targetDivRef)
   targetDiv.addEventListener('mousemove', onMouseMove)

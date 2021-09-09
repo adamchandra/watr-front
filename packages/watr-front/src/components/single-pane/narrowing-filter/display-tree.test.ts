@@ -1,6 +1,6 @@
 import { prettyPrint } from '@watr/commonlib-shared';
 import _ from 'lodash';
-import { createDisplayTree, queryAndUpdateDisplayTree, renderDisplayTree, span, RenderedItem, renderItemTo } from './display-tree';
+import { createDisplayTree, queryAndUpdateDisplayTree, renderDisplayTree, span, RenderedItem, renderItemTo, renderAbbrevString } from './display-tree';
 
 interface Item {
   path: string[];
@@ -62,5 +62,15 @@ describe('Display Trees', () => {
     prettyPrint({ rendered, rstr })
   });
 
+  it.only('render abbrevs', () => {
+    const example = [
+      'page:0',
+      'page:1',
+      'page:11',
+    ];
+
+    const abbrevs = renderAbbrevString(example);
+    prettyPrint({ abbrevs });
+  });
 });
 

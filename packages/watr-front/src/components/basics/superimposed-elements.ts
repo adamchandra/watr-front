@@ -3,7 +3,7 @@ import _ from 'lodash';
 import {
   Ref,
   watch,
-  ref,
+  ref as deepRef,
 } from '@nuxtjs/composition-api';
 
 import { awaitRef } from '~/components/basics/component-basics'
@@ -71,12 +71,12 @@ export async function useSuperimposedElements({
   }
 
 
-  const dimensions: Ref<[number, number]> = ref([200, 500] as [number, number]);
+  const dimensions: Ref<[number, number]> = deepRef([200, 500] as [number, number]);
 
   const width = () => dimensions.value[0];
   const height = () => dimensions.value[1];
   const placeholderImage = () => `http://via.placeholder.com/${width()}x${height()}`;
-  const imgElemSource: Ref<string | null> = ref(null);
+  const imgElemSource: Ref<string | null> = deepRef(null);
 
   await awaitRef(mountPoint);
 

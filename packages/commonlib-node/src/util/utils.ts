@@ -1,6 +1,4 @@
 import _ from 'lodash';
-import path from 'path';
-import fs from 'fs-extra';
 
 export function getOrDie<T>(v: T | null | undefined, msg: string = 'null|undef'): T {
   if (v === null || v === undefined) {
@@ -8,36 +6,6 @@ export function getOrDie<T>(v: T | null | undefined, msg: string = 'null|undef')
   }
   return v;
 }
-
-export function fileOrUndef(file: string|undefined, ...ps: string[]): string|undefined {
-  let pres = file;
-  if (file) {
-    pres = path.resolve(...ps, file)
-    const exists = fs.existsSync(pres);
-    const valid = exists? fs.statSync(pres).isFile() : false;
-    if (valid) {
-      return pres;
-    }
-  }
-  return undefined;
-}
-
-
-// export function makeNowTimeString(): string {
-//   const now = new Date();
-//   const timeOpts = {
-//     timeStyle: 'medium',
-//     hour: '2-digit',
-//     minute: '2-digit',
-//     seconds: '2-digit',
-//     hour12: false,
-//   };
-//   const nowTime = now.toLocaleTimeString('en-US', timeOpts);
-
-//   const timestamp = nowTime.replace(/:/g, '.');
-//   return timestamp;
-// }
-
 
 export const delay = (t: number) => new Promise(resolve => setTimeout(resolve, t));
 

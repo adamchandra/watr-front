@@ -28,7 +28,12 @@ export default defineComponent({
           return errors;
         }),
         TE.map(({ transcriptIndex }) => {
-          showStanza(transcriptIndex, 0);
+          // TODO test out various indexGranularity values
+          showStanza(transcriptIndex, 0, {
+            indexGranularity: 'none',
+            // lineBegin: 0,
+            // lineCount: 20
+          });
         })
 
       );

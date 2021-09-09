@@ -1,21 +1,19 @@
 import _ from 'lodash';
 
 import {
-  ref,
+  ref as deepRef,
   watch,
   Ref,
   defineComponent,
   inject,
   SetupContext,
-  shallowRef
+  shallowRef,
+  isReactive
 } from '@nuxtjs/composition-api';
 
 import Bluebird from 'bluebird';
 
 import {
-  createRadix,
-  radFoldUp,
-  radInsert,
   Radix,
 } from '@watr/commonlib-shared';
 
@@ -28,7 +26,8 @@ import {
   renderDisplayTree,
   RenderedGroup,
   RenderedItem,
-  span
+  span,
+  renderAbbrevString
 } from './display-tree';
 
 import { getLabelProp } from '~/lib/transcript/tracelogs';
@@ -39,39 +38,18 @@ type RenderedGroupT = RenderedGroup<Label[]>;
 
 function getLabelTerms(label: Label): string[] {
   const tags = getLabelProp(label, 'tags');
-  const fonts = getLabelProp(label, 'Fonts').map(s => s.toLowerCase());
-  return _.concat(tags, fonts, [label.name]);
+  const fonts = getLabelProp(label, 'Fonts');
+  return _.concat(tags, fonts);
 }
 
 function renderLabelGroup(labels: Label[]): RenderedItem {
-  const head = labels[0];
-  const allTags = _.flatten(labels.map(l => getLabelProp(l, 'tags')));
-  const allFonts = _.flatten(labels.map(l => getLabelProp(l, 'Fonts')));
-  const tagSet = new Set<string>(_.concat(allTags, allFonts));
-  const name = head ? head.name : '???'
-
-  const tagList = _.join(Array.from(tagSet), ', ');
-  const nameDisp = `${name}   ${tagList}`;
+  const terms = _.flatten(labels.map(l => getLabelTerms(l)));
+  const tagSet = new Set<string>(terms);
+  const abbrevTags = renderAbbrevString(Array.from(tagSet));
+  const nameDisp = abbrevTags;
   return span(nameDisp, 'label')
 }
 
-function renderAbbrevString(strings: string[]): string[] {
-  const abbrevRadix = createRadix<string>()
-  _.each(strings, str => {
-    const chars = str.split('');
-    radInsert(abbrevRadix, chars, str);
-  });
-
-  radFoldUp<boolean, string[]>(abbrevRadix, (path, { nodeData, childResults }) => {
-    const childAbbrev = `{${childResults.join('|')}}`
-    if (typeof nodeData === 'string') {
-      return [nodeData];
-    }
-  });
-
-
-  return [];
-}
 
 async function updateDisplay(
   choices: DisplayTreeT,
@@ -83,7 +61,7 @@ async function updateDisplay(
 
   return delay.then(() => {
     queryAndUpdateDisplayTree(choices, query, (label) => {
-      return getLabelTerms(label);
+      return getLabelTerms(label).map(s => s.toLowerCase());
     });
     const renderedChoices = renderDisplayTree(choices, renderLabelGroup);
 
@@ -95,8 +73,8 @@ export default defineComponent({
   setup(_props, ctx: SetupContext) {
     const { emit } = ctx;
 
-    const currSelectionRef = ref([] as RenderedGroupT[])
-    const queryTextRef = ref('');
+    const currSelectionRef = shallowRef([] as RenderedGroupT[])
+    const queryTextRef = deepRef('');
 
     const choicesRef: Ref<DisplayTreeT | null> = inject(ProvidedChoices, shallowRef(null));
 
@@ -129,6 +107,8 @@ export default defineComponent({
         debounced(queryText);
       });
 
+    }, {
+      deep: false
     });
 
     return {

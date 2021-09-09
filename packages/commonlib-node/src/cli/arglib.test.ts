@@ -22,11 +22,11 @@ describe('Arglib tests', () => {
       yargs,
       'extract-abstracts',
       'run the abstract field extractors over htmls in corpus',
-      config(
+      config([
         opt.cwd,
         opt.existingDir('corpus-root: root directory for corpus files'),
         opt.ion('overwrite: force overwrite of existing files', { boolean: false })
-      )
+      ])
     )((args: any) => {
       // prettyPrint({ msg: 'success!', args });
     });
@@ -58,7 +58,7 @@ describe('Arglib tests', () => {
     return new Promise((resolve, reject) => {
       yargs.command(
         'testcmd', 'desc',
-        config(...fs),
+        config(fs),
         (argv: any) => resolve(argv)
       );
       const argtokens = args.split(' ');

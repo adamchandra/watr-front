@@ -11,7 +11,7 @@ export type ArgvApp = (ya: Argv) => Argv;
 
 export const YArgs = yargs;
 
-export function config(...fs: ArgvApp[]): ArgvApp {
+export function config(fs: ArgvApp[]): ArgvApp {
   return ya => _.reduce(fs, (acc, f) => f(acc), ya);
 }
 
@@ -141,7 +141,7 @@ export function registerCmd(
   return (cb: (parsedArgs: any) => void) => {
     useYargs.command(
       name, description,
-      config(...fs),
+      config(fs),
       (argv: any) => {
         if (_.isArray(argv.errors)) {
           const fullArgs = _.merge({}, argv);

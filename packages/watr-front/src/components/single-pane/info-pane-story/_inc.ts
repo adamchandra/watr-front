@@ -3,7 +3,7 @@ import _ from 'lodash'
 import {
   defineComponent,
   SetupContext,
-  ref,
+  ref as deepRef,
   watch,
 } from '@nuxtjs/composition-api'
 
@@ -20,7 +20,7 @@ export default defineComponent({
   setup(_props, _context: SetupContext) {
     const infoPaneDiv = divRef();
 
-    const inputText = ref('');
+    const inputText = deepRef('');
 
     const run = pipe(
       TE.right({}),

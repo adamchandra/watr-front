@@ -4,7 +4,7 @@ import {
   defineComponent,
   SetupContext,
   Ref,
-  ref,
+  ref as deepRef,
 } from '@nuxtjs/composition-api'
 
 import { pipe } from 'fp-ts/lib/function';
@@ -19,7 +19,7 @@ export default defineComponent({
       entries: []
     };
 
-    const corpusEntries: Ref<CorpusEntryList> = ref(emptyEntries);
+    const corpusEntries: Ref<CorpusEntryList> = deepRef(emptyEntries);
 
     const run = pipe(
       TE.right({}),

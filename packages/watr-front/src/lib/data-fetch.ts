@@ -5,6 +5,7 @@ import { PathReporter } from 'io-ts/lib/PathReporter'
 import { getArtifactData, getEntryList } from './axios';
 import * as io from 'io-ts'
 import { Transcript } from './transcript/transcript';
+import { markRaw } from '@nuxtjs/composition-api';
 
 export function fetchAndDecode<A, IO>(
   ioType: io.Type<A, IO, IO>,
@@ -29,7 +30,7 @@ export const fetchAndDecodeTranscript = (entryId: string): TE.TaskEither<string[
   const fetcher = () => getArtifactData<any>(entryId, 'transcript')
     .then(data => data === undefined ?
       E.left([`could not fetch transcript ${entryId}`])
-      : E.right(data));
+      : E.right(markRaw(data)));
 
   return fetchAndDecode(Transcript, fetcher);
 }

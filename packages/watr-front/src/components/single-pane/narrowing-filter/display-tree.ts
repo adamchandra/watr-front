@@ -154,7 +154,7 @@ export function createDisplayTree<ItemT>(
   radTraverseDepthFirst<NodeT>(labelRadix, (_path, data, _childCount, node) => {
     if (data === undefined) {
       node.data = emptyNode();
-    } else if (data.kind === 'DataNode') {
+    } else if (isDataNode(data)) {
       data.setItemCount(data.data.length);
     }
   });
@@ -227,7 +227,7 @@ export function renderDisplayTree<ItemT>(
       nodeData: undefined,
     };
 
-    if (nodeData.kind === 'DataNode' && nodeData.getOwnVisible() > 0) {
+    if (isDataNode(nodeData) && nodeData.getOwnVisible() > 0) {
       const items = nodeData.data;
 
       const visibleItems = nodeData.filter(items);
@@ -273,4 +273,46 @@ export function renderItemTo<U>(
   }
 
   return ustack[0];
+}
+
+export function renderAbbrevString0(strings: string[]): string {
+  const abbrevRadix = createRadix<number>()
+  _.each(strings, str => {
+    const chars = str.split('');
+    radUpsert(abbrevRadix, chars, (count) => count === undefined ? 1 : count + 1);
+  });
+
+  const abbrevs = radFoldUp<number, string>(abbrevRadix, (path, { nodeData, childResults }) => {
+    const childAbbrev = childResults.length > 1? `(${childResults.join('|')})` : childResults.join('');
+    // const childAbbrev = nodeData === undefined? childAbbrev_ : `.${childAbbrev_}`;
+    if (path.length > 0) {
+      const pathLast: string = _.last(path);
+      return `${pathLast}${childAbbrev}`;
+    }
+    return childAbbrev;
+  });
+
+
+  return abbrevs;
+}
+export function renderAbbrevString(strings: string[]): string {
+  const abbrevRadix = createRadix<number>()
+  _.each(strings, str => {
+    const chars = str.split('');
+    radUpsert(abbrevRadix, chars, (count) => count === undefined ? 1 : count + 1);
+  });
+
+  const abbrevs = radFoldUp<number, string>(abbrevRadix, (path, { nodeData, childResults }) => {
+    const childAbbrev = childResults.length > 1? ` ${childResults.join(' ')} ` : childResults.join('');
+    // const childAbbrev = nodeData === undefined? childAbbrev_ : `.${childAbbrev_}`;
+    if (path.length > 0) {
+      const pathLast: string = _.last(path);
+      return `${pathLast}${childAbbrev}`;
+    }
+    return childAbbrev;
+  });
+
+  const sortedAbbrevs = _.sortBy(_.uniq(abbrevs.split(/ +/)), s => s.length).reverse()
+
+  return sortedAbbrevs.join(' ');
 }

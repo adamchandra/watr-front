@@ -12,7 +12,9 @@
         <v-container>
             <v-row>
                 <v-col justify="space-between" cols="4">
-                    Control Panel
+                  <span>
+                    Selection Count: {{ selectionRef.length }}
+                  </span>
                 </v-col>
             </v-row>
         </v-container>
@@ -20,7 +22,7 @@
 
     <template v-slot:notes>
         <ul>
-            <li> Allow geometry based filtering along with text based </li>
+            <li> TODO: Allow geometry based filtering along with text based </li>
         </ul>
     </template>
 
