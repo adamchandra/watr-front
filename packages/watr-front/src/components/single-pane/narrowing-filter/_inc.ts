@@ -8,7 +8,6 @@ import {
   inject,
   SetupContext,
   shallowRef,
-  isReactive
 } from '@nuxtjs/composition-api';
 
 import Bluebird from 'bluebird';

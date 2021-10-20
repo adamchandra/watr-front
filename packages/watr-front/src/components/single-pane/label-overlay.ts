@@ -12,7 +12,7 @@ import { PdfPageViewer } from './page-viewer';
 import { useFlashlight } from '../basics/rtree-search';
 
 import { dimShapesFillStroke, highlightShapesFillStroke, labelToSVGs, removeShapes, updateSvgElement } from '~/lib/transcript-rendering';
-import { InfoPane } from './info-pane';
+import { InfoPane } from './info-pane/info-pane';
 import * as d3 from 'd3-selection';
 
 type Args = {

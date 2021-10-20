@@ -22,19 +22,19 @@ export function initRect<GElement extends BaseType, Datum, PElement extends Base
   fbbox: (d: any) => BBox
 ) {
 
-  sel.attr('x', d => fbbox(d).x)
-    .attr('y', d => fbbox(d).y)
-    .attr('width', d => fbbox(d).width)
-    .attr('height', d => fbbox(d).height);
+  sel.attr('x', d => fbbox(d).x);
+  sel.attr('y', d => fbbox(d).y);
+  sel.attr('width', d => fbbox(d).width);
+  sel.attr('height', d => fbbox(d).height);
 }
 
 export function initStroke<GElement extends BaseType, Datum, PElement extends BaseType, PDatum>(
   sel: SelectionOrTransition<GElement, Datum, PElement, PDatum>,
   stroke: string, strokeWidth: number, strokeOpacity: number
 ) {
-  sel.attr('stroke', stroke)
-    .attr('stroke-width', strokeWidth)
-    .attr('stroke-opacity', strokeOpacity);
+  sel.attr('stroke', stroke);
+  sel.attr('stroke-width', strokeWidth);
+  sel.attr('stroke-opacity', strokeOpacity);
 }
 
 export function initFill<GElement extends BaseType, Datum, PElement extends BaseType, PDatum>(
@@ -44,6 +44,7 @@ export function initFill<GElement extends BaseType, Datum, PElement extends Base
   sel.attr('fill', fill);
   sel.attr('fill-opacity', fillOpacity);
 }
+
 
 
 export function deriveLabelId(label: Label): string {

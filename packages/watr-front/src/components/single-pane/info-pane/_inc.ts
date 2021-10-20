@@ -12,7 +12,7 @@ import { divRef } from '~/lib/vue-composition-lib'
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';
 import * as E from 'fp-ts/lib/Either';
-import { useInfoPane } from '../info-pane';
+import { useInfoPane } from './info-pane';
 
 export default defineComponent({
   components: {},

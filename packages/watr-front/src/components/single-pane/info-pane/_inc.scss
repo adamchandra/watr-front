@@ -1,0 +1,19 @@
+.infoPane {
+    height: auto;
+    width: auto;
+
+    min-height: 3em;
+    min-width: 10em;
+
+    border: 2px solid black;
+
+    color: black;
+    .hoverable {
+        background-color: lightblue;
+    }
+
+    .hovering {
+        background-color: wheat;
+        border-bottom: 1px solid black;
+    }
+}

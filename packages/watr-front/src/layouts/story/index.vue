@@ -4,14 +4,18 @@
 
  .story-panels {
      width: 100%;
-     height: 100%;
 
      .story-panel {
-         width: 90%;
-         height: 100%;
+         min-width: 50%;
      }
      .control-panel {
-         height: 100%;
+         width: 100%;
+         .controls {
+
+         }
+         .notes {
+
+         }
      }
  }
 

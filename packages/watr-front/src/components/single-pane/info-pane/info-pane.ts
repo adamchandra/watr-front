@@ -6,12 +6,11 @@ import {
 import _ from 'lodash';
 import { Label } from '~/lib/transcript/labels';
 import { formatShape } from '~/lib/transcript/shapes';
-import { useMeasuredTextOverlay } from '../basics/measured-text-overlay';
 import { LineDimensions, TextStyle } from '~/lib/html-text-metrics';
 import { Promise as Bromise } from 'bluebird';
 import { useSuperimposedElements, ElementTypes } from '~/components/basics/superimposed-elements';
 import { deriveLabelId } from '~/lib/d3-extras';
-
+import { useMeasuredTextOverlay } from '~/components/basics/measured-text-overlay';
 
 type Args = {
   mountPoint: Ref<HTMLDivElement | null>;
@@ -49,7 +48,14 @@ export async function useInfoPane({
   });
 
   const mtext = useMeasuredTextOverlay({ superimposedElements });
-  superimposedElements.setDimensions(800, 1000);
+
+  mountPoint.value.onresize = function(_event: UIEvent) {
+    superimposedElements.setDimensions(
+      mountPoint.value.clientWidth,
+      mountPoint.value.clientHeight
+    );
+  };
+
   const actions: Ref<string[]> = ref([]);
 
   const reactiveTexts: ReactiveTexts = {
@@ -73,6 +79,7 @@ export async function useInfoPane({
   let textTopCurr = textTopInit;
 
 
+  // TODO move this showLabel function out of InfoPane class
   const showLabel = async (l: Label, doFreeze: boolean) => {
     await clearScreen();
     if (doFreeze) {

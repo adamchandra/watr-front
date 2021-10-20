@@ -5,7 +5,7 @@ import { ShapeSvg, shapeToSvg } from '~/lib/transcript/shapes';
 import * as d3 from 'd3-selection';
 import { deriveLabelId } from './d3-extras';
 
-export function initSVGDimensions(r: any) {
+function initSVGDimensions(r: any) {
   const shape = r.node().nodeName.toLowerCase();
 
   switch (shape) {
@@ -30,7 +30,7 @@ export function initSVGDimensions(r: any) {
         .attr('id', (d: any) => d.id)
         .attr('marker-start', () => 'url(#arrow)')
         .attr('marker-end', () => 'url(#arrow)')
-      ;
+        ;
     case 'path':
       return r.attr('d', (d: any) => d.d)
         .attr('id', (d: any) => d.id);
@@ -54,9 +54,7 @@ function setSVGColors(r: any) {
 }
 
 function setSVGClasses(r: any) {
-  return r
-    .classed('shape', true)
-    ;
+  return r.classed('shape', true);
 }
 
 export function labelToSVGs(label: Label, parentClasses: string[], forceEval: boolean): ShapeSvg[] {
@@ -93,12 +91,12 @@ export function labelToSVGs(label: Label, parentClasses: string[], forceEval: bo
     return [];
   });
 
-  const allShapes =  _.concat(localShapes, childShapes);
+  const allShapes = _.concat(localShapes, childShapes);
 
   return allShapes;
 }
 
-export function labelToTriggerSVG(label: Label, rootLabel: Label): ShapeSvg {
+function labelToTriggerSVG(label: Label, rootLabel: Label): ShapeSvg {
   const classStrings = label?.props?.['class'] || [];
   const isTrigger = _.some(classStrings, s => s === '=eager');
   // console.log('labelToTriggerSVG', label);
@@ -178,7 +176,7 @@ export function updateSvgElement(svgElement: SVGElement, svgShapes: ShapeSvg[]) 
         });
     });
 
-  dataSelection.exit().remove();
+  // dataSelection.exit().remove();
 
 }
 

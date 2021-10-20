@@ -11,6 +11,7 @@ export const storyItems: StoryEntry[] = [
   { title: 'App[Image+Stanza+Labels]', to: '/stories/autogen/transcriptViewer?id=austenite.pdf.d' },
   { title: 'Corpus Listing Browser', to: '/stories/autogen/corpusBrowser?' },
   { title: 'Info Pane / Logging Output', to: '/stories/autogen/infoPane?' },
+  { title: 'Label Drawing and Display', to: '/stories/autogen/labelDisplay?' },
   { title: 'Eventlib Core', to: '/stories/autogen/eventlibCore' },
   { title: 'Superimposed Elements Story', to: '/stories/autogen/superimposedElementsStory' },
   { title: 'Text Overlay', to: '/stories/autogen/textOverlay' },

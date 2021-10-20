@@ -282,9 +282,8 @@ export function renderAbbrevString0(strings: string[]): string {
     radUpsert(abbrevRadix, chars, (count) => count === undefined ? 1 : count + 1);
   });
 
-  const abbrevs = radFoldUp<number, string>(abbrevRadix, (path, { nodeData, childResults }) => {
-    const childAbbrev = childResults.length > 1? `(${childResults.join('|')})` : childResults.join('');
-    // const childAbbrev = nodeData === undefined? childAbbrev_ : `.${childAbbrev_}`;
+  const abbrevs = radFoldUp<number, string>(abbrevRadix, (path, { childResults }) => {
+    const childAbbrev = childResults.length > 1 ? `(${childResults.join('|')})` : childResults.join('');
     if (path.length > 0) {
       const pathLast: string = _.last(path);
       return `${pathLast}${childAbbrev}`;
@@ -302,8 +301,8 @@ export function renderAbbrevString(strings: string[]): string {
     radUpsert(abbrevRadix, chars, (count) => count === undefined ? 1 : count + 1);
   });
 
-  const abbrevs = radFoldUp<number, string>(abbrevRadix, (path, { nodeData, childResults }) => {
-    const childAbbrev = childResults.length > 1? ` ${childResults.join(' ')} ` : childResults.join('');
+  const abbrevs = radFoldUp<number, string>(abbrevRadix, (path, { childResults }) => {
+    const childAbbrev = childResults.length > 1 ? ` ${childResults.join(' ')} ` : childResults.join('');
     // const childAbbrev = nodeData === undefined? childAbbrev_ : `.${childAbbrev_}`;
     if (path.length > 0) {
       const pathLast: string = _.last(path);

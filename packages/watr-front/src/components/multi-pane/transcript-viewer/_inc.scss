@@ -1,4 +1,5 @@
 @import '~/assets/sass/inc/_solarized';
+@import '~/components/single-pane/info-pane/_inc';
 
 .transcriptViewer {
   height: 80vh;
@@ -44,19 +45,6 @@
           }
 
         }
-      }
-    }
-
-    .infoPane {
-      height: 100%;
-      width: 100%;
-      .hoverable {
-        background-color: lightblue;
-      }
-
-      .hovering {
-        background-color: wheat;
-        border-bottom: 1px solid black;
       }
     }
 

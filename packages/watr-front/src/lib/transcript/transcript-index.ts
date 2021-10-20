@@ -43,8 +43,6 @@ export class TranscriptIndex {
   nextId: () => number;
 
   constructor(t: Transcript) {
-    const p0l0 = t.pages[0].labels[0];
-
     this.transcript = t;
     this.indexes = {};
     this.indexables = {};
@@ -109,7 +107,7 @@ export class TranscriptIndex {
     putTextLn: PutTextLn,
     opts: RenderStanzaOpts
   ): Rect {
-    const { indexGranularity, lineBegin, lineCount } = opts;
+    const { lineBegin, lineCount } = opts;
     const stanza = this.transcript.stanzas[stanzaIndex];
 
     const lbegin = lineBegin === undefined ? 0 : lineBegin;

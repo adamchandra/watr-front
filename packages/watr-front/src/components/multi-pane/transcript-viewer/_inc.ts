@@ -32,7 +32,7 @@ import { useLabelOverlay } from '~/components/single-pane/label-overlay'
 import { getQueryParam } from '~/lib/url-utils'
 
 import SplitScreen from '~/components/basics/splitscreen/index.vue'
-import { useInfoPane } from '~/components/single-pane/info-pane'
+import { useInfoPane } from '~/components/single-pane/info-pane/info-pane'
 import { getLabelProp } from '~/lib/transcript/tracelogs'
 import { Radix, } from '@watr/commonlib-shared';
 import { createDisplayTree, TreeNode } from '~/components/single-pane/narrowing-filter/display-tree'

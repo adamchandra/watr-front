@@ -1,64 +1,37 @@
-<v-container fluid class="story-panels">
-    <v-row justify="space-between">
-        <!-- Title/Short description -->
+<div fluid class="d-flex flex-column story-panels">
+  <div class="">
+    <!-- Title/Short description -->
+    <v-card>
+      <v-card-title>
+        <slot name="title" /> -
+        <slot class="font-regular subtitle-1" name="description" />
+      </v-card-title>
+    </v-card>
+  </div>
+
+  <div class="d-flex blue-grey">
+    <div class="ma-4 story-panel blue-grey lighten-5">
+      <slot name="main">Main</slot>
+    </div>
+
+    <div class="control-panel d-flex flex-column ma-4 ">
+      <div class="controls blue-grey lighten-4 ma-2">
         <v-card class="">
-            <v-card-title>
-                <slot name="title" /> -
-                <slot class="font-regular subtitle-1" name="description" />
-            </v-card-title>
+          <v-card-text>
+            <slot name="controls" ></slot>
+          </v-card-text>
         </v-card>
 
-    </v-row>
+      </div>
+      <div class="notes blue-grey lighten-3 ma-2">
+        <v-card class="">
+          <v-card-text>
+            <slot name="notes" ></slot>
+          </v-card-text>
+        </v-card>
+      </div>
+    </div>
 
-    <v-row justify="space-between">
+  </div>
 
-        <v-col class="story-panel">
-          <!-- Main display -->
-          <slot name="main">Main</slot>
-        </v-col>
-
-        <v-col class="control-panel">
-            <v-tabs class="elevation-2">
-
-                <v-tab
-                    key="0"
-                    href="#tab-0">
-                    Controls
-                </v-tab>
-
-                <v-tab-item
-                    key="0"
-                    value="tab-0"
-                >
-                    <v-card>
-                        <v-card-text>
-                            <slot name="controls" ></slot>
-                        </v-card-text>
-                    </v-card>
-
-                </v-tab-item>
-
-                <v-tab
-                    key="1"
-                    href="#tab-1">
-                    Notes
-                </v-tab>
-
-                <v-tab-item
-                    key="1"
-                    value="tab-1"
-                >
-                    <v-card>
-                        <v-card-text>
-                            <slot name="notes" ></slot>
-                        </v-card-text>
-                    </v-card>
-
-                </v-tab-item>
-            </v-tabs>
-        </v-col>
-
-    </v-row>
-
-
-</v-container>
+</div>
