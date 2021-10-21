@@ -12,7 +12,7 @@ import * as TE from 'fp-ts/lib/TaskEither';
 import { CorpusEntryList, fetchAndDecodeCorpusEntryList } from '~/lib/data-fetch';
 
 export default defineComponent({
-  components: { },
+  components: {},
 
   setup(_props, _context: SetupContext) {
     const emptyEntries: CorpusEntryList = {

@@ -1,18 +1,19 @@
 import _ from 'lodash';
 
-import { defineComponent, provide, Ref, shallowRef,  markRaw } from '@nuxtjs/composition-api';
+import {
+  defineComponent, provide, Ref, shallowRef, markRaw,
+} from '@nuxtjs/composition-api';
+import { pipe } from 'fp-ts/lib/function';
+import * as TE from 'fp-ts/lib/TaskEither';
+import {
+  Radix,
+} from '@watr/commonlib-shared';
 import NarrowingFilter from '../index.vue';
 import { ProvidedChoices } from '../_inc';
 import { getLabelProp } from '~/lib/transcript/tracelogs';
 import { fetchAndDecodeTranscript } from '~/lib/data-fetch';
 import { TranscriptIndex } from '~/lib/transcript/transcript-index';
 
-import { pipe } from 'fp-ts/lib/function';
-import * as TE from 'fp-ts/lib/TaskEither';
-
-import {
-  Radix,
-} from '@watr/commonlib-shared';
 import { createDisplayTree, TreeNode } from '../display-tree';
 import { Label } from '~/lib/transcript/labels';
 
@@ -21,7 +22,6 @@ export default defineComponent({
     NarrowingFilter,
   },
   setup() {
-
     type DisplayTreeT = Radix<TreeNode<Label[]>>;
     const choicesRef: Ref<DisplayTreeT | null > = shallowRef(null);
     const selectionRef: Ref<Label[]> = shallowRef([]);
@@ -44,9 +44,7 @@ export default defineComponent({
         const allPageLabels = transcriptIndex.getLabels([]);
         const displayTree = createDisplayTree<Label>(
           allPageLabels,
-          (label: Label) => {
-            return _.concat(getLabelProp(label, 'outline'), 'LB.' + label.name);
-          },
+          (label: Label) => _.concat(getLabelProp(label, 'outline'), `LB.${label.name}`),
         );
 
         markRaw(displayTree);

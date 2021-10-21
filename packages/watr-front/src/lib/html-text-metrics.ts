@@ -1,7 +1,7 @@
 /**
  * A collection of utilities to determine the exact sizes and positions of
  * html text.
- **/
+ * */
 
 import _ from 'lodash';
 import { Rect } from './transcript/shapes';
@@ -17,7 +17,6 @@ export interface TextStyle {
 export function makeStyleString(style: TextStyle): string {
   return `${style.weight} ${style.size}px ${style.family}`;
 }
-
 
 export interface LineDimensions extends Rect {
   charBounds: Rect[];
@@ -37,7 +36,6 @@ export function showText0(
   atY: number,
   _charWidthCache: Record<string, number>,
 ): LineDimensions {
-
   div.innerText = text;
 
   const lineWidth = div.offsetWidth;
@@ -46,7 +44,9 @@ export function showText0(
     const charWidth = 10;
     const currX = atX + (i * charWidth);
 
-    const size: Rect = { kind: 'rect', x: currX, y: atY, width: charWidth, height: lineHeight };
+    const size: Rect = {
+      kind: 'rect', x: currX, y: atY, width: charWidth, height: lineHeight,
+    };
     return size;
   });
   const lineDimensions: LineDimensions = {
@@ -91,7 +91,9 @@ export function showTextOrig(
     const currWidth = div.offsetWidth;
     const charWidth = currWidth - currX + atX;
     charWidthCache[char] = charWidth;
-    const size: Rect = { kind: 'rect', x: currX, y: atY, width: charWidth, height: lineHeight };
+    const size: Rect = {
+      kind: 'rect', x: currX, y: atY, width: charWidth, height: lineHeight,
+    };
     sizes.push(size);
     currX = currWidth + atX;
     // }

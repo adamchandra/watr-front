@@ -20,8 +20,6 @@ export interface Point {
   y: number;
 }
 
-
-
 export const PointRepr = io.tuple([io.number, io.number], 'PointRepr');
 export type PointRepr = io.TypeOf<typeof PointRepr>;
 
@@ -52,7 +50,6 @@ export const Circle = new io.Type<Circle, CircleRepr, unknown>(
   (a: Circle) => [Point.encode(a.p), floatToIntRep(a.r)],
 );
 
-
 export interface Line {
   kind: 'line';
   p1: Point;
@@ -70,7 +67,6 @@ export const Line = new io.Type<Line, LineRepr, unknown>(
   ),
   (a: Line) => [Point.encode(a.p1), Point.encode(a.p2)],
 );
-
 
 export interface Triangle {
   kind: 'triangle';
@@ -99,9 +95,7 @@ export interface Rect {
   height: number;
 }
 
-
-export const RectRepr =
-  io.tuple([io.number, io.number, io.number, io.number], 'RectRepr');
+export const RectRepr = io.tuple([io.number, io.number, io.number, io.number], 'RectRepr');
 
 export type RectRepr = io.TypeOf<typeof RectRepr>;
 
@@ -109,13 +103,13 @@ export const Rect = new io.Type<Rect, RectRepr, unknown>(
   'Rect', isKind('rect'),
   (u: unknown, c: io.Context) => pipe(
     RectRepr.validate(u, c),
-    E.map(foo => {
-      return foo;
-    }),
+    E.map(foo => foo),
     E.chain(validRepr => io.success(uRect(validRepr))),
   ),
   (a: Rect) => {
-    const { x, y, width, height } = a;
+    const {
+      x, y, width, height,
+    } = a;
     return [
       floatToIntRep(x),
       floatToIntRep(y),
@@ -210,7 +204,6 @@ export interface PathSvg extends BaseSvg {
 export type ShapeSvg = PointSvg | LineSvg | RectSvg | PathSvg;
 
 export function shapeToSvg(shape: Shape): ShapeSvg {
-
   switch (shape.kind) {
     case 'point':
       return <PointSvg>{
@@ -252,7 +245,7 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
       };
 
     case 'circle':
-      const r = shape.r;
+      const { r } = shape;
       const r2 = r / 2;
       return <PointSvg>{
         type: 'circle',
@@ -266,7 +259,6 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
         data: {},
       };
     case 'triangle': {
-
       const { p1, p2, p3 } = shape;
       const minX = Math.min(p1.x, p2.x, p3.x);
       const maxX = Math.max(p1.x, p2.x, p3.x);
@@ -275,13 +267,17 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
       return <PathSvg>{
         type: 'path',
         d: `M ${p1.x} ${p1.y} L ${p2.x} ${p2.y} L ${p3.x} ${p3.y} Z`,
-        minX, minY, maxX, maxY,
+        minX,
+        minY,
+        maxX,
+        maxY,
         data: {},
       };
     }
     case 'trapezoid': {
-
-      const { topLeft, topWidth, bottomLeft, bottomWidth } = shape;
+      const {
+        topLeft, topWidth, bottomLeft, bottomWidth,
+      } = shape;
       const bottomRight = _.clone(bottomLeft);
       bottomRight.x += bottomWidth;
       const topRight = _.clone(topLeft);
@@ -295,7 +291,10 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
       return <PathSvg>{
         type: 'path',
         d: `M ${topLeft.x} ${topLeft.y} L ${bottomLeft.x} ${bottomLeft.y} L ${bottomRight.x} ${bottomRight.y} L ${topRight.x} ${topRight.y} Z`,
-        minX, minY, maxX, maxY,
+        minX,
+        minY,
+        maxX,
+        maxY,
         data: {},
       };
     }
@@ -303,11 +302,11 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
 }
 
 function uFloat(n: number): number {
-  return n / 100.0;
+  return n / 100;
 }
 
 function floatToIntRep(n: number): number {
-  return Math.round(n * 100.0);
+  return Math.round(n * 100);
 }
 
 function uPoint(repr: PointRepr): Point {
@@ -322,7 +321,9 @@ function uCircle(repr: CircleRepr): Circle {
 
 function uTriangle(repr: TriangleRepr): Triangle {
   const [p1, p2, p3] = repr;
-  return { kind: 'triangle', p1: uPoint(p1), p2: uPoint(p2), p3: uPoint(p3) };
+  return {
+    kind: 'triangle', p1: uPoint(p1), p2: uPoint(p2), p3: uPoint(p3),
+  };
 }
 
 function uTrapezoid(repr: TrapezoidRepr): Trapezoid {
@@ -352,12 +353,16 @@ export function uRect(repr: RectRepr): Rect {
   };
 }
 export function minMaxToRect(mm: MinMaxBox): Rect {
-  const { minX, minY, maxX, maxY } = mm;
+  const {
+    minX, minY, maxX, maxY,
+  } = mm;
   const x = minX;
   const y = minY;
   const width = maxX - minX;
   const height = maxY - minY;
-  return { kind: 'rect', x, y, width, height };
+  return {
+    kind: 'rect', x, y, width, height,
+  };
 }
 
 export function formatShape(shape: Shape): string {

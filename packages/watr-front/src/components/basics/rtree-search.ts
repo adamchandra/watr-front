@@ -32,7 +32,6 @@ interface Flashlight {
   eventTargetRecs: EventTargetRecord;
 }
 
-
 type Args = {
   indexKey: string;
   transcriptIndex: TranscriptIndex;
@@ -40,22 +39,19 @@ type Args = {
   flashlightRadius: number;
 };
 
-
 export function useFlashlight({
   transcriptIndex,
   indexKey,
   flashlightRadius,
   eventlibCore,
 }: Args): Flashlight {
-
-
-  const eventTargetRecs  = toRefs(reactive({
+  const eventTargetRecs = toRefs(reactive({
     mousemove: [],
     click: [],
   }));
 
   const mousemove = (e: EMouseEvent) => {
-    const pos = e.pos;
+    const { pos } = e;
     const mousePt = coords.mkPoint.fromXy(pos.x, pos.y);
     const queryBox = coords.boxCenteredAt(mousePt, flashlightRadius, flashlightRadius);
 
@@ -66,7 +62,7 @@ export function useFlashlight({
   };
 
   const click = (e: EMouseEvent) => {
-    const pos = e.pos;
+    const { pos } = e;
     const mousePt = coords.mkPoint.fromXy(pos.x, pos.y);
     const queryBox = coords.boxCenteredAt(mousePt, 1, 1);
 
@@ -75,12 +71,10 @@ export function useFlashlight({
     eventTargetRecs.click.value = hits;
   };
 
-  const handlers: MouseHandlerInit = () => {
-    return {
-      mousemove,
-      click,
-    };
-  };
+  const handlers: MouseHandlerInit = () => ({
+    mousemove,
+    click,
+  });
 
   eventlibCore.setMouseHandlers([handlers]);
 

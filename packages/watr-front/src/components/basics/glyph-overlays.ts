@@ -14,11 +14,10 @@ import { EventlibCore } from '~/components/basics/eventlib-core';
 import { SuperimposedElements } from '~/components/basics/superimposed-elements';
 
 import * as d3x from '~/lib/d3-extras';
-
-const { initStroke, initFill, initRect } = d3x;
 import { TranscriptIndex } from '~/lib/transcript/transcript-index';
 import { useFlashlight } from './rtree-search';
 
+const { initStroke, initFill, initRect } = d3x;
 
 // export type SetGlyphOverlays = (glyphs: Glyph[], pageGeometry: Rect) => void;
 export interface GlyphOverlays {
@@ -31,7 +30,6 @@ type Args = {
   transcriptIndex: TranscriptIndex;
   pageNumber: number;
 };
-
 
 export function useGlyphOverlays({
   eventlibCore,
@@ -55,7 +53,6 @@ export function useGlyphOverlays({
   const svgSelect = d3.select(svgLayer);
 
   watch(flashlight.eventTargetRecs.mousemove, (mousemove) => {
-
     const items = _.sortBy(
       mousemove, // _.filter(litItems, (hit) => hit.glyph !== undefined),
       (hit) => [hit.minY, hit.minX],
@@ -102,5 +99,4 @@ export function useGlyphOverlays({
     // setGlyphOverlays,
     // rtreeIndex
   };
-
 }

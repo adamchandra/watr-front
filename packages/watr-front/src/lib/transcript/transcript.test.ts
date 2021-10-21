@@ -3,9 +3,7 @@ import _ from 'lodash';
 import { Transcript } from './transcript';
 import { isIsomorphic } from '~/lib/codec-utils';
 
-
 describe('Transcripts', () => {
-
   // const pageTexts = [[
   //   'H2O I+',
   //   'eﬃcient'
@@ -38,13 +36,11 @@ describe('Transcripts', () => {
   // { // Super/subscript markup 'H_{2}SO_{4}^{+}', // extracted glyphs: "H2SO4+"
   // { // Inset math/chemical formulae/matrix etc.
 
-
   it('glyph bounding box PDF overlays', () => {
     // prettyPrint({ page1 })
   });
 
-  it('text substitutions/formatting/escape chars', () => {
-  });
+  it('text substitutions/formatting/escape chars', () => {});
 
   it('links between text sections', () => {
     // const bodyGlyphs = [
@@ -61,10 +57,8 @@ describe('Transcripts', () => {
     // Link body text to reference
     // Link from body text to separate stanza representing inset math
   });
-  it('ordering over text/glyphs/shapes', () => {
-  });
-  it('extracted text with labeled lines/regions', () => {
-  });
+  it('ordering over text/glyphs/shapes', () => {});
+  it('extracted text with labeled lines/regions', () => {});
   it('tracelog shapes', () => {
     // base/top/midline, left/right column points/lines
     // const glyphLineLabel = {
@@ -91,20 +85,16 @@ describe('Transcripts', () => {
     //   ]
     // };
   });
-  it('hierarchical labels over spans of text (textgrid functionality)', () => {
-  });
-  it('text reshaped into stanzas with suitable classes for rtree-indexing (textgrid functionality)', () => {
-  });
-  it('represent zones (clipped region of PDF page with contained text)', () => {
-  });
+  it('hierarchical labels over spans of text (textgrid functionality)', () => {});
+  it('text reshaped into stanzas with suitable classes for rtree-indexing (textgrid functionality)', () => {});
+  it('represent zones (clipped region of PDF page with contained text)', () => {});
 
   it('smokescreen', () => {
-
     const transcriptTemplate = {
       documentId: 'doc-25-id',
       pages: [{
         page: 1,
-        bounds: [0, 0, 61200, 79200],
+        bounds: [0, 0, 61_200, 79_200],
         glyphs: [
           ['I', 1, [19, 94, 9, 10]],
           [' ', 2, [19, 94, 9, 10], { kind: 'ws' }],
@@ -123,7 +113,9 @@ describe('Transcripts', () => {
           ],
           labels: [
             {
-              name: 'PageText', range: [{ unit: 'page', at: 1 }], children: [
+              name: 'PageText',
+              range: [{ unit: 'page', at: 1 }],
+              children: [
                 { name: 'BodyContent', range: [{ unit: 'text:line', at: [1, 3] }] },
                 { name: 'HeaderContent', range: [{ unit: 'text:line', at: [4, 10] }] },
               ],
@@ -136,7 +128,6 @@ describe('Transcripts', () => {
     const verbose = false;
     expect(isIsomorphic(Transcript, transcriptTemplate, verbose)).toBe(true);
   });
-
 });
 
 // {

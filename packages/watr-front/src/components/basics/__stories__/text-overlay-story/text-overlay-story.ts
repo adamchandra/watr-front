@@ -7,7 +7,6 @@ import {
   watch,
 } from '@nuxtjs/composition-api';
 
-
 import { useSuperimposedElements, ElementTypes } from '~/components/basics/superimposed-elements';
 import { useMeasuredTextOverlay } from '~/components/basics/measured-text-overlay';
 import { awaitRef } from '~/components/basics/component-basics';
@@ -16,7 +15,6 @@ import { TextStyle } from '~/lib/html-text-metrics';
 
 export default {
   setup() {
-
     const mountPoint: Ref<HTMLDivElement | null> = ref(null);
     const textDimensions = ref('init');
     const textSize = ref(45);
@@ -31,7 +29,6 @@ export default {
         mountPoint,
       }))
       .then(superimposedElements => {
-
         // Set text size, print text, overlay canvas or svg rect, print dimensions
         // Set text color, styles, ...
 
@@ -77,17 +74,12 @@ export default {
               .attr('fill-opacity', 0.3)
             ;
 
-            const dimStrs = _.map(dims, d => {
-              return `[${d.x}, ${d.y}, ${d.width}, ${d.height}]`;
-            });
+            const dimStrs = _.map(dims, d => `[${d.x}, ${d.y}, ${d.width}, ${d.height}]`);
             const dimFmt = _.join(dimStrs, '\n');
             textDimensions.value = dimFmt;
-
           });
-
         });
       });
-
 
     return {
       mountPoint,

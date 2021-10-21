@@ -2,13 +2,13 @@
  * Container for a Transcript which provides access to glyphs/stanzas/labels/etc., and
  * maintains a cache of any rtree-indexes, cross-references, ... within the transcript
  *
- **/
+ * */
 
 import _ from 'lodash';
+import RBush from 'rbush';
 import { Transcript } from './transcript';
 import { Glyph } from '~/lib/transcript/glyph';
 import { mk } from '~/lib/coord-sys';
-import RBush from 'rbush';
 import { Rect } from './shapes';
 import { LineDimensions } from '../html-text-metrics';
 import { newIdGenerator } from '../misc-utils';
@@ -71,9 +71,13 @@ export class TranscriptIndex {
 
       const primaryKey = `page#${page.page}/glyphs`;
       const pageIndexables = _.map(page.glyphs, (glyph) => {
-        const { x, y, width, height } = glyph.rect;
+        const {
+          x, y, width, height,
+        } = glyph.rect;
         const charBounds = mk.fromLtwh(x, y, width, height);
-        const { minX, minY, maxX, maxY } = charBounds;
+        const {
+          minX, minY, maxX, maxY,
+        } = charBounds;
         const indexedRects: Record<RTreeIndexKey, Rect> = {};
         indexedRects[primaryKey] = glyph.rect;
         const glyphOverlay: TranscriptIndexable<Glyph> = {
@@ -82,7 +86,10 @@ export class TranscriptIndex {
           primaryRect: glyph.rect,
           indexedRects,
           id: glyph.id.toString(),
-          minX, minY, maxX, maxY,
+          minX,
+          minY,
+          maxX,
+          maxY,
         };
 
         this.indexables[glyphOverlay.id] = glyphOverlay;
@@ -94,7 +101,7 @@ export class TranscriptIndex {
     });
   }
 
-  public getLabels(labelNames: string[], pageNumber: number | undefined = undefined): Label[] {
+  public getLabels(labelNames: string[], pageNumber: number | undefined): Label[] {
     const { pages } = this.transcript;
     const pageNs = pageNumber === undefined ? pages : [pages[pageNumber]];
     const labels = _.flatMap(pageNs, p => p.labels);
@@ -132,9 +139,13 @@ export class TranscriptIndex {
 
       const lineIndexables = _.map(line.glyphs, (glyphRef, i) => {
         const charDim = lineDimensions.charBounds[i];
-        const { x, y, width, height } = charDim;
+        const {
+          x, y, width, height,
+        } = charDim;
         const charBounds = mk.fromLtwh(x, y, width, height);
-        const { minX, minY, maxX, maxY } = charBounds;
+        const {
+          minX, minY, maxX, maxY,
+        } = charBounds;
 
         if (_.isNumber(glyphRef)) {
           const pageGlyph = this.indexables[glyphRef];
@@ -145,7 +156,10 @@ export class TranscriptIndex {
             primaryRect: charDim,
             indexedRects: pageGlyph.indexedRects,
             id: glyphRef.toString(),
-            minX, minY, maxX, maxY,
+            minX,
+            minY,
+            maxX,
+            maxY,
           };
           return stanzaIndexable;
         }
@@ -155,7 +169,10 @@ export class TranscriptIndex {
           primaryRect: charDim,
           indexedRects: {},
           id: (-this.nextId()).toString(),
-          minX, minY, maxX, maxY,
+          minX,
+          minY,
+          maxX,
+          maxY,
         };
         return stanzaIndexable;
       });
@@ -164,7 +181,8 @@ export class TranscriptIndex {
 
     return {
       kind: 'rect',
-      x: 0, y: 0,
+      x: 0,
+      y: 0,
       width: maxWidth,
       height: totalHeight,
     };

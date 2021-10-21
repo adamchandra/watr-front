@@ -5,7 +5,6 @@ import _ from 'lodash';
 import * as d3 from 'd3-selection';
 import { SelectionOrTransition } from 'd3-transition';
 
-
 import {
   ref as deepRef,
   Ref,
@@ -18,9 +17,10 @@ import { EMouseEvent, MouseHandlerInit } from '~/lib/EventlibHandlers';
 import { EventlibCore } from './eventlib-core';
 import { BBox, Point } from '~/lib/coord-sys';
 import * as d3x from '~/lib/d3-extras';
-const { initStroke, initFill, initRect } = d3x;
 
 import { SuperimposedElements } from './superimposed-elements';
+
+const { initStroke, initFill, initRect } = d3x;
 
 function pointsToRect(p1: Point, p2: Point): BBox {
   const ny = Math.min(p1.y, p2.y);
@@ -45,7 +45,6 @@ export function useEventlibSelect({
   superimposedElements,
   eventlibCore,
 }: Args) {
-
   const selectionRef: Ref<BBox | null> = deepRef(null);
   const clickedPointRef: Ref<Point | null> = deepRef(null);
 
@@ -69,15 +68,14 @@ export function useEventlibSelect({
       .selectAll('rect#selection')
       .data([currBBox])
       .enter()
-      .append('rect').attr('id', 'selection')
+      .append('rect')
+      .attr('id', 'selection')
       .call(initStroke, 'blue', 1, 0.8)
       .call(initFill, 'yellow', 0.8)
     ;
 
-
     updateCurrentRect();
   }
-
 
   function updateCurrentRect() {
     currBBox = pointsToRect(originPt, currentPt);
@@ -131,7 +129,6 @@ export interface ExtentHandlers {
 }
 
 export function selectExtentHandlers(): ExtentHandlers {
-
   let selecting = false;
 
   const refs: ExtentHandlerRefs = toRefs(reactive({
@@ -175,17 +172,14 @@ export function selectExtentHandlers(): ExtentHandlers {
     }
   };
 
-  const handlers: MouseHandlerInit = () =>  {
-    return {
-      mousedown,
-      mousemove,
-      mouseup,
-      mouseout,
-      mouseover,
-    };
-  };
+  const handlers: MouseHandlerInit = () => ({
+    mousedown,
+    mousemove,
+    mouseup,
+    mouseout,
+    mouseover,
+  });
   return {
     refs, handlers,
   };
-
 }

@@ -1,10 +1,9 @@
 import _ from 'lodash';
+import fs from 'fs-extra';
 import { Stanza, Transcript } from './transcript';
 import { isIsomorphic } from '~/lib/codec-utils';
-import fs from 'fs-extra';
 
 describe('Transcript/Stanza IO', () => {
-
   const verbose = false;
 
   it('should I/O Stanzas', () => {
@@ -18,7 +17,9 @@ describe('Transcript/Stanza IO', () => {
         ],
         labels: [
           {
-            name: 'PageText', range: [{ unit: 'page', at: 1 }], children: [
+            name: 'PageText',
+            range: [{ unit: 'page', at: 1 }],
+            children: [
               { name: 'BodyContent', range: [{ unit: 'text:line', at: [1, 3] }] },
               { name: 'HeaderContent', range: [{ unit: 'text:line', at: [4, 10] }] },
             ],
@@ -33,7 +34,7 @@ describe('Transcript/Stanza IO', () => {
   });
 
   it('should I/O Transcript', () => {
-    const example =  fs.readJsonSync('./dev-data/transcriptions/sample-transcription.json');
+    const example = fs.readJsonSync('./dev-data/transcriptions/sample-transcription.json');
     // isIsomorphic(Transcript, example, true)
     expect(isIsomorphic(Transcript, example, verbose)).toBe(true);
   });

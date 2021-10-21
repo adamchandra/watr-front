@@ -12,28 +12,25 @@
 import _ from 'lodash';
 
 import {
+  watch,
+} from '@nuxtjs/composition-api';
+import {
   mk,
   BBox,
   MinMaxBox,
 } from '~/lib/coord-sys';
-
-import {
-  watch,
-} from '@nuxtjs/composition-api';
 
 import { EventlibSelect } from '~/components/basics/eventlib-select';
 // import { RTreeIndex } from '~/components/basics/rtree-search';
 // import { tweenBBox } from '~/lib/tweening';
 // import { GlyphOverlay } from './glyph-overlays';
 
-
 export interface SnaptoSelection {
 }
 
-type Args =  {
+type Args = {
   eventlibSelect: EventlibSelect;
 };
-
 
 export function useSnaptoSelection({
   eventlibSelect,
@@ -63,7 +60,6 @@ export function useSnaptoSelection({
     // }
   });
 
-
   return {};
 }
 
@@ -80,5 +76,4 @@ export function queryHitsMBR(hits: MinMaxBox[]): BBox | undefined {
   const height = maxY - minY;
 
   return mk.fromLtwh(minX, minY, width, height);
-
 }

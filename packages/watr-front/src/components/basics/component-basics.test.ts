@@ -9,11 +9,10 @@ import {
   markRaw,
 } from '@nuxtjs/composition-api';
 
-import { watchAll } from './component-basics';
 import { prettyPrint } from '@watr/commonlib-shared';
+import { watchAll } from './component-basics';
 
 describe('Component Basics', () => {
-
   it('should testing watch', () => {
     const dep1 = deepRef(1);
     const dep2 = deepRef(2);
@@ -123,14 +122,12 @@ describe('Component Basics', () => {
   }
 
   it.only('should ensure that shallow refs do not walk arrays/objects', (done) => {
-
     const ary = [foo(1, 'one'), foo(2, 'two')];
 
     prettyPrint({
       ary,
       isReactive: isReactive(ary),
     });
-
 
     markRaw(ary);
     const aryRef: Ref<Foo[]> = deepRef([]);
@@ -156,5 +153,4 @@ describe('Component Basics', () => {
 
     aryRef.value = ary;
   });
-
 });

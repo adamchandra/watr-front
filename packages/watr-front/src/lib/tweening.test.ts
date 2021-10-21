@@ -5,7 +5,7 @@ import { tweenBBox } from './tweening';
 import * as coords from '~/lib/coord-sys';
 
 describe('Tweening support', () => {
-  it.only('all tests disabled', () => undefined);
+  it.only('all tests disabled', () => {});
 
   it('tweens bbox', async () => {
     const b1 = coords.mk.fromLtwh(10, 10, 100, 200);

@@ -11,6 +11,10 @@ import {
 
 import * as VC from '@nuxtjs/composition-api';
 
+import { pipe } from 'fp-ts/lib/function';
+import * as TE from 'fp-ts/lib/TaskEither';
+import * as E from 'fp-ts/lib/Either';
+import { Radix } from '@watr/commonlib-shared';
 import { divRef } from '~/lib/vue-composition-lib';
 import { awaitRefTask } from '~/components/basics/component-basics';
 import { usePdfPageViewer } from '~/components/single-pane/page-viewer';
@@ -23,10 +27,6 @@ import {
   ProvidedChoices,
 } from '~/components/single-pane/narrowing-filter/_inc';
 
-
-import { pipe } from 'fp-ts/lib/function';
-import * as TE from 'fp-ts/lib/TaskEither';
-import * as E from 'fp-ts/lib/Either';
 import { fetchAndDecodeTranscript } from '~/lib/data-fetch';
 import { useLabelOverlay } from '~/components/single-pane/label-overlay';
 import { getQueryParam } from '~/lib/url-utils';
@@ -34,7 +34,6 @@ import { getQueryParam } from '~/lib/url-utils';
 import SplitScreen from '~/components/basics/splitscreen/index.vue';
 import { useInfoPane } from '~/components/single-pane/info-pane/info-pane';
 import { getLabelProp } from '~/lib/transcript/tracelogs';
-import { Radix } from '@watr/commonlib-shared';
 import { createDisplayTree, TreeNode } from '~/components/single-pane/narrowing-filter/display-tree';
 
 interface AppState {
@@ -43,18 +42,15 @@ interface AppState {
   showPageOverlays: boolean;
 }
 
-const TETap = <E, A>(tapf: (a: A) => unknown | Promise<unknown>) =>
-  TE.chain<E, A, A>((a: A) => {
-    return () => Promise.resolve(tapf(a))
-      .then(() => E.right(a));
-  });
+const TETap = <E, A>(tapf: (a: A) => unknown | Promise<unknown>) => TE.chain<E, A, A>((a: A) => () => Promise.resolve(tapf(a))
+  .then(() => E.right(a)));
 
 function isPageRange(r: Range): r is PageRange {
   return r.unit === 'page';
 }
 
 function getLabelPageNumber(l: Label): number {
-  const pageRange = _.filter(l.range, isPageRange)[0];
+  const pageRange = _.find(l.range, isPageRange);
   if (pageRange === undefined || pageRange === null) return -1;
   return pageRange.at;
 }
@@ -75,7 +71,6 @@ export default defineComponent({
     provide(ProvidedChoices, choicesRef);
 
     const pageLabelRefs: Array<Ref<Label[]>> = [];
-
 
     const onItemsSelected = (selection: Label[]) => {
       // const labels = _.flatMap(selection, choice => _.map(choice.value, l => [l, getLabelPageNumber(l)] as const));
@@ -116,15 +111,14 @@ export default defineComponent({
       TE.bind('transcriptIndex', ({ transcript }) => TE.right(new TranscriptIndex(transcript))),
       TETap(({ infoPane }) => infoPane.putStringLn('indexed transcript')),
 
-      TE.bind('pageViewers', ({ entryId, pageImageListDiv, transcript, transcriptIndex, infoPane }) => {
-
+      TE.bind('pageViewers', ({
+        entryId, pageImageListDiv, transcript, transcriptIndex, infoPane,
+      }) => {
         const allPageLabels = transcriptIndex.getLabels([]);
 
         const displayTree = createDisplayTree<Label>(
           allPageLabels,
-          (label: Label) => {
-            return _.concat(getLabelProp(label, 'outline'), 'LB.' + label.name);
-          },
+          (label: Label) => _.concat(getLabelProp(label, 'outline'), `LB.${label.name}`),
         );
         VC.markRaw(displayTree);
 
@@ -137,11 +131,13 @@ export default defineComponent({
 
         const inits = _.map(transcript.pages, async (_, pageNumber) => {
           const mount = document.createElement('div');
-          pageImageListDiv.appendChild(mount);
+          pageImageListDiv.append(mount);
           const mountPoint = divRef();
           mountPoint.value = mount;
 
-          return usePdfPageViewer({ mountPoint, transcriptIndex, pageNumber, entryId })
+          return usePdfPageViewer({
+            mountPoint, transcriptIndex, pageNumber, entryId,
+          })
             .then(pdfPageViewer => useLabelOverlay({
               transcriptIndex,
               pdfPageViewer,
@@ -161,7 +157,7 @@ export default defineComponent({
           const mount = document.createElement('div');
           const mountPoint = divRef();
           mountPoint.value = mount;
-          stanzaListDiv.appendChild(mount);
+          stanzaListDiv.append(mount);
           return useStanzaViewer({ mountPoint })
             .then(stanzaViewer => stanzaViewer.showStanza(
               transcriptIndex,
@@ -169,7 +165,8 @@ export default defineComponent({
                 indexGranularity: 'none',
                 lineBegin: 0,
                 lineCount: 10,
-              }));
+              },
+            ));
         });
 
         return () => Promise.all(inits).then(E.right);

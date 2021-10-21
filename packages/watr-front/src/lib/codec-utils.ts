@@ -1,4 +1,3 @@
-
 import _ from 'lodash';
 import * as io from 'io-ts';
 import { isLeft } from 'fp-ts/lib/Either';
@@ -24,7 +23,6 @@ export const NonNegative = io.brand(
   (n: number): n is io.Branded<number, NonNegative> => n >= 0,
   'NonNegative',
 );
-
 
 export const PositiveInt = io.intersection([io.Int, Positive]);
 export type PositiveInt = io.TypeOf<typeof PositiveInt>;
@@ -64,7 +62,9 @@ export function isIsomorphic<A, IO>(ioType: io.Type<A, IO, IO>, input: IO, verbo
   const reEncoded = ioType.encode(decoded);
   if (!_.isEqual(input, reEncoded)) {
     if (verbose) {
-      prettyPrint({ m: `isIsomorphic(${ioType.name})/re-encode === false`, input, decoded, reEncoded });
+      prettyPrint({
+        m: `isIsomorphic(${ioType.name})/re-encode === false`, input, decoded, reEncoded,
+      });
     }
     return false;
   }
@@ -77,7 +77,9 @@ export function isIsomorphic<A, IO>(ioType: io.Type<A, IO, IO>, input: IO, verbo
   if (isLeft(maybeReDecoded)) {
     const report = PathReporter.report(maybeReDecoded);
     if (verbose) {
-      prettyPrint({ m: `isIsomorphic(${ioType.name})/re-decode === false`, report, input, reEncoded });
+      prettyPrint({
+        m: `isIsomorphic(${ioType.name})/re-decode === false`, report, input, reEncoded,
+      });
     }
     return false;
   }
@@ -89,7 +91,9 @@ export function isIsomorphic<A, IO>(ioType: io.Type<A, IO, IO>, input: IO, verbo
 
   if (!_.isEqual(decoded, reDecoded)) {
     if (verbose) {
-      prettyPrint({ m: `isIsomorphic(${ioType.name})/re-decode === false`, input, decoded, reDecoded });
+      prettyPrint({
+        m: `isIsomorphic(${ioType.name})/re-decode === false`, input, decoded, reDecoded,
+      });
     }
     return false;
   }
@@ -98,7 +102,9 @@ export function isIsomorphic<A, IO>(ioType: io.Type<A, IO, IO>, input: IO, verbo
   }
 
   if (verbose) {
-    prettyPrint({ m: `isIsomorphic(${ioType.name}) === true`, input, decoded, reEncoded, reDecoded });
+    prettyPrint({
+      m: `isIsomorphic(${ioType.name}) === true`, input, decoded, reEncoded, reDecoded,
+    });
   }
 
   return true;
@@ -136,8 +142,5 @@ export function isIsomorphic<A, IO>(ioType: io.Type<A, IO, IO>, input: IO, verbo
         "range": [],
         "name": "Found"
       }],
-
-
-
 
 */

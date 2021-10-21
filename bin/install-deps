@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# lerna exec npx -- install-peerdeps --dev eslint-config-airbnb-base
+# lerna exec npx -- install-peerdeps --dev eslint-config-airbnb-typescript
+# lerna exec npx -- install-peerdeps --dev eslint-plugin-eslint-comments
+# lerna exec npx -- install-peerdeps --dev eslint-plugin-import
+# lerna exec npx -- install-peerdeps --dev eslint-plugin-jest
+# lerna exec npx -- install-peerdeps --dev eslint-plugin-promise
+# lerna exec npx -- install-peerdeps --dev eslint-plugin-unicorn
+# lerna exec --scope '@watr/watrfront' npx -- install-peerdeps @nuxtjs/composition-api@latest
+# lerna exec --scope '@watr/watrfront' npx -- install-peerdeps ts-loader@8.0.17
+
+lerna exec npx -- install-peerdeps --dev eslint-plugin-jsx-a11y
+# lerna exec npx -- install-peerdeps --dev eslint-plugin-react

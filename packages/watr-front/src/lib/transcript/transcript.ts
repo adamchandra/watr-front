@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
-import { Rect } from './shapes';
 import * as io from 'io-ts';
+import { Rect } from './shapes';
 import { NonNegativeInt } from '~/lib/codec-utils';
 import { Glyph } from './glyph';
 import { Label } from './labels';
@@ -40,7 +40,6 @@ export const BuildInfo = io.type({
   gitHeadCommit: io.string,
   scalaVersion: io.string,
 }, 'BuildInfo');
-
 
 export const Transcript = io.type({
   documentId: io.string,

@@ -2,9 +2,8 @@ import _ from 'lodash';
 
 import {
   Ref,
+  UnwrapRef,
 } from '@nuxtjs/composition-api';
-
-import { UnwrapRef } from '@nuxtjs/composition-api';
 
 export function getCursorPosition(elem: Element, event: MouseEvent): EventlibPoint {
   const rect: DOMRect = elem.getBoundingClientRect();
@@ -78,7 +77,6 @@ export function setMouseHandlers(
   targetDivRef: Ref<HTMLDivElement | null>,
   handlers: MouseHandlerInit[],
 ): void {
-
   const targetDiv = targetDivRef.value;
 
   _.each(MouseEvents, eventType => {
@@ -106,7 +104,6 @@ export function setMouseHandlers(
     });
   });
 }
-
 
 // interface KeyEventMap {
 //   "keydown": KeyboardEvent;

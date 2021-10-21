@@ -3,7 +3,6 @@ export default {
   layout: 'app',
 
   data() {
-    return {
-    };
+    return {};
   },
 };

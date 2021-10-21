@@ -5,15 +5,17 @@ import {
   watch,
 } from '@nuxtjs/composition-api';
 
+import * as d3 from 'd3-selection';
 import { TranscriptIndex, TranscriptIndexable } from '~/lib/transcript/transcript-index';
 import { Label } from '~/lib/transcript/labels';
 import { minMaxToRect, ShapeSvg } from '~/lib/transcript/shapes';
 import { PdfPageViewer } from './page-viewer';
 import { useFlashlight } from '../basics/rtree-search';
 
-import { dimShapesFillStroke, highlightShapesFillStroke, labelToSVGs, removeShapes, updateSvgElement } from '~/lib/transcript-rendering';
+import {
+  dimShapesFillStroke, highlightShapesFillStroke, labelToSVGs, removeShapes, updateSvgElement,
+} from '~/lib/transcript-rendering';
 import { InfoPane } from './info-pane/info-pane';
-import * as d3 from 'd3-selection';
 
 type Args = {
   transcriptIndex: TranscriptIndex;
@@ -27,7 +29,6 @@ type Args = {
 export interface LabelOverlay {
   //
 }
-
 
 // TODO:
 //   - [ ] Toggle to make all shapes visible vs. only on hover
@@ -50,9 +51,10 @@ export async function useLabelOverlay({
   transcriptIndex.newKeyedIndex(indexKey);
 
   const flashlightRadius = 2;
-  const flashlight = useFlashlight({ indexKey, transcriptIndex, eventlibCore, flashlightRadius });
+  const flashlight = useFlashlight({
+    indexKey, transcriptIndex, eventlibCore, flashlightRadius,
+  });
   let freezeFlashlight = false;
-
 
   let once = true;
   watch(pageLabelRef, (displayableLabels: Label[]) => {
@@ -82,7 +84,6 @@ export async function useLabelOverlay({
         .attr('stop-color', 'blue')
       ;
 
-
       defs
         .append('marker')
         .attr('id', 'arrow')
@@ -106,9 +107,7 @@ export async function useLabelOverlay({
         .attr('orient', 'auto-start-reverse')
         .append('path')
         .attr('d', 'M 0 0 L 10 5 L 0 5 z');
-
     }
-
 
     if (displayableLabels.length === 0) {
       removeShapes(svgOverlay);
@@ -130,17 +129,15 @@ export async function useLabelOverlay({
         };
         return asIndexable;
       });
-
     });
 
     transcriptIndex.getKeyedIndex(indexKey).load(shapes);
-
 
     const showAll = showAllLabels.value;
     if (showAll) {
       const allSvgs = _.flatMap(shapes, shape => {
         const itemSvg = shape.cargo;
-        const rootLabel: Label = itemSvg.data.rootLabel;
+        const { rootLabel } = itemSvg.data;
         const items = [itemSvg];
         if (rootLabel) {
           const svgs = labelToSVGs(rootLabel, [], true);
@@ -150,24 +147,20 @@ export async function useLabelOverlay({
       });
       updateSvgElement(svgOverlay, allSvgs);
     }
-
-
-
   });
   watch(flashlight.eventTargetRecs.mousemove, (mousemove) => {
-    if (mousemove === undefined || mousemove.length == 0) return;
+    if (mousemove === undefined || mousemove.length === 0) return;
     if (freezeFlashlight) return;
     const svgOverlay = superimposedElements.overlayElements.svg;
 
     const item = mousemove[0];
     const itemSvg = item.cargo;
-    const rootLabel: Label = itemSvg.data.rootLabel;
+    const { rootLabel } = itemSvg.data;
     const items = [itemSvg];
 
     if (rootLabel) {
       const svgs = labelToSVGs(rootLabel, [], true);
       items.push(...svgs);
-
 
       infoPane.showLabel(rootLabel, false);
     }
@@ -177,7 +170,7 @@ export async function useLabelOverlay({
 
   watch(infoPane.reactiveTexts.actions, (actions) => {
     const svgOverlay = superimposedElements.overlayElements.svg;
-    freezeFlashlight = actions.some(s => s === 'freeze');
+    freezeFlashlight = actions.includes('freeze');
     d3.select(svgOverlay).classed('inspecting', freezeFlashlight);
     if (freezeFlashlight) {
       dimShapesFillStroke(svgOverlay);
@@ -187,11 +180,11 @@ export async function useLabelOverlay({
   });
   if (infoPane !== undefined) {
     watch(flashlight.eventTargetRecs.click, (click) => {
-      if (click === undefined || click.length == 0) return;
+      if (click === undefined || click.length === 0) return;
       if (freezeFlashlight) return;
 
       const item = click[0];
-      const rootLabel: Label = item.cargo.data.rootLabel;
+      const { rootLabel } = item.cargo.data;
       if (rootLabel !== undefined) {
         infoPane.showLabel(rootLabel, true);
       }
@@ -207,7 +200,5 @@ export async function useLabelOverlay({
     });
   }
 
-
   return {};
 }
-

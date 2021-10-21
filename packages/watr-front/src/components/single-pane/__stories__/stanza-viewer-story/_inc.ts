@@ -1,12 +1,12 @@
 import _ from 'lodash';
 
 import { defineComponent } from '@nuxtjs/composition-api';
+import { pipe } from 'fp-ts/lib/function';
+import * as TE from 'fp-ts/lib/TaskEither';
 import { useStanzaViewer } from '~/components/single-pane/stanza-viewer';
 import { divRef } from '~/lib/vue-composition-lib';
-import { pipe } from 'fp-ts/lib/function';
 import { TranscriptIndex } from '~/lib/transcript/transcript-index';
 import { getURLQueryParam } from '~/lib/url-utils';
-import * as TE from 'fp-ts/lib/TaskEither';
 import { fetchAndDecodeTranscript } from '~/lib/data-fetch';
 
 export default defineComponent({

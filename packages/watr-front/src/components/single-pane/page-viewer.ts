@@ -1,7 +1,7 @@
 /**
  * Create and setup SVG/Img/Div + EventHandlers to view a particular page image
  * from a PDF
- **/
+ * */
 import _ from 'lodash';
 
 import {
@@ -31,7 +31,6 @@ export async function usePdfPageViewer({
   entryId,
   pageNumber,
 }: Args): Promise<PdfPageViewer> {
-
   const eventlibCore = await useEventlibCore({ targetDivRef: mountPoint });
 
   const superimposedElements = await useSuperimposedElements({

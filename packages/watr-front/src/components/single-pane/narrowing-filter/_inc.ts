@@ -16,8 +16,6 @@ import {
   Radix,
 } from '@watr/commonlib-shared';
 
-export const ProvidedChoices = 'ProvidedChoices';
-
 import { Label } from '~/lib/transcript/labels';
 import {
   TreeNode,
@@ -31,9 +29,10 @@ import {
 
 import { getLabelProp } from '~/lib/transcript/tracelogs';
 
+export const ProvidedChoices = 'ProvidedChoices';
+
 type DisplayTreeT = Radix<TreeNode<Label[]>>;
 type RenderedGroupT = RenderedGroup<Label[]>;
-
 
 function getLabelTerms(label: Label): string[] {
   const tags = getLabelProp(label, 'tags');
@@ -42,13 +41,12 @@ function getLabelTerms(label: Label): string[] {
 }
 
 function renderLabelGroup(labels: Label[]): RenderedItem {
-  const terms = _.flatten(labels.map(l => getLabelTerms(l)));
+  const terms = labels.flatMap(l => getLabelTerms(l));
   const tagSet = new Set<string>(terms);
-  const abbrevTags = renderAbbrevString(Array.from(tagSet));
+  const abbrevTags = renderAbbrevString([...tagSet]);
   const nameDisp = abbrevTags;
   return span(nameDisp, 'label');
 }
-
 
 async function updateDisplay(
   choices: DisplayTreeT,
@@ -56,12 +54,10 @@ async function updateDisplay(
   renderedRef: Ref<RenderedGroupT[]>,
   priorAttempt?: Bluebird<void>,
 ): Bluebird<void> {
-  const delay = priorAttempt ? priorAttempt : Bluebird.resolve(undefined);
+  const delay = priorAttempt || Bluebird.resolve();
 
   return delay.then(() => {
-    queryAndUpdateDisplayTree(choices, query, (label) => {
-      return getLabelTerms(label).map(s => s.toLowerCase());
-    });
+    queryAndUpdateDisplayTree(choices, query, (label) => getLabelTerms(label).map(s => s.toLowerCase()));
     const renderedChoices = renderDisplayTree(choices, renderLabelGroup);
 
     renderedRef.value = renderedChoices;
@@ -78,11 +74,8 @@ export default defineComponent({
     const choicesRef: Ref<DisplayTreeT | null> = inject(ProvidedChoices, shallowRef(null));
 
     const onSubmit = () => {
-
       const items = _.flatMap(
-        currSelectionRef.value, v => {
-          return v.nodeData ? v.nodeData : [];
-        },
+        currSelectionRef.value, v => (v.nodeData ? v.nodeData : []),
       );
       emit('items-selected', items);
     };
@@ -95,7 +88,7 @@ export default defineComponent({
     watch(choicesRef, (choices) => {
       if (choices === null) return;
 
-      let currUpdate: Bluebird<void> = updateDisplay(choices, '', currSelectionRef, undefined);
+      let currUpdate: Bluebird<void> = updateDisplay(choices, '', currSelectionRef);
 
       const updateSelection = (query: string) => {
         currUpdate = updateDisplay(choices, query, currSelectionRef, currUpdate);
@@ -105,7 +98,6 @@ export default defineComponent({
       watch(queryTextRef, (queryText) => {
         debounced(queryText);
       });
-
     }, {
       deep: false,
     });
@@ -117,6 +109,5 @@ export default defineComponent({
       onSubmit,
       onReset,
     };
-
   },
 });

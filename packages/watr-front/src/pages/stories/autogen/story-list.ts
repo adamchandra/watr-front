@@ -1,4 +1,3 @@
-
 // Auto-generated file
 export type StoryEntry = {
   title: string;
@@ -19,4 +18,3 @@ export const storyItems: StoryEntry[] = [
   { title: 'Stanza (Text) Viewer', to: '/stories/autogen/stanzaViewer' },
   { title: 'Selection narrowing filter', to: '/stories/autogen/narrowingFilter' },
 ];
-

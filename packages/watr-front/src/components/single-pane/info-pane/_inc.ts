@@ -7,11 +7,10 @@ import {
   watch,
 } from '@nuxtjs/composition-api';
 
-import { divRef } from '~/lib/vue-composition-lib';
-
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';
 import * as E from 'fp-ts/lib/Either';
+import { divRef } from '~/lib/vue-composition-lib';
 import { useInfoPane } from './info-pane';
 
 export default defineComponent({
@@ -35,20 +34,19 @@ export default defineComponent({
         putStringLn('Hello From Storyland!');
 
         watch(inputText, (text) => {
-          if (text.endsWith('clear')){
+          if (text.endsWith('clear')) {
             inputText.value = '';
             clearScreen();
           }
-          if (text.endsWith('.')){
+          if (text.endsWith('.')) {
             inputText.value = '';
             putStringLn(text);
           }
-          if (text.endsWith(' ')){
+          if (text.endsWith(' ')) {
             inputText.value = '';
             putString(text);
           }
         });
-
       }),
     );
 

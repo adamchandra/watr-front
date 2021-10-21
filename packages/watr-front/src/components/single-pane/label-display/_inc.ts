@@ -7,20 +7,19 @@ import {
   watch,
 } from '@nuxtjs/composition-api';
 
-import { divRef } from '~/lib/vue-composition-lib';
-
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';
 import * as E from 'fp-ts/lib/Either';
+import { isLeft, Either } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
+import { Errors } from 'io-ts';
 import { useLabelDisplay } from '.';
 import { ElementTypes, useSuperimposedElements } from '~/components/basics/superimposed-elements';
 
 import { useInfoPane } from '~/components/single-pane/info-pane/info-pane';
 import { Label } from '~/lib/transcript/labels';
 
-import { isLeft, Either } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
-import { Errors } from 'io-ts';
+import { divRef } from '~/lib/vue-composition-lib';
 
 // TODO move to lib/transcript
 export function decodeLabel(input: unknown): Label | null {
@@ -55,7 +54,6 @@ export default defineComponent({
       TE.bind('infoPane', ({ }) => taskifyPromise(useInfoPane({ mountPoint: infoPaneDiv }))),
       TE.bind('labelDisplay', ({ superimposedElements }) => taskifyPromise(useLabelDisplay({ superimposedElements }))),
       TE.map(({ infoPane, superimposedElements, labelDisplay }) => {
-
         superimposedElements.setDimensions(800, 1000);
         const { showLabel, clearAll } = labelDisplay;
 
@@ -96,81 +94,76 @@ export default defineComponent({
 
 function drawBasicShapes(showLabel: (l: Label) => void) {
   const examples: any[] = [
-    { 'range': [{ 'unit': 'shape', 'at': [[8684, 6472], [9255, 4024]] }], 'name': 'HorizonLine' },
-    { 'range': [{ 'unit': 'shape', 'at': [3684, 6472, 4255, 4024] }], 'name': 'HorizonRect' },
+    { range: [{ unit: 'shape', at: [[8684, 6472], [9255, 4024]] }], name: 'HorizonLine' },
+    { range: [{ unit: 'shape', at: [3684, 6472, 4255, 4024] }], name: 'HorizonRect' },
   ];
 
   _.each(examples, (ex) => {
     const l: Label | null = decodeLabel(ex);
     showLabel(l);
   });
-
 }
-
-
 
 function drawCompoundShapes(showLabel: (l: Label) => void) {
   const examples = [{
-    'children': [{
-      'children': [{
-        'props': {
-          'class': ['=eager'],
+    children: [{
+      children: [{
+        props: {
+          class: ['=eager'],
         },
-        'range': [{ 'unit': 'shape', 'at': [29748, 75954, 381, 545] }],
-        'name': 'FocalRect',
+        range: [{ unit: 'shape', at: [29_748, 75_954, 381, 545] }],
+        name: 'FocalRect',
       }, {
-        'range': [{ 'unit': 'shape', 'at': [29748, 75954, 381, 2937] }],
-        'name': 'HorizonRect',
+        range: [{ unit: 'shape', at: [29_748, 75_954, 381, 2937] }],
+        name: 'HorizonRect',
       }, {
-        'children': [{
-          'range': [{ 'unit': 'shape', 'at': [29748, 76500, 381, 2391] }],
-          'name': 'Query/Cell:Bottom',
+        children: [{
+          range: [{ unit: 'shape', at: [29_748, 76_500, 381, 2391] }],
+          name: 'Query/Cell:Bottom',
         }],
-        'range': [],
-        'name': 'SearchArea',
+        range: [],
+        name: 'SearchArea',
       }],
-      'range': [],
-      'name': 'Octothorpe',
+      range: [],
+      name: 'Octothorpe',
     }, {
-      'children': [],
-      'range': [],
-      'name': 'Found',
+      children: [],
+      range: [],
+      name: 'Found',
     }],
-    'props': {
-      'class': ['>lazy'],
-      'outline': ['FindMonoFontBlocks', 'ConnectComponents', 'WithAdjacentSkyline/Down'],
+    props: {
+      class: ['>lazy'],
+      outline: ['FindMonoFontBlocks', 'ConnectComponents', 'WithAdjacentSkyline/Down'],
     },
-    'range': [],
-    'name': 'OctSearch',
+    range: [],
+    name: 'OctSearch',
   }, {
-    'children': [{
-      'props': { 'class': ['=eager'] },
-      'range': [{ 'unit': 'shape', 'at': [7220, 29427, 46572, 500] }],
-      'name': 'FocalRect',
+    children: [{
+      props: { class: ['=eager'] },
+      range: [{ unit: 'shape', at: [7220, 29_427, 46_572, 500] }],
+      name: 'FocalRect',
     }, {
-      'range': [{ 'unit': 'shape', 'at': [7235, 31587, 46555, 500] }],
-      'name': 'HitRect',
+      range: [{ unit: 'shape', at: [7235, 31_587, 46_555, 500] }],
+      name: 'HitRect',
     }, {
-      'range': [{ 'unit': 'shape', 'at': [7235, 29927, 46555, 1660] }],
-      'name': 'OcclusionQuery',
+      range: [{ unit: 'shape', at: [7235, 29_927, 46_555, 1660] }],
+      name: 'OcclusionQuery',
     }, {
-      'range': [],
-      'name': 'Occlusions',
+      range: [],
+      name: 'Occlusions',
     }, {
-      'range': [{ 'unit': 'shape', 'at': [7235, 31587, 46555, 500] }],
-      'name': 'FinalHit',
+      range: [{ unit: 'shape', at: [7235, 31_587, 46_555, 500] }],
+      name: 'FinalHit',
     }],
-    'props': {
-      'class': ['>lazy'],
+    props: {
+      class: ['>lazy'],
     },
-    'range': [],
-    'name': 'FacingDownFind( BaselineMidriseBand )',
+    range: [],
+    name: 'FacingDownFind( BaselineMidriseBand )',
   }];
-
 
   _.each(examples, (ex) => {
     const l: Label | null = decodeLabel(ex);
     showLabel(l);
   });
-
 }

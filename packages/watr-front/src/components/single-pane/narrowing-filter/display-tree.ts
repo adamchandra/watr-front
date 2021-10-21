@@ -24,7 +24,6 @@ export interface RenderedGroup<T> {
   nodeData: T | undefined;
 }
 
-
 export function span(
   text: string,
   cls: string,
@@ -57,7 +56,7 @@ export interface DataNode<D> {
 export function dataNode<D>(data: D): DataNode<D> {
   return {
     kind: 'DataNode',
-    _flags: new Bitset,
+    _flags: new Bitset(),
     _itemCount: 0,
     visibleDescendantCount: 0,
     getTotalVisible(): number {
@@ -85,9 +84,7 @@ export function dataNode<D>(data: D): DataNode<D> {
     },
 
     filter<A>(items: A[]): A[] {
-      return _.filter(items, (_item, i) => {
-        return this._flags.get(i) === 1;
-      });
+      return _.filter(items, (_item, i) => this._flags.get(i) === 1);
     },
   };
 }
@@ -122,7 +119,6 @@ export function isDataNode<D>(n: TreeNode<D>): n is DataNode<D> {
   return n.kind === 'DataNode';
 }
 
-
 export function createDisplayTree<ItemT>(
   items: ItemT[],
   itemPath: (a: ItemT) => string[],
@@ -148,7 +144,6 @@ export function createDisplayTree<ItemT>(
 
       return prevSel;
     });
-
   });
 
   radTraverseDepthFirst<NodeT>(labelRadix, (_path, data, _childCount, node) => {
@@ -170,7 +165,7 @@ export function queryAndUpdateDisplayTree<ItemT>(
   type GroupT = ItemT[];
   type NodeT = TreeNode<GroupT>;
 
-  const queryTerms = queryString.trim().split(/[ ]+/g).map(t => t.toLowerCase());
+  const queryTerms = queryString.trim().split(/ +/g).map(t => t.toLowerCase());
   const showAll = queryTerms.length === 0;
 
   radFoldUp<NodeT, number>(displayTree, (path, { nodeData, childResults }) => {
@@ -186,12 +181,8 @@ export function queryAndUpdateDisplayTree<ItemT>(
         const pathQuery = queryTerms.filter(t => !t.startsWith(':'));
         _.each(data, (item, i) => {
           const itemTerms = getItemTerms(item).map(s => s.toLowerCase());
-          const termMatch = attrQuery.length === 0 || _.every(attrQuery, qt => {
-            return _.some(itemTerms, it => it.includes(qt));
-          });
-          const pathMatch = pathQuery.length === 0 || _.every(pathQuery, qt => {
-            return _.some(pathTerms, it => it.includes(qt));
-          });
+          const termMatch = attrQuery.length === 0 || _.every(attrQuery, qt => _.some(itemTerms, it => it.includes(qt)));
+          const pathMatch = pathQuery.length === 0 || _.every(pathQuery, qt => _.some(pathTerms, it => it.includes(qt)));
           const setBit = termMatch && pathMatch;
           nodeData.setVisible(i, setBit);
         });
@@ -206,9 +197,7 @@ export function renderDisplayTree<ItemT>(
   displayTree: Radix<TreeNode<ItemT[]>>,
   renderDataNode: (items: ItemT[]) => RenderedItem,
 ): Array<RenderedGroup<ItemT[]>> {
-
   const renderedGroups: RenderedGroup<ItemT[]>[][] = radUnfold(displayTree, (path, nodeData) => {
-
     if (path.length === 0) return [];
     if (nodeData.getTotalVisible() === 0) return [];
 
@@ -244,9 +233,8 @@ export function renderDisplayTree<ItemT>(
     return [showOutline];
   });
 
-
   return _.filter(
-    _.flatten(renderedGroups),
+    renderedGroups.flat(),
     v => v !== undefined,
   );
 }
@@ -279,7 +267,7 @@ export function renderAbbrevString0(strings: string[]): string {
   const abbrevRadix = createRadix<number>();
   _.each(strings, str => {
     const chars = str.split('');
-    radUpsert(abbrevRadix, chars, (count) => count === undefined ? 1 : count + 1);
+    radUpsert(abbrevRadix, chars, (count) => (count === undefined ? 1 : count + 1));
   });
 
   const abbrevs = radFoldUp<number, string>(abbrevRadix, (path, { childResults }) => {
@@ -291,14 +279,13 @@ export function renderAbbrevString0(strings: string[]): string {
     return childAbbrev;
   });
 
-
   return abbrevs;
 }
 export function renderAbbrevString(strings: string[]): string {
   const abbrevRadix = createRadix<number>();
   _.each(strings, str => {
     const chars = str.split('');
-    radUpsert(abbrevRadix, chars, (count) => count === undefined ? 1 : count + 1);
+    radUpsert(abbrevRadix, chars, (count) => (count === undefined ? 1 : count + 1));
   });
 
   const abbrevs = radFoldUp<number, string>(abbrevRadix, (path, { childResults }) => {

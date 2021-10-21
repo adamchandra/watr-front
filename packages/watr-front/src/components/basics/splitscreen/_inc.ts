@@ -15,7 +15,6 @@ export default defineComponent({
   },
 
   setup(_props, _context: SetupContext) {
-    return {
-    };
+    return {};
   },
 });

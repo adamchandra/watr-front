@@ -11,7 +11,6 @@ import {
   updateSvgElement,
 } from '~/lib/transcript-rendering';
 
-
 type Args = {
   superimposedElements: SuperimposedElements
 };
@@ -24,7 +23,6 @@ export interface LabelDisplay {
 export async function useLabelDisplay({
   superimposedElements,
 }: Args): Promise<LabelDisplay> {
-
   const svgElement = superimposedElements.overlayElements.svg;
 
   const defs = d3.select(svgElement)
@@ -47,7 +45,6 @@ export async function useLabelDisplay({
     .attr('stop-opacity', '0.1')
     .attr('stop-color', 'blue')
   ;
-
 
   defs
     .append('marker')
@@ -74,7 +71,6 @@ export async function useLabelDisplay({
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 5 z')
   ;
-
 
   function showLabel(l: Label): void {
     const svgs = labelToSVGs(l, [], false);

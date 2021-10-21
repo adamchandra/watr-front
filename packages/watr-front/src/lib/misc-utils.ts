@@ -1,4 +1,3 @@
-
 export function getOrDie<T>(v: T | null | undefined, msg: string = 'null|undef'): T {
   if (v === null || v === undefined) {
     throw new Error(`Error: ${msg}`);

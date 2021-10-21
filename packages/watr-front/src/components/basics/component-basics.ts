@@ -47,11 +47,13 @@ export function watchOnceFor<T>(tref: Ref<T | null | undefined>, fn: (t: T) => v
  * refs have a value !== null/undefined
  */
 export function watchAll(rs?: Ref<any>[]): any {
-  if (!rs) return toRefs(reactive({
-    done: true,
-    len: 0,
-    curr: 0,
-  }));
+  if (!rs) {
+    return toRefs(reactive({
+      done: true,
+      len: 0,
+      curr: 0,
+    }));
+  }
 
   const curr = rs;
   const next = deepRef(0);
@@ -78,7 +80,6 @@ export function watchAll(rs?: Ref<any>[]): any {
         state.curr.value += 1;
         next.value += 1;
       }
-
     }, { immediate: false });
 
     startFlag.value = true;

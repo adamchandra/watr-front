@@ -23,7 +23,6 @@ export interface StanzaViewer {
 export async function useStanzaViewer({
   mountPoint,
 }: Args): Promise<StanzaViewer> {
-
   const superimposedElements = await useSuperimposedElements({
     includeElems: [ElementTypes.Text, ElementTypes.Svg, ElementTypes.Event],
     mountPoint,
@@ -38,13 +37,12 @@ export async function useStanzaViewer({
   };
 
   const mtext = useMeasuredTextOverlay({ superimposedElements });
-  const textDiv = superimposedElements.overlayElements.textDiv;
+  const { textDiv } = superimposedElements.overlayElements;
   const pageLeft = 0;
-  const putTextLn: (o: ShowStanzaOpts) => PutTextLn =
-    () => (lineNum: number, text: string) => {
-      const lineY = (size + 2) * lineNum;
-      return mtext.putTextLn(style, pageLeft, lineY, text);
-    };
+  const putTextLn: (o: ShowStanzaOpts) => PutTextLn = () => (lineNum: number, text: string) => {
+    const lineY = (size + 2) * lineNum;
+    return mtext.putTextLn(style, pageLeft, lineY, text);
+  };
 
   const showStanza: ShowStanza = (transcriptIndex, stanzaId, opts) => {
     textDiv.style.visibility = 'hidden';

@@ -1,10 +1,10 @@
 import _ from 'lodash';
 
-import { Shape, ShapeRepr } from './shapes';
 import * as io from 'io-ts';
-import { PageNumber, Span } from '~/lib/codec-utils';
 import { pipe } from 'fp-ts/lib/function';
 import * as E from 'fp-ts/lib/Either';
+import { PageNumber, Span } from '~/lib/codec-utils';
+import { Shape, ShapeRepr } from './shapes';
 
 const DocumentRange = io.type({
   unit: io.literal('document'),
@@ -48,7 +48,6 @@ const GeometricRangeRepr = io.type({
   unit: io.literal('shape'),
   at: ShapeRepr,
 }, 'GeometricRangeRepr');
-
 
 type GeometricRangeRepr = io.TypeOf<typeof GeometricRangeRepr>;
 
@@ -135,8 +134,6 @@ export const LabelNameRangeRepr = io.type({
 }, 'LabelNameRangeRepr');
 export type LabelNameRangeRepr = io.TypeOf<typeof LabelNameRangeRepr>;
 
-
-
 export const LabelPartialsRepr = io.partial({
   id: io.number,
   children: io.array(LabelRepr),
@@ -152,12 +149,10 @@ export const LabelPartials: io.Type<LabelPartials, LabelPartialsRepr, unknown> =
   }),
 );
 
-
 export const Label = new io.Type<Label, LabelRepr, unknown>(
   'Label',
 
-  (u: any): u is Label =>
-    io.string.is(u.name) && io.array(Range).is(u.range),
+  (u: any): u is Label => io.string.is(u.name) && io.array(Range).is(u.range),
 
   (unk: unknown, c: io.Context) => {
     try {
@@ -186,13 +181,11 @@ export const Label = new io.Type<Label, LabelRepr, unknown>(
         result.children = childResults;
       }
 
-
       if (id !== undefined) result.id = id;
       if (props !== undefined) result.props = props;
 
       return io.success(result);
-
-    } catch (error) {
+    } catch {
       console.log('error validating label', unk);
     }
     return LabelWithContext.validate(unk, c);
@@ -216,12 +209,10 @@ export const Label = new io.Type<Label, LabelRepr, unknown>(
   },
 );
 
-
 const LabelWithContext = new io.Type<Label, LabelRepr, unknown>(
   'Label',
 
-  (u: any): u is Label =>
-    io.string.is(u.name) && io.array(Range).is(u.range),
+  (u: any): u is Label => io.string.is(u.name) && io.array(Range).is(u.range),
 
   (unk: unknown, c: io.Context) => pipe(
     LabelRepr.validate(unk, c),
@@ -229,11 +220,13 @@ const LabelWithContext = new io.Type<Label, LabelRepr, unknown>(
     E.bind('partials', ({ repr }) => LabelPartialsRepr.validate(repr, c)),
     E.bind('range', ({ repr }) => io.array(Range).validate(repr.range, c)),
     E.bind('label', ({ repr, range }) => io.success({ name: repr.name, range })),
-    E.bind('id', ({ partials: { id } }) => id === undefined ? io.success({}) : io.success({ id })),
-    E.bind('props', ({ partials: { props } }) => props === undefined ? io.success({}) : io.success({ props })),
-    E.bind('childArray', ({ partials: { children } }) => children === undefined ? io.success([]) : io.array(Label).validate(children, c)),
-    E.bind('children', ({ childArray }) => childArray.length === 0 ? io.success({}) : io.success({ children: childArray })),
-    E.chain(({ label, id, children, props }) => io.success(_.merge(label, id, children, props))),
+    E.bind('id', ({ partials: { id } }) => (id === undefined ? io.success({}) : io.success({ id }))),
+    E.bind('props', ({ partials: { props } }) => (props === undefined ? io.success({}) : io.success({ props }))),
+    E.bind('childArray', ({ partials: { children } }) => (children === undefined ? io.success([]) : io.array(Label).validate(children, c))),
+    E.bind('children', ({ childArray }) => (childArray.length === 0 ? io.success({}) : io.success({ children: childArray }))),
+    E.chain(({
+      label, id, children, props,
+    }) => io.success(_.merge(label, id, children, props))),
   ),
   (a: Label) => {
     const lenc: LabelRepr = {

@@ -33,30 +33,27 @@ function setup() {
     }
   }
 
-
-  useEventlibCore({ targetDivRef: mountPoint }).then( async (eventlibCore) => {
+  useEventlibCore({ targetDivRef: mountPoint }).then(async (eventlibCore) => {
     const { setMouseHandlers } = eventlibCore;
 
-    const superimposedElements = await useSuperimposedElements({ includeElems: [ElementTypes.Img, ElementTypes.Svg], mountPoint  });
+    const superimposedElements = await useSuperimposedElements({ includeElems: [ElementTypes.Img, ElementTypes.Svg], mountPoint });
 
     const eventlibSelect = useEventlibSelect({ eventlibCore, superimposedElements });
 
     selectionRef = eventlibSelect.selectionRef;
 
-    const myHandlers1: MouseHandlerInit = () => {
-      return {
-        mousemove: e => showMouseEvent(e),
-        mousedown: e => showMouseEvent(e),
-        mouseenter: e => showMouseEvent(e),
-        mouseleave: e => showMouseEvent(e),
-        mouseout: e => showMouseEvent(e),
-        mouseover: e => showMouseEvent(e),
-        mouseup: e => showMouseEvent(e),
-        click: e => showMouseEvent(e),
-        dblclick: e => showMouseEvent(e),
-        contextmenu: e => showMouseEvent(e),
-      };
-    };
+    const myHandlers1: MouseHandlerInit = () => ({
+      mousemove: e => showMouseEvent(e),
+      mousedown: e => showMouseEvent(e),
+      mouseenter: e => showMouseEvent(e),
+      mouseleave: e => showMouseEvent(e),
+      mouseout: e => showMouseEvent(e),
+      mouseover: e => showMouseEvent(e),
+      mouseup: e => showMouseEvent(e),
+      click: e => showMouseEvent(e),
+      dblclick: e => showMouseEvent(e),
+      contextmenu: e => showMouseEvent(e),
+    });
 
     superimposedElements.setDimensions(600, 500);
     setMouseHandlers([myHandlers1]);

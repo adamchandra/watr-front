@@ -6,7 +6,9 @@
 import _ from 'lodash';
 
 import { SuperimposedElements } from './superimposed-elements';
-import { TextStyle, makeStyleString, LineDimensions, showText0 } from '~/lib/html-text-metrics';
+import {
+  TextStyle, makeStyleString, LineDimensions, showText0,
+} from '~/lib/html-text-metrics';
 
 type PutText = (style: TextStyle, x: number, y: number, text: string) => LineDimensions;
 type ClearText = () => Promise<void>;
@@ -20,15 +22,13 @@ type Args = {
   superimposedElements: SuperimposedElements;
 };
 
-
 export function useMeasuredTextOverlay({
   superimposedElements,
 }: Args): TextOverlay {
-
   const charWidthCache: Record<string, number> = {};
 
   function putTextLn(style: TextStyle, x: number, y: number, text: string): LineDimensions {
-    const textDiv = superimposedElements.overlayElements.textDiv;
+    const { textDiv } = superimposedElements.overlayElements;
     const fontstring = makeStyleString(style);
 
     const div = document.createElement('div');
@@ -40,14 +40,13 @@ export function useMeasuredTextOverlay({
     div.style.top = `${y}px`;
     const node = document.createTextNode(text);
     div.append(node);
-    textDiv.appendChild(div);
+    textDiv.append(div);
 
     return showText0(text, div, x, y, charWidthCache);
   }
 
-
   const clearText: ClearText = () => {
-    const textDiv = superimposedElements.overlayElements.textDiv;
+    const { textDiv } = superimposedElements.overlayElements;
 
     if (textDiv === undefined) return Promise.resolve();
     // if (textDiv.childElementCount === 0) return Promise.resolve();
@@ -76,7 +75,7 @@ export function useMeasuredTextOverlay({
 
       // observer.observe(textDiv, config);
       while (textDiv.firstChild) {
-        textDiv.removeChild(textDiv.firstChild);
+        textDiv.firstChild.remove();
       }
       resolve();
     });

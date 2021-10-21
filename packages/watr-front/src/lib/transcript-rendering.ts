@@ -1,8 +1,8 @@
 import _ from 'lodash';
 
+import * as d3 from 'd3-selection';
 import { Label } from '~/lib/transcript/labels';
 import { ShapeSvg, shapeToSvg } from '~/lib/transcript/shapes';
-import * as d3 from 'd3-selection';
 import { deriveLabelId } from './d3-extras';
 
 function initSVGDimensions(r: any) {
@@ -39,18 +39,16 @@ function initSVGDimensions(r: any) {
   return r;
 }
 
-
 function setSVGColors(r: any) {
   return r
     // .attr('opacity', (d: any) => d.classes.some((cls: string) => cls === 'eager') ? 0.3 : 0.2)
-    .attr('fill-opacity', (d: any) => d.classes.some((cls: string) => cls === 'eager') ? 0.3 : 0.2)
-    .attr('stroke-opacity', (d: any) => d.classes.some((cls: string) => cls === 'eager') ? 0.3 : 0.2)
+    .attr('fill-opacity', (d: any) => (d.classes.includes('eager') ? 0.3 : 0.2))
+    .attr('stroke-opacity', (d: any) => (d.classes.includes('eager') ? 0.3 : 0.2))
     .attr('stroke-width', 1)
     // .attr('fill', (d: any) => d.classes.some((cls: string) => cls === 'eager') ? 'blue' : 'yellow')
     .attr('fill', () => 'url(#grad1)')
-    .attr('stroke', (d: any) => d.classes.some((cls: string) => cls === 'eager') ? 'blue' : 'red')
+    .attr('stroke', (d: any) => (d.classes.includes('eager') ? 'blue' : 'red'))
   ;
-
 }
 
 function setSVGClasses(r: any) {
@@ -58,7 +56,6 @@ function setSVGClasses(r: any) {
 }
 
 export function labelToSVGs(label: Label, parentClasses: string[], forceEval: boolean): ShapeSvg[] {
-
   const classStrings = label?.props?.class || [];
 
   const isLazy = _.some(classStrings, s => s === '>lazy');
@@ -68,15 +65,15 @@ export function labelToSVGs(label: Label, parentClasses: string[], forceEval: bo
   }
 
   const localClasses = _.filter(classStrings, c => c.startsWith('='))
-    .map(c => c.substring(1));
+    .map(c => c.slice(1));
 
   const propogatedClasses = _.filter(classStrings, c => c.startsWith('>'))
-    .map(c => c.substring(1));
+    .map(c => c.slice(1));
 
   propogatedClasses.push(label.name);
 
-  const childShapes: ShapeSvg[] = label.children === undefined ? [] :
-    _.flatMap(label.children, c => labelToSVGs(c, propogatedClasses, forceEval));
+  const childShapes: ShapeSvg[] = label.children === undefined ? []
+    : _.flatMap(label.children, c => labelToSVGs(c, propogatedClasses, forceEval));
 
   const labelId = deriveLabelId(label);
 
@@ -103,7 +100,7 @@ function labelToTriggerSVG(label: Label, rootLabel: Label): ShapeSvg {
 
   if (isTrigger) {
     const localClasses = _.filter(classStrings, c => c.startsWith('='))
-      .map(c => c.substring(1));
+      .map(c => c.slice(1));
 
     // console.log('  isTrigger: localClasses', localClasses);
 
@@ -125,15 +122,14 @@ function labelToTriggerSVG(label: Label, rootLabel: Label): ShapeSvg {
   }
 
   const children = label.children || [];
-  const childShapes: ShapeSvg[] =
-    _.filter(
-      _.flatMap(children, c => labelToTriggerSVG(c, rootLabel)),
-      (c) => c !== undefined,
-    );
+  const childShape: ShapeSvg[] = _.find(
+    _.flatMap(children, c => labelToTriggerSVG(c, rootLabel)),
+    (c) => c !== undefined,
+  );
 
   // console.log('  notTrigger: childShapes', childShapes);
 
-  return childShapes[0];
+  return childShape;
 }
 
 const OctoAttrs = {
@@ -177,7 +173,6 @@ export function updateSvgElement(svgElement: SVGElement, svgShapes: ShapeSvg[]) 
     });
 
   // dataSelection.exit().remove();
-
 }
 
 export function resetShapesFillStroke(svgElement: SVGElement) {
@@ -214,7 +209,7 @@ export function highlightShapesFillStroke(svgElement: SVGElement, shapeId: strin
     .each(function () {
       d3.select(this)
         .attr('stroke', () => 'black')
-        .attr('stroke-opacity', () => 1.0)
+        .attr('stroke-opacity', () => 1)
         .attr('fill', () => 'blue')
         .attr('fill-opacity', () => '0.3')
       ;

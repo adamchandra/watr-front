@@ -10,10 +10,9 @@ import {
   select,
 } from 'd3-selection';
 
-import 'd3-transition';
+import { SelectionOrTransition } from 'd3-transition';
 
 import { BBox } from '~/lib/coord-sys';
-import { SelectionOrTransition } from 'd3-transition';
 import { formatShape, Shape } from './transcript/shapes';
 import { Label } from './transcript/labels';
 
@@ -21,7 +20,6 @@ export function initRect<GElement extends BaseType, Datum, PElement extends Base
   sel: SelectionOrTransition<GElement, Datum, PElement, PDatum>,
   fbbox: (d: any) => BBox,
 ) {
-
   sel.attr('x', d => fbbox(d).x);
   sel.attr('y', d => fbbox(d).y);
   sel.attr('width', d => fbbox(d).width);
@@ -44,8 +42,6 @@ export function initFill<GElement extends BaseType, Datum, PElement extends Base
   sel.attr('fill', fill);
   sel.attr('fill-opacity', fillOpacity);
 }
-
-
 
 export function deriveLabelId(label: Label): string {
   const rangeShape = _.flatMap(label.range, range => {

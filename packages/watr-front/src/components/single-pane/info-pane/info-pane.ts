@@ -4,10 +4,10 @@ import {
 } from '@nuxtjs/composition-api';
 
 import _ from 'lodash';
+import { Promise as Bromise } from 'bluebird';
 import { Label } from '~/lib/transcript/labels';
 import { formatShape } from '~/lib/transcript/shapes';
 import { LineDimensions, TextStyle } from '~/lib/html-text-metrics';
-import { Promise as Bromise } from 'bluebird';
 import { useSuperimposedElements, ElementTypes } from '~/components/basics/superimposed-elements';
 import { deriveLabelId } from '~/lib/d3-extras';
 import { useMeasuredTextOverlay } from '~/components/basics/measured-text-overlay';
@@ -41,7 +41,6 @@ export interface InfoPane {
 export async function useInfoPane({
   mountPoint,
 }: Args): Promise<InfoPane> {
-
   const superimposedElements = await useSuperimposedElements({
     includeElems: [ElementTypes.Text],
     mountPoint,
@@ -49,12 +48,12 @@ export async function useInfoPane({
 
   const mtext = useMeasuredTextOverlay({ superimposedElements });
 
-  mountPoint.value.onresize = function (_event: UIEvent) {
+  mountPoint.value.addEventListener('resize', (_event: UIEvent) => {
     superimposedElements.setDimensions(
       mountPoint.value.clientWidth,
       mountPoint.value.clientHeight,
     );
-  };
+  });
 
   const actions: Ref<string[]> = ref([]);
 
@@ -78,7 +77,6 @@ export async function useInfoPane({
   let textLeftCurr = textLeftInit;
   let textTopCurr = textTopInit;
 
-
   // TODO move this showLabel function out of InfoPane class
   const showLabel = async (l: Label, doFreeze: boolean) => {
     await clearScreen();
@@ -90,14 +88,14 @@ export async function useInfoPane({
     const lineDimensions = await putStringLn('>>>== Label (Click here to clear) ==');
     const { lineDiv } = lineDimensions;
     lineDiv.classList.add('hoverable');
-    lineDiv.onclick = function () {
+    lineDiv.addEventListener('click', () => {
       actions.value = actions.value.filter(s => s !== 'freeze');
       clearScreen();
-    };
+    });
 
     await Bromise.mapSeries(lstrings, async ([lstr, id]) => {
       await putStringLn(lstr, id);
-      return Promise.resolve(undefined);
+      return Promise.resolve();
     });
 
     await putStringLn('<<<<==');
@@ -105,7 +103,7 @@ export async function useInfoPane({
   const putStringLn = async (str: string, id?: string): Promise<LineDimensions> => {
     const x = textLeftCurr;
     const y = textTopCurr;
-    textTopCurr = textTopCurr + lineOffset;
+    textTopCurr += lineOffset;
     textLeftCurr = textLeftInit;
     const lineDimensions = await _putString(x, y, str, id);
     return lineDimensions;
@@ -114,7 +112,7 @@ export async function useInfoPane({
   const putString = async (str: string, id?: string): Promise<LineDimensions> => {
     const x = textLeftCurr;
     const lineDimensions = await _putString(x, textTopCurr, str, id);
-    textLeftCurr = textLeftCurr + lineDimensions.width;
+    textLeftCurr += lineDimensions.width;
     return lineDimensions;
   };
 
@@ -124,22 +122,21 @@ export async function useInfoPane({
       const { lineDiv } = lineDimensions;
 
       lineDiv.classList.add('hoverable');
-      lineDiv.onmouseover = function () {
+      lineDiv.addEventListener('mouseover', () => {
         lineDiv.classList.add('hovering');
         reactiveTexts.mouseover.value = id;
-      };
-      lineDiv.onmouseout = function () {
+      });
+      lineDiv.addEventListener('mouseout', () => {
         lineDiv.classList.remove('hovering');
         reactiveTexts.mouseout.value = id;
-      };
+      });
 
-      lineDiv.onclick = function () {
+      lineDiv.addEventListener('click', () => {
         reactiveTexts.click.value = id;
-      };
+      });
     }
     return lineDimensions;
   };
-
 
   const clearScreen = async () => {
     await mtext.clearText();
@@ -159,29 +156,24 @@ export async function useInfoPane({
 type TupleStrStr = readonly [string, string];
 
 function labelToStringWithIds(label: Label, level: number, _parentClasses: string[]): TupleStrStr[] {
-
   const allProps: Record<string, string[]> = label?.props || {};
 
   const classStrings = allProps.class || [];
 
   const kvalStrings = _.join(_.map(
-    _.toPairs(allProps), ([key, value]) => {
-      return `${key}=${_.join(value, ', ')}`;
-    }), '; ');
-
+    _.toPairs(allProps), ([key, value]) => `${key}=${_.join(value, ', ')}`,
+  ), '; ');
 
   const localClasses = _.filter(classStrings, c => c.startsWith('='))
-    .map(c => c.substring(1));
-
+    .map(c => c.slice(1));
 
   const propogatedClasses = _.filter(classStrings, c => c.startsWith('>'))
-    .map(c => c.substring(1));
-
+    .map(c => c.slice(1));
 
   const lpad: string = _.map(_.range(level + 1), () => '   ').join('');
 
-  const childStrings: TupleStrStr[] = label.children === undefined ? [] :
-    _.flatMap(label.children, c => labelToStringWithIds(c, level + 1, propogatedClasses).map(([s, id]) => [lpad + s, id]));
+  const childStrings: TupleStrStr[] = label.children === undefined ? []
+    : _.flatMap(label.children, c => labelToStringWithIds(c, level + 1, propogatedClasses).map(([s, id]) => [lpad + s, id]));
 
   const localShapes = _.flatMap(label.range, range => {
     if (range.unit === 'shape') {
@@ -195,5 +187,5 @@ function labelToStringWithIds(label: Label, level: number, _parentClasses: strin
   const labelId = deriveLabelId(label);
   const ret: TupleStrStr = [header, labelId];
 
-  return _.concat([ret], childStrings);
+  return [..._, ret].concat(childStrings);
 }

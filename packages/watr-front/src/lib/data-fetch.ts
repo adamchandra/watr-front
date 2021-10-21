@@ -2,10 +2,10 @@ import { pipe } from 'fp-ts/lib/function';
 import * as E from 'fp-ts/lib/Either';
 import * as TE from 'fp-ts/lib/TaskEither';
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { getArtifactData, getEntryList } from './axios';
 import * as io from 'io-ts';
-import { Transcript } from './transcript/transcript';
 import { markRaw } from '@nuxtjs/composition-api';
+import { getArtifactData, getEntryList } from './axios';
+import { Transcript } from './transcript/transcript';
 
 export function fetchAndDecode<A, IO>(
   ioType: io.Type<A, IO, IO>,
@@ -28,9 +28,9 @@ export function fetchAndDecode<A, IO>(
 
 export const fetchAndDecodeTranscript = (entryId: string): TE.TaskEither<string[], Transcript> => {
   const fetcher = () => getArtifactData<any>(entryId, 'transcript')
-    .then(data => data === undefined ?
-      E.left([`could not fetch transcript ${entryId}`])
-      : E.right(markRaw(data)));
+    .then(data => (data === undefined
+      ? E.left([`could not fetch transcript ${entryId}`])
+      : E.right(markRaw(data))));
 
   return fetchAndDecode(Transcript, fetcher);
 };
@@ -47,9 +47,9 @@ export type CorpusEntryList = io.TypeOf<typeof CorpusEntryList>;
 
 export const fetchAndDecodeCorpusEntryList = (): TE.TaskEither<string[], CorpusEntryList> => {
   const fetcher = () => getEntryList<any>()
-    .then(data => data === undefined ?
-      E.left(['could not fetch corpus entry listing'])
-      : E.right(data));
+    .then(data => (data === undefined
+      ? E.left(['could not fetch corpus entry listing'])
+      : E.right(data)));
 
   return fetchAndDecode(CorpusEntryList, fetcher);
 };

@@ -1,4 +1,3 @@
-
 import {
   ref as deepRef,
   Ref,
@@ -8,4 +7,3 @@ export function divRef(div?: HTMLDivElement): Ref<HTMLDivElement | null> {
   const d = div || null;
   return deepRef(d);
 }
-

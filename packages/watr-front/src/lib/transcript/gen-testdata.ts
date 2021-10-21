@@ -22,9 +22,9 @@ export function makeGlyphRepr(char: string): GlyphRepr {
       gprops = { kind: 'rewrite', gs: [['ﬃ', 1, [19, 94, 9, 10]]] };
       break;
   }
-  const repr: GlyphRepr = gprops ?
-    [gchar, 2, [100, 200, 300, 400], gprops] :
-    [gchar, 3, [100, 200, 300, 400]];
+  const repr: GlyphRepr = gprops
+    ? [gchar, 2, [100, 200, 300, 400], gprops]
+    : [gchar, 3, [100, 200, 300, 400]];
 
   return repr;
 }

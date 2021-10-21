@@ -68,7 +68,7 @@ export class Point {
   public constructor(x: number, y: number, sys?: CoordSys) {
     this.x = x;
     this.y = y;
-    this.sys = sys ? sys : CoordSys.Unknown;
+    this.sys = sys || CoordSys.Unknown;
     // this.type = "Point";
   }
 
@@ -116,8 +116,8 @@ class Trapezoid {
   }
 
   public svgShape() {
-    const p1 = this.topLine.p1;
-    const p2 = this.topLine.p2;
+    const { p1 } = this.topLine;
+    const { p2 } = this.topLine;
     const p3 = this.bottomLine.p2;
     const p4 = this.bottomLine.p1;
     return {
@@ -133,21 +133,13 @@ export type BBoxArray = NumArray4;
 export type AnyShape = Point | Line | Trapezoid | BBox;
 
 export const mkPoint = {
-  fromXy: (x: number, y: number, sys: CoordSys = CoordSys.Unknown) => {
-    return new Point(x, y, sys);
-  },
+  fromXy: (x: number, y: number, sys: CoordSys = CoordSys.Unknown) => new Point(x, y, sys),
 
-  fromD3Mouse: (d3Mouse: [number, number]) => {
-    return new Point(d3Mouse[0], d3Mouse[1], CoordSys.Screen);
-  },
+  fromD3Mouse: (d3Mouse: [number, number]) => new Point(d3Mouse[0], d3Mouse[1], CoordSys.Screen),
 
-  offsetFromJqEvent: (event: any) => {
-    return mkPoint.fromXy(event.offsetX, event.offsetY, CoordSys.Screen);
-  },
+  offsetFromJqEvent: (event: any) => mkPoint.fromXy(event.offsetX, event.offsetY, CoordSys.Screen),
 
-  fromFloatReps: (o: any) => {
-    return new Point(o.x / 100.0, o.y / 100.0, CoordSys.PdfMedia);
-  },
+  fromFloatReps: (o: any) => new Point(o.x / 100, o.y / 100, CoordSys.PdfMedia),
 };
 
 export function pointFloor(p: Point) {
@@ -180,7 +172,7 @@ export class BBox implements LTBounds {
     this.top = t;
     this.width = w;
     this.height = h;
-    this.sys = sys ? sys : CoordSys.Unknown;
+    this.sys = sys || CoordSys.Unknown;
   }
 
   get minX() {
@@ -243,10 +235,10 @@ export class BBox implements LTBounds {
 
   get intRep() {
     return [
-      Math.trunc(this.left * 100.0),
-      Math.trunc(this.top * 100.0),
-      Math.trunc(this.width * 100.0),
-      Math.trunc(this.height * 100.0),
+      Math.trunc(this.left * 100),
+      Math.trunc(this.top * 100),
+      Math.trunc(this.width * 100),
+      Math.trunc(this.height * 100),
     ];
   }
 
@@ -266,42 +258,37 @@ export class BBox implements LTBounds {
 }
 
 export const mk = {
-  fromLtwhFloatReps: (o: LTBoundsIntRep) => {
-    return new BBox(
-      o.left / 100.0,
-      o.top / 100.0,
-      o.width / 100.0,
-      o.height / 100.0,
-      CoordSys.Unknown,
-    );
-  },
+  fromLtwhFloatReps: (o: LTBoundsIntRep) => new BBox(
+    o.left / 100,
+    o.top / 100,
+    o.width / 100,
+    o.height / 100,
+    CoordSys.Unknown,
+  ),
 
-  fromLtwh: (l: number, t: number, w: number, h: number) => {
-    return new BBox(l, t, w, h, CoordSys.Unknown);
-  },
+  fromLtwh: (l: number, t: number, w: number, h: number) => new BBox(l, t, w, h, CoordSys.Unknown),
 
-  fromLtwhObj: (o: LTBounds) => {
-    return new BBox(o.left, o.top, o.width, o.height, CoordSys.Unknown);
-  },
+  fromLtwhObj: (o: LTBounds) => new BBox(o.left, o.top, o.width, o.height, CoordSys.Unknown),
 
   fromArray: (ltwh: [number, number, number, number]) => {
-    const left = ltwh[0] / 100.0;
-    const top = ltwh[1] / 100.0;
-    const width = ltwh[2] / 100.0;
-    const height = ltwh[3] / 100.0;
+    const left = ltwh[0] / 100;
+    const top = ltwh[1] / 100;
+    const width = ltwh[2] / 100;
+    const height = ltwh[3] / 100;
     return new BBox(left, top, width, height, CoordSys.PdfMedia);
   },
 };
 
 export function toBox(mm: MinMaxBox): BBox {
-  const { minX, minY, maxX, maxY } = mm;
+  const {
+    minX, minY, maxX, maxY,
+  } = mm;
   const x = minX;
   const y = minY;
   const width = maxX - minX;
   const height = maxY - minY;
   return new BBox(x, y, width, height);
 }
-
 
 export function centerBoxAt(box: BBox, p: Point): void {
   const { width, height } = box;

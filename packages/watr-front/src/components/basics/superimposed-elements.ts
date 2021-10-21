@@ -36,14 +36,9 @@ type Args = {
 export async function useSuperimposedElements({
   mountPoint, includeElems,
 }: Args): Promise<SuperimposedElements> {
+  const useElem: (et: ElementTypes) => boolean = (et) => includeElems.includes(et);
 
-  const useElem: (et: ElementTypes) => boolean =
-    (et) => includeElems.includes(et);
-
-
-  const overlayElements: OverlayElements = {
-  };
-
+  const overlayElements: OverlayElements = {};
 
   if (useElem(ElementTypes.Event)) {
     const el = overlayElements.eventDiv = document.createElement('div');
@@ -60,8 +55,7 @@ export async function useSuperimposedElements({
     el.classList.add('layer');
   }
   if (useElem(ElementTypes.Svg)) {
-    const el = overlayElements.svg =
-      document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const el = overlayElements.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     el.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xlink', 'http://www.w3.org/1999/xlink');
     el.classList.add('layer');
   }
@@ -69,7 +63,6 @@ export async function useSuperimposedElements({
     const el = overlayElements.textDiv = document.createElement('div');
     el.classList.add('layer', 'text-layer');
   }
-
 
   const dimensions: Ref<[number, number]> = deepRef([200, 500] as [number, number]);
 
@@ -82,13 +75,15 @@ export async function useSuperimposedElements({
 
   const overlayContainer = mountPoint.value;
   overlayContainer.classList.add('layers');
-  const { img, canvas, svg, textDiv, eventDiv } = overlayElements;
+  const {
+    img, canvas, svg, textDiv, eventDiv,
+  } = overlayElements;
 
   if (img) {
-    img.onload = function () {
+    img.addEventListener('load', () => {
       const { width, height } = img;
       dimensions.value = [width, height];
-    };
+    });
     overlayContainer.append(img);
   }
   if (canvas) {
@@ -104,7 +99,6 @@ export async function useSuperimposedElements({
     overlayContainer.append(eventDiv);
   }
 
-
   if (img) {
     watch(imgElemSource, (src) => {
       if (src) {
@@ -114,7 +108,6 @@ export async function useSuperimposedElements({
   }
 
   watch(dimensions, ([width, height]) => {
-
     const w = `${width}px`;
     const h = `${height}px`;
 
