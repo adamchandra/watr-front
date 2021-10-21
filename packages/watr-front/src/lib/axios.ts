@@ -1,45 +1,45 @@
-import path from 'path'
+import path from 'path';
 
 import axios, {
   AxiosRequestConfig,
-  AxiosInstance
-} from 'axios'
+  AxiosInstance,
+} from 'axios';
 
 export function configRequest(): AxiosRequestConfig {
-  const auth = {}
+  const auth = {};
 
   const config: AxiosRequestConfig = {
     baseURL: 'http://localhost:3100/',
     headers: {
-      ...auth
+      ...auth,
     },
-    timeout: 4000
+    timeout: 4000,
     // responseType: "json"
-  }
+  };
 
-  return config
+  return config;
 }
 
 export function configAxios(): AxiosInstance {
-  const conf = configRequest()
-  return axios.create(conf)
+  const conf = configRequest();
+  return axios.create(conf);
 }
 
 export function resolveCorpusUrl(entryId: string, ...artifactPaths: string[]): string {
-  const fullPath = resolveCorpusPath(entryId, ...artifactPaths)
+  const fullPath = resolveCorpusPath(entryId, ...artifactPaths);
   const base = 'http://localhost:3100';
   return base + fullPath;
 }
 
 export function resolveCorpusPath(entryId: string, ...artifactPaths: string[]): string {
-  const leaves = path.join(entryId, ...artifactPaths)
-  return path.join('/api/corpus/entry/', leaves)
+  const leaves = path.join(entryId, ...artifactPaths);
+  return path.join('/api/corpus/entry/', leaves);
 }
 
 export async function getArtifactData<T>(entryId: string, ...artifactPaths: string[]): Promise<T | undefined> {
   return configAxios()
     .get(resolveCorpusPath(entryId, ...artifactPaths))
-    .then(resp => resp.data)
+    .then(resp => resp.data);
 }
 
 export async function getEntryList<T>(): Promise<T | undefined> {
@@ -47,5 +47,5 @@ export async function getEntryList<T>(): Promise<T | undefined> {
 
   return configAxios()
     .get(endpoint)
-    .then(resp => resp.data)
+    .then(resp => resp.data);
 }

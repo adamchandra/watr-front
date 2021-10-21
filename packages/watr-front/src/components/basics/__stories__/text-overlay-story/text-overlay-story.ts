@@ -28,7 +28,7 @@ export default {
     awaitRef(mountPoint)
       .then(() => useSuperimposedElements({
         includeElems: [ElementTypes.Text, ElementTypes.Img, ElementTypes.Svg],
-        mountPoint
+        mountPoint,
       }))
       .then(superimposedElements => {
 
@@ -50,16 +50,16 @@ export default {
             size,
             style: 'normal',
             family,
-            weight: 'normal'
+            weight: 'normal',
           };
 
           textOverlay.clearText();
 
-          const svgLayer = superimposedElements.overlayElements.svg!;
+          const svgLayer = superimposedElements.overlayElements.svg;
           const svgSelect = d3.select(svgLayer);
 
           _.each(inputLines, (line, linenum) => {
-            const lineDimensions = textOverlay.putTextLn(style, left, top + (linenum * size), line)
+            const lineDimensions = textOverlay.putTextLn(style, left, top + (linenum * size), line);
             const dims = lineDimensions.charBounds;
             svgSelect
               .selectAll('.chars')
@@ -75,7 +75,7 @@ export default {
               .attr('stroke-opacity', 0.8)
               .attr('fill', 'yellow')
               .attr('fill-opacity', 0.3)
-              ;
+            ;
 
             const dimStrs = _.map(dims, d => {
               return `[${d.x}, ${d.y}, ${d.width}, ${d.height}]`;
@@ -86,7 +86,7 @@ export default {
           });
 
         });
-      })
+      });
 
 
     return {
@@ -98,5 +98,5 @@ export default {
       textLeft,
       textFamily,
     };
-  }
-}
+  },
+};

@@ -29,14 +29,14 @@ export async function usePdfPageViewer({
   mountPoint,
   transcriptIndex,
   entryId,
-  pageNumber
+  pageNumber,
 }: Args): Promise<PdfPageViewer> {
 
   const eventlibCore = await useEventlibCore({ targetDivRef: mountPoint });
 
   const superimposedElements = await useSuperimposedElements({
     includeElems: [ElementTypes.Img, ElementTypes.Svg, ElementTypes.Event],
-    mountPoint
+    mountPoint,
   });
 
   const transcriptPage = transcriptIndex.transcript.pages[pageNumber];
@@ -56,5 +56,5 @@ export async function usePdfPageViewer({
   return {
     eventlibCore,
     superimposedElements,
-  }
+  };
 }

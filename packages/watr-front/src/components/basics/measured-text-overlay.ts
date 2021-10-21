@@ -28,7 +28,7 @@ export function useMeasuredTextOverlay({
   const charWidthCache: Record<string, number> = {};
 
   function putTextLn(style: TextStyle, x: number, y: number, text: string): LineDimensions {
-    const textDiv = superimposedElements.overlayElements.textDiv!;
+    const textDiv = superimposedElements.overlayElements.textDiv;
     const fontstring = makeStyleString(style);
 
     const div = document.createElement('div');
@@ -39,7 +39,7 @@ export function useMeasuredTextOverlay({
     div.style.left = `${x}px`;
     div.style.top = `${y}px`;
     const node = document.createTextNode(text);
-    div.append(node)
+    div.append(node);
     textDiv.appendChild(div);
 
     return showText0(text, div, x, y, charWidthCache);
@@ -47,7 +47,7 @@ export function useMeasuredTextOverlay({
 
 
   const clearText: ClearText = () => {
-    const textDiv = superimposedElements.overlayElements.textDiv!;
+    const textDiv = superimposedElements.overlayElements.textDiv;
 
     if (textDiv === undefined) return Promise.resolve();
     // if (textDiv.childElementCount === 0) return Promise.resolve();

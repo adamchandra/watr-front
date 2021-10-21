@@ -2,21 +2,19 @@
  * Initialize and return an rtree interface
  */
 
-import _ from 'lodash'
-
-jkl
+import _ from 'lodash';
 
 import {
   Ref,
   toRefs,
   reactive,
 
-} from '@nuxtjs/composition-api'
+} from '@nuxtjs/composition-api';
 
-import { EventlibCore } from './eventlib-core'
-import * as coords from '~/lib/coord-sys'
-import { EMouseEvent, MouseHandlerInit, MouseEventT } from '~/lib/EventlibHandlers'
-import { TranscriptIndex, TranscriptIndexable } from '~/lib/transcript/transcript-index'
+import { EventlibCore } from './eventlib-core';
+import * as coords from '~/lib/coord-sys';
+import { EMouseEvent, MouseHandlerInit, MouseEventT } from '~/lib/EventlibHandlers';
+import { TranscriptIndex, TranscriptIndexable } from '~/lib/transcript/transcript-index';
 
 /**
  * Minimal interface required for RTree index
@@ -40,57 +38,57 @@ type Args = {
   transcriptIndex: TranscriptIndex;
   eventlibCore: EventlibCore;
   flashlightRadius: number;
-}
+};
 
 
 export function useFlashlight({
   transcriptIndex,
   indexKey,
   flashlightRadius,
-  eventlibCore
+  eventlibCore,
 }: Args): Flashlight {
 
 
   const eventTargetRecs  = toRefs(reactive({
     mousemove: [],
-    click: []
+    click: [],
   }));
 
   const mousemove = (e: EMouseEvent) => {
-    const pos = e.pos
+    const pos = e.pos;
     const mousePt = coords.mkPoint.fromXy(pos.x, pos.y);
     const queryBox = coords.boxCenteredAt(mousePt, flashlightRadius, flashlightRadius);
 
     const rtree = transcriptIndex.getKeyedIndex(indexKey);
-    const hits = rtree.search(queryBox)
+    const hits = rtree.search(queryBox);
 
     eventTargetRecs.mousemove.value = hits;
-  }
+  };
 
   const click = (e: EMouseEvent) => {
-    const pos = e.pos
+    const pos = e.pos;
     const mousePt = coords.mkPoint.fromXy(pos.x, pos.y);
     const queryBox = coords.boxCenteredAt(mousePt, 1, 1);
 
     const rtree = transcriptIndex.getKeyedIndex(indexKey);
-    const hits = rtree.search(queryBox)
+    const hits = rtree.search(queryBox);
     eventTargetRecs.click.value = hits;
   };
 
   const handlers: MouseHandlerInit = () => {
     return {
       mousemove,
-      click
-    }
+      click,
+    };
   };
 
-  eventlibCore.setMouseHandlers([handlers])
+  eventlibCore.setMouseHandlers([handlers]);
 
   const off = () => {
     // TODO unwatch(litItemsRef)
   };
 
   return {
-    eventTargetRecs, off
+    eventTargetRecs, off,
   };
 }

@@ -7,9 +7,9 @@ import {
 import { UnwrapRef } from '@nuxtjs/composition-api';
 
 export function getCursorPosition(elem: Element, event: MouseEvent): EventlibPoint {
-  const rect: DOMRect = elem.getBoundingClientRect()
-  const x = event.clientX - rect.left
-  const y = event.clientY - rect.top
+  const rect: DOMRect = elem.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
   return { x, y };
 }
 
@@ -35,9 +35,9 @@ type GEMap = GlobalEventHandlersEventMap;
 export type MouseEventT = {
   [K in keyof GEMap]:
   GEMap[K] extends MouseEvent ?
-  (GEMap[K] extends DragEvent ? never : (
-    GEMap[K] extends PointerEvent ? never : K
-  )) : never
+    (GEMap[K] extends DragEvent ? never : (
+      GEMap[K] extends PointerEvent ? never : K
+    )) : never
 }[keyof GEMap];
 
 interface MouseEventMap {
@@ -76,10 +76,10 @@ export type MouseHandlerInit = (t?: any) => MouseHandlers;
 
 export function setMouseHandlers(
   targetDivRef: Ref<HTMLDivElement | null>,
-  handlers: MouseHandlerInit[]
+  handlers: MouseHandlerInit[],
 ): void {
 
-  const targetDiv = targetDivRef.value!;
+  const targetDiv = targetDivRef.value;
 
   _.each(MouseEvents, eventType => {
     _.each(handlers, (hInit: MouseHandlerInit) => {
@@ -90,7 +90,7 @@ export function setMouseHandlers(
         const adaptor = (e: MouseEvent) => {
           const ev = {
             origMouseEvent: e,
-            pos: getCursorPosition(targetDiv, e)
+            pos: getCursorPosition(targetDiv, e),
           };
           return eventHandler(ev);
         };
@@ -98,7 +98,7 @@ export function setMouseHandlers(
         const addEventListenerOptions: AddEventListenerOptions = {
           capture: false,
           once: false,
-          passive: false
+          passive: false,
         };
 
         targetDiv.addEventListener(eventType, adaptor, addEventListenerOptions);

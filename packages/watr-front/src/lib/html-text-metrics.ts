@@ -3,8 +3,8 @@
  * html text.
  **/
 
-import _ from 'lodash'
-import { Rect } from './transcript/shapes'
+import _ from 'lodash';
+import { Rect } from './transcript/shapes';
 
 export interface TextStyle {
   style: string;
@@ -15,7 +15,7 @@ export interface TextStyle {
 }
 
 export function makeStyleString(style: TextStyle): string {
-  return `${style.weight} ${style.size}px ${style.family}`
+  return `${style.weight} ${style.size}px ${style.family}`;
 }
 
 
@@ -25,9 +25,9 @@ export interface LineDimensions extends Rect {
 }
 
 export function getTextWidth(ctx: CanvasRenderingContext2D, text: string, font: string): number {
-  ctx.font = font
-  const metrics: TextMetrics = ctx.measureText(text)
-  return metrics.width
+  ctx.font = font;
+  const metrics: TextMetrics = ctx.measureText(text);
+  return metrics.width;
 }
 
 export function showText0(
@@ -35,7 +35,7 @@ export function showText0(
   div: HTMLDivElement,
   atX: number,
   atY: number,
-  _charWidthCache: Record<string, number>
+  _charWidthCache: Record<string, number>,
 ): LineDimensions {
 
   div.innerText = text;
@@ -67,14 +67,14 @@ export function showTextOrig(
   div: HTMLDivElement,
   atX: number,
   atY: number,
-  charWidthCache: Record<string, number>
+  charWidthCache: Record<string, number>,
 ): LineDimensions {
-  const lineWidth = div.offsetWidth
-  const lineHeight = div.offsetHeight
+  const lineWidth = div.offsetWidth;
+  const lineHeight = div.offsetHeight;
 
   let currX = atX;
   // let init = '';
-  const sizes: Rect[] = []
+  const sizes: Rect[] = [];
   // TODO re-enable char-wise size calculation when you can figure out how to do it efficiently
   for (let i = 0; i < text.length; i++) {
     const char = text.charAt(i);
@@ -106,7 +106,7 @@ export function showTextOrig(
     height: lineHeight,
     charBounds: sizes,
     lineDiv: div,
-  }
+  };
 
-  return lineDimensions
+  return lineDimensions;
 }

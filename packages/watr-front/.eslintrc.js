@@ -8,12 +8,24 @@ module.exports = {
   },
   parser: '@typescript-eslint/parser',
 
-  extends: [],
+  extends: [
+    "airbnb-typescript",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    // "plugin:eslint-comments/recommended",
+    // "plugin:jest/recommended",
+    // "plugin:promise/recommended",
+    // "plugin:unicorn/recommended",
+    // "prettier",
+  ],
 
   plugins: [
-    '@typescript-eslint',
-    'chai-expect'
+    '@typescript-eslint'
   ],
+
+  parserOptions: {
+    project: './tsconfig.json',
+  },
 
   globals: {
     expect: true
@@ -31,12 +43,6 @@ module.exports = {
     'vue/max-attributes-per-line': ['off'],
     'vue/attributes-order': ['off'],
     'vue/script-indent': ['off'],
-    // 'vue/html-self-closing': ['warn', {
-    //   html: {
-    //     void: 'any',
-    //     normal: 'any'
-    //   }
-    // }],
 
     '@typescript-eslint/ban-ts-comment': ['off'],
     '@typescript-eslint/explicit-function-return-type': ['off'],

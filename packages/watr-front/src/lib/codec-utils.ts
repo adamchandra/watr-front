@@ -1,9 +1,9 @@
 
-import _ from 'lodash'
+import _ from 'lodash';
 import * as io from 'io-ts';
-import { isLeft } from 'fp-ts/lib/Either'
-import { PathReporter } from 'io-ts/lib/PathReporter'
-import { prettyPrint } from '@watr/commonlib-shared'
+import { isLeft } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
+import { prettyPrint } from '@watr/commonlib-shared';
 
 interface Positive {
   readonly Positive: unique symbol;
@@ -16,21 +16,21 @@ interface NonNegative {
 export const Positive = io.brand(
   io.number,
   (n: number): n is io.Branded<number, Positive> => n > 0,
-  'Positive'
+  'Positive',
 );
 
 export const NonNegative = io.brand(
   io.number,
   (n: number): n is io.Branded<number, NonNegative> => n >= 0,
-  'NonNegative'
+  'NonNegative',
 );
 
 
-export const PositiveInt = io.intersection([io.Int, Positive])
-export type PositiveInt = io.TypeOf<typeof PositiveInt>
+export const PositiveInt = io.intersection([io.Int, Positive]);
+export type PositiveInt = io.TypeOf<typeof PositiveInt>;
 
-export const NonNegativeInt = io.intersection([io.Int, NonNegative])
-export type NonNegativeInt = io.TypeOf<typeof NonNegativeInt>
+export const NonNegativeInt = io.intersection([io.Int, NonNegative]);
+export type NonNegativeInt = io.TypeOf<typeof NonNegativeInt>;
 
 // export const Begin = NonNegativeInt;
 const Begin = io.number;
@@ -48,60 +48,60 @@ export type Span = io.TypeOf<typeof Span>;
 export const PageNumber = io.number;
 
 export function isIsomorphic<A, IO>(ioType: io.Type<A, IO, IO>, input: IO, verbose: boolean = false): boolean {
-  const maybeDecoded = ioType.decode(input)
+  const maybeDecoded = ioType.decode(input);
   if (isLeft(maybeDecoded)) {
-    const report = PathReporter.report(maybeDecoded)
+    const report = PathReporter.report(maybeDecoded);
     if (verbose) {
-      prettyPrint({ m: `isIsomorphic(${ioType.name})/decode === false`, input, report })
+      prettyPrint({ m: `isIsomorphic(${ioType.name})/decode === false`, input, report });
     }
-    return false
+    return false;
   }
 
-  const decoded = maybeDecoded.right
+  const decoded = maybeDecoded.right;
   if (verbose) {
-    prettyPrint({ m: `(1) decode-success: isIsomorphic(${ioType.name})/decode === true`, decoded })
+    prettyPrint({ m: `(1) decode-success: isIsomorphic(${ioType.name})/decode === true`, decoded });
   }
-  const reEncoded = ioType.encode(decoded)
+  const reEncoded = ioType.encode(decoded);
   if (!_.isEqual(input, reEncoded)) {
     if (verbose) {
-      prettyPrint({ m: `isIsomorphic(${ioType.name})/re-encode === false`, input, decoded, reEncoded })
+      prettyPrint({ m: `isIsomorphic(${ioType.name})/re-encode === false`, input, decoded, reEncoded });
     }
     return false;
   }
 
   if (verbose) {
-    prettyPrint({ m: `(2) encode-success: isIsomorphic(${ioType.name})/decode === true`, reEncoded })
+    prettyPrint({ m: `(2) encode-success: isIsomorphic(${ioType.name})/decode === true`, reEncoded });
   }
 
-  const maybeReDecoded = ioType.decode(reEncoded)
+  const maybeReDecoded = ioType.decode(reEncoded);
   if (isLeft(maybeReDecoded)) {
-    const report = PathReporter.report(maybeReDecoded)
+    const report = PathReporter.report(maybeReDecoded);
     if (verbose) {
-      prettyPrint({ m: `isIsomorphic(${ioType.name})/re-decode === false`, report, input, reEncoded })
+      prettyPrint({ m: `isIsomorphic(${ioType.name})/re-decode === false`, report, input, reEncoded });
     }
-    return false
+    return false;
   }
   if (verbose) {
-    console.log('isIsomorphic: decoded 3')
+    console.log('isIsomorphic: decoded 3');
   }
 
   const reDecoded = maybeReDecoded.right;
 
   if (!_.isEqual(decoded, reDecoded)) {
     if (verbose) {
-      prettyPrint({ m: `isIsomorphic(${ioType.name})/re-decode === false`, input, decoded, reDecoded })
+      prettyPrint({ m: `isIsomorphic(${ioType.name})/re-decode === false`, input, decoded, reDecoded });
     }
     return false;
   }
   if (verbose) {
-    console.log('isIsomorphic: decoded 3')
+    console.log('isIsomorphic: decoded 3');
   }
 
   if (verbose) {
-    prettyPrint({ m: `isIsomorphic(${ioType.name}) === true`, input, decoded, reEncoded, reDecoded })
+    prettyPrint({ m: `isIsomorphic(${ioType.name}) === true`, input, decoded, reEncoded, reDecoded });
   }
 
-  return true
+  return true;
 }
 /*
 

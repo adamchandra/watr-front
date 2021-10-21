@@ -30,7 +30,7 @@ function initSVGDimensions(r: any) {
         .attr('id', (d: any) => d.id)
         .attr('marker-start', () => 'url(#arrow)')
         .attr('marker-end', () => 'url(#arrow)')
-        ;
+      ;
     case 'path':
       return r.attr('d', (d: any) => d.d)
         .attr('id', (d: any) => d.id);
@@ -49,7 +49,7 @@ function setSVGColors(r: any) {
     // .attr('fill', (d: any) => d.classes.some((cls: string) => cls === 'eager') ? 'blue' : 'yellow')
     .attr('fill', () => 'url(#grad1)')
     .attr('stroke', (d: any) => d.classes.some((cls: string) => cls === 'eager') ? 'blue' : 'red')
-    ;
+  ;
 
 }
 
@@ -59,7 +59,7 @@ function setSVGClasses(r: any) {
 
 export function labelToSVGs(label: Label, parentClasses: string[], forceEval: boolean): ShapeSvg[] {
 
-  const classStrings = label?.props?.['class'] || [];
+  const classStrings = label?.props?.class || [];
 
   const isLazy = _.some(classStrings, s => s === '>lazy');
 
@@ -68,10 +68,10 @@ export function labelToSVGs(label: Label, parentClasses: string[], forceEval: bo
   }
 
   const localClasses = _.filter(classStrings, c => c.startsWith('='))
-    .map(c => c.substring(1))
+    .map(c => c.substring(1));
 
   const propogatedClasses = _.filter(classStrings, c => c.startsWith('>'))
-    .map(c => c.substring(1))
+    .map(c => c.substring(1));
 
   propogatedClasses.push(label.name);
 
@@ -83,7 +83,7 @@ export function labelToSVGs(label: Label, parentClasses: string[], forceEval: bo
   const localShapes = _.flatMap(label.range, range => {
     if (range.unit === 'shape') {
       const svg = shapeToSvg(range.at);
-      svg.data['rootLabel'] = label;
+      svg.data.rootLabel = label;
       svg.classes = _.concat(localClasses, parentClasses, propogatedClasses);
       svg.id = labelId;
       return [svg];
@@ -97,20 +97,20 @@ export function labelToSVGs(label: Label, parentClasses: string[], forceEval: bo
 }
 
 function labelToTriggerSVG(label: Label, rootLabel: Label): ShapeSvg {
-  const classStrings = label?.props?.['class'] || [];
+  const classStrings = label?.props?.class || [];
   const isTrigger = _.some(classStrings, s => s === '=eager');
   // console.log('labelToTriggerSVG', label);
 
   if (isTrigger) {
     const localClasses = _.filter(classStrings, c => c.startsWith('='))
-      .map(c => c.substring(1))
+      .map(c => c.substring(1));
 
     // console.log('  isTrigger: localClasses', localClasses);
 
     const localShapes = _.flatMap(label.range, range => {
       if (range.unit === 'shape') {
         const svg = shapeToSvg(range.at);
-        svg.data['rootLabel'] = rootLabel;
+        svg.data.rootLabel = rootLabel;
         svg.classes = localClasses;
         const labelId = deriveLabelId(label);
         svg.id = labelId;
@@ -128,8 +128,8 @@ function labelToTriggerSVG(label: Label, rootLabel: Label): ShapeSvg {
   const childShapes: ShapeSvg[] =
     _.filter(
       _.flatMap(children, c => labelToTriggerSVG(c, rootLabel)),
-      (c) => c !== undefined
-    )
+      (c) => c !== undefined,
+    );
 
   // console.log('  notTrigger: childShapes', childShapes);
 
@@ -143,7 +143,7 @@ const OctoAttrs = {
   SearchArea: ['black', 0.1, 'yellow', 0.1],
   Found: ['black', 0.5, 'green', 0.2],
   FinalHit: ['black', 0.5, 'green', 0.2],
-}
+};
 
 export function updateSvgElement(svgElement: SVGElement, svgShapes: ShapeSvg[]) {
   const dataSelection: d3.Selection<d3.BaseType, ShapeSvg, SVGElement, unknown> = d3.select(svgElement)
@@ -151,16 +151,16 @@ export function updateSvgElement(svgElement: SVGElement, svgShapes: ShapeSvg[]) 
     .data(svgShapes, (sh: any) => sh.id);
 
   dataSelection.enter()
-    .each(function(shape: any) {
+    .each(function (shape: any) {
       const self = d3.select(this);
       return self.append(shape.type)
         .call(initSVGDimensions)
         .call(setSVGColors)
         .call(setSVGClasses)
-        .each(function() {
+        .each(function () {
           const shape = d3.select(this);
           const shdata = shape.datum();
-          const classes = shdata['classes'] || [];
+          const classes = shdata.classes || [];
           _.each(classes, cls => {
             const classDefs = OctoAttrs[cls] || OctoAttrs['?'];
             const [stroke, sop, fill, fop] = classDefs;
@@ -170,7 +170,7 @@ export function updateSvgElement(svgElement: SVGElement, svgShapes: ShapeSvg[]) 
               // .attr('fill', () => 'url(#grad1)')
               .attr('fill', () => fill)
               .attr('fill-opacity', () => fop)
-              ;
+            ;
           });
           shape.classed(classes.join(' '), true);
         });
@@ -183,10 +183,10 @@ export function updateSvgElement(svgElement: SVGElement, svgShapes: ShapeSvg[]) 
 export function resetShapesFillStroke(svgElement: SVGElement) {
   d3.select(svgElement)
     .selectAll('.shape')
-    .each(function() {
+    .each(function () {
       const shape = d3.select(this);
       const shdata = shape.datum();
-      const classes = shdata['classes'] || [];
+      const classes = shdata.classes || [];
       _.each(classes, cls => {
         const classDefs = OctoAttrs[cls];
         if (_.isArray(classDefs)) {
@@ -196,9 +196,9 @@ export function resetShapesFillStroke(svgElement: SVGElement) {
             .attr('stroke-opacity', () => sop)
             .attr('fill', () => fill)
             .attr('fill-opacity', () => fop)
-            ;
+          ;
         }
-      })
+      });
     });
 }
 export function removeShapes(svgElement: SVGElement) {
@@ -211,13 +211,13 @@ export function highlightShapesFillStroke(svgElement: SVGElement, shapeId: strin
   dimShapesFillStroke(svgElement);
   d3.select(svgElement)
     .select(`#${shapeId}`)
-    .each(function() {
+    .each(function () {
       d3.select(this)
         .attr('stroke', () => 'black')
         .attr('stroke-opacity', () => 1.0)
         .attr('fill', () => 'blue')
         .attr('fill-opacity', () => '0.3')
-        ;
+      ;
     });
 }
 export function dimShapesFillStroke(svgElement: SVGElement) {
@@ -230,5 +230,5 @@ export function dimShapesFillStroke(svgElement: SVGElement) {
 }
 
 export function toggleShapeClass(svgElement: SVGElement, cls: string, shapeId: string, activate: boolean) {
-  d3.select(svgElement).select(`#${shapeId}`).classed(cls, activate)
+  d3.select(svgElement).select(`#${shapeId}`).classed(cls, activate);
 }

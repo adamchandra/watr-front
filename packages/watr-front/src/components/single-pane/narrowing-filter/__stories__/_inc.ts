@@ -1,10 +1,10 @@
-import _ from 'lodash'
+import _ from 'lodash';
 
-import { defineComponent, provide, Ref, shallowRef,  markRaw } from '@nuxtjs/composition-api'
-import NarrowingFilter from '../index.vue'
-import { ProvidedChoices } from '../_inc'
-import { getLabelProp } from '~/lib/transcript/tracelogs'
-import { fetchAndDecodeTranscript } from '~/lib/data-fetch'
+import { defineComponent, provide, Ref, shallowRef,  markRaw } from '@nuxtjs/composition-api';
+import NarrowingFilter from '../index.vue';
+import { ProvidedChoices } from '../_inc';
+import { getLabelProp } from '~/lib/transcript/tracelogs';
+import { fetchAndDecodeTranscript } from '~/lib/data-fetch';
 import { TranscriptIndex } from '~/lib/transcript/transcript-index';
 
 import { pipe } from 'fp-ts/lib/function';
@@ -13,12 +13,12 @@ import * as TE from 'fp-ts/lib/TaskEither';
 import {
   Radix,
 } from '@watr/commonlib-shared';
-import { createDisplayTree, TreeNode } from '../display-tree'
-import { Label } from '~/lib/transcript/labels'
+import { createDisplayTree, TreeNode } from '../display-tree';
+import { Label } from '~/lib/transcript/labels';
 
 export default defineComponent({
   components: {
-    NarrowingFilter
+    NarrowingFilter,
   },
   setup() {
 
@@ -26,13 +26,13 @@ export default defineComponent({
     const choicesRef: Ref<DisplayTreeT | null > = shallowRef(null);
     const selectionRef: Ref<Label[]> = shallowRef([]);
 
-    provide(ProvidedChoices, choicesRef)
+    provide(ProvidedChoices, choicesRef);
 
     const onItemsSelected = (selection: any[]) => {
-      console.log('we got items!', selection)
+      console.log('we got items!', selection);
       markRaw(selection);
       selectionRef.value = selection;
-    }
+    };
 
     const entryId = 'austenite.pdf.d';
 
@@ -45,8 +45,8 @@ export default defineComponent({
         const displayTree = createDisplayTree<Label>(
           allPageLabels,
           (label: Label) => {
-            return _.concat(getLabelProp(label, 'outline'), 'LB.'+label.name);
-          }
+            return _.concat(getLabelProp(label, 'outline'), 'LB.' + label.name);
+          },
         );
 
         markRaw(displayTree);
@@ -62,7 +62,7 @@ export default defineComponent({
     return {
       onItemsSelected,
       choicesRef,
-      selectionRef
-    }
-  }
-})
+      selectionRef,
+    };
+  },
+});

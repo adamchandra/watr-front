@@ -32,8 +32,8 @@ function pointsToRect(p1: Point, p2: Point): BBox {
 }
 
 export interface EventlibSelect {
-  selectionRef: Ref<BBox|null>;
-  clickedPointRef: Ref<Point|null>;
+  selectionRef: Ref<BBox | null>;
+  clickedPointRef: Ref<Point | null>;
 }
 
 type Args = {
@@ -46,10 +46,10 @@ export function useEventlibSelect({
   eventlibCore,
 }: Args) {
 
-  const selectionRef: Ref<BBox|null> = deepRef(null);
-  const clickedPointRef: Ref<Point|null> = deepRef(null);
+  const selectionRef: Ref<BBox | null> = deepRef(null);
+  const clickedPointRef: Ref<Point | null> = deepRef(null);
 
-  const svgLayer = superimposedElements.overlayElements.svg!;
+  const svgLayer = superimposedElements.overlayElements.svg;
   const svgSelect = d3.select(svgLayer);
 
   let currSvgRect: SelectionOrTransition<SVGRectElement, BBox, SVGElement, unknown>;
@@ -114,8 +114,8 @@ export function useEventlibSelect({
 
   return {
     selectionRef,
-    clickedPointRef
-  }
+    clickedPointRef,
+  };
 }
 
 export interface ExtentHandlerRefs {
@@ -138,42 +138,42 @@ export function selectExtentHandlers(): ExtentHandlers {
     origin: [0, 0] as [number, number],
     current: [0, 0] as [number, number],
     final: [[0, 0], [0, 0]] as [[number, number], [number, number]],
-    cancelled: false
+    cancelled: false,
   }));
 
   const mousedown = (e: EMouseEvent) => {
-    const {x, y} = e.pos;
+    const { x, y } = e.pos;
     refs.current.value = refs.origin.value = [x, y];
     selecting = true;
   };
 
   const mousemove = (e: EMouseEvent) => {
     if (selecting) {
-      const {x, y} = e.pos;
+      const { x, y } = e.pos;
       refs.current.value = [x, y];
     }
-  }
+  };
 
   const mouseup = (e: EMouseEvent) => {
     if (selecting) {
-      const {x, y} = e.pos;
+      const { x, y } = e.pos;
       refs.final.value = [refs.origin.value, [x, y]];
     }
-  }
+  };
 
   const mouseout = (e: EMouseEvent) => {
     if (selecting) {
-      const {x, y} = e.pos;
+      const { x, y } = e.pos;
       refs.current.value = [x, y];
     }
-  }
+  };
 
   const mouseover = (e: EMouseEvent) => {
     if (selecting) {
-      const {x, y} = e.pos;
+      const { x, y } = e.pos;
       refs.current.value = [x, y];
     }
-  }
+  };
 
   const handlers: MouseHandlerInit = () =>  {
     return {
@@ -182,10 +182,10 @@ export function selectExtentHandlers(): ExtentHandlers {
       mouseup,
       mouseout,
       mouseover,
-    }
-  }
+    };
+  };
   return {
-    refs, handlers
+    refs, handlers,
   };
 
 }

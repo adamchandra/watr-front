@@ -26,7 +26,7 @@ type GlyphRepr2 = [string, number, RectRepr, GlyphPropsRepr];
 const GlyphRepr2: io.Type<GlyphRepr2> =
   io.recursion(
     'GlyphRepr2',
-    () => io.tuple([io.string, io.number, RectRepr, GlyphPropsRepr])
+    () => io.tuple([io.string, io.number, RectRepr, GlyphPropsRepr]),
   );
 
 
@@ -34,13 +34,13 @@ export type GlyphRepr = GlyphRepr1 | GlyphRepr2;
 export const GlyphRepr: io.Type<GlyphRepr> =
   io.recursion(
     'GlyphRepr',
-    () => io.union([GlyphRepr2, GlyphRepr1], 'GlyphRepr') // n.b. GlyphRepr*[] is order dependent
+    () => io.union([GlyphRepr2, GlyphRepr1], 'GlyphRepr'), // n.b. GlyphRepr*[] is order dependent
   );
 
 export const GlyphPropsRepr: io.Type<GlyphPropsRepr> =
   io.intersection([
     io.type({ kind: io.string }),
-    io.partial({ gs: io.array(GlyphRepr) })
+    io.partial({ gs: io.array(GlyphRepr) }),
   ], 'GlyphPropsRepr');
 
 
@@ -70,7 +70,7 @@ const decodeGlyphProps: (unk: unknown, ctx: io.Context) => E.Either<io.Errors, G
       v => GlyphPropsRepr.validate(v, ctx),
       E.chain(({ kind, gs }) => {
         if (gs) {
-          const gsValid = traverseGlyphs(gs)
+          const gsValid = traverseGlyphs(gs);
 
           const mapf = E.map(((gs: Glyph[]) => ({ kind, gs } as GlyphProps)));
 
@@ -85,8 +85,8 @@ export const GlyphProps: io.Type<GlyphProps, GlyphPropsRepr, unknown> =
   new io.Type<GlyphProps, GlyphPropsRepr, unknown>(
     'GlyphProps',
     (a: any): a is GlyphProps => {
-      const k = a['kind'];
-      const gs = a['gs'];
+      const k = a.kind;
+      const gs = a.gs;
       return io.string.is(k) && io.array(Glyph).is(gs);
     },
     (unk: unknown, ctx: io.Context) => decodeGlyphProps(unk, ctx),
@@ -97,7 +97,7 @@ export const GlyphProps: io.Type<GlyphProps, GlyphPropsRepr, unknown> =
         propsRepr.gs = _.map(gs, Glyph.encode);
       }
       return propsRepr;
-    }
+    },
   );
 
 // const seqTupleEither = Ap.sequenceT(E.either);
@@ -125,12 +125,12 @@ export const Glyph: io.Type<Glyph, GlyphRepr, unknown> =
           g.props = props;
         }
         return io.success(g);
-      })
+      }),
     ),
 
     (a: Glyph) => {
       return (a.props === undefined
         ? [a.char, a.id, Rect.encode(a.rect)]
         : [a.char, a.id, Rect.encode(a.rect), GlyphProps.encode(a.props)]);
-    }
+    },
   );

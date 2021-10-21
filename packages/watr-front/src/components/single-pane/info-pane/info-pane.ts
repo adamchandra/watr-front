@@ -1,7 +1,7 @@
 import {
   Ref,
-  ref
-} from '@nuxtjs/composition-api'
+  ref,
+} from '@nuxtjs/composition-api';
 
 import _ from 'lodash';
 import { Label } from '~/lib/transcript/labels';
@@ -39,20 +39,20 @@ export interface InfoPane {
 }
 
 export async function useInfoPane({
-  mountPoint
+  mountPoint,
 }: Args): Promise<InfoPane> {
 
   const superimposedElements = await useSuperimposedElements({
     includeElems: [ElementTypes.Text],
-    mountPoint
+    mountPoint,
   });
 
   const mtext = useMeasuredTextOverlay({ superimposedElements });
 
-  mountPoint.value.onresize = function(_event: UIEvent) {
+  mountPoint.value.onresize = function (_event: UIEvent) {
     superimposedElements.setDimensions(
       mountPoint.value.clientWidth,
-      mountPoint.value.clientHeight
+      mountPoint.value.clientHeight,
     );
   };
 
@@ -71,7 +71,7 @@ export async function useInfoPane({
     size,
     style: 'normal',
     family: 'arial',
-    weight: 'normal'
+    weight: 'normal',
   };
   const textLeftInit = 4;
   const textTopInit = 4;
@@ -90,10 +90,10 @@ export async function useInfoPane({
     const lineDimensions = await putStringLn('>>>== Label (Click here to clear) ==');
     const { lineDiv } = lineDimensions;
     lineDiv.classList.add('hoverable');
-    lineDiv.onclick = function() {
+    lineDiv.onclick = function () {
       actions.value = actions.value.filter(s => s !== 'freeze');
       clearScreen();
-    }
+    };
 
     await Bromise.mapSeries(lstrings, async ([lstr, id]) => {
       await putStringLn(lstr, id);
@@ -101,7 +101,7 @@ export async function useInfoPane({
     });
 
     await putStringLn('<<<<==');
-  }
+  };
   const putStringLn = async (str: string, id?: string): Promise<LineDimensions> => {
     const x = textLeftCurr;
     const y = textTopCurr;
@@ -109,14 +109,14 @@ export async function useInfoPane({
     textLeftCurr = textLeftInit;
     const lineDimensions = await _putString(x, y, str, id);
     return lineDimensions;
-  }
+  };
 
   const putString = async (str: string, id?: string): Promise<LineDimensions> => {
     const x = textLeftCurr;
     const lineDimensions = await _putString(x, textTopCurr, str, id);
     textLeftCurr = textLeftCurr + lineDimensions.width;
     return lineDimensions;
-  }
+  };
 
   const _putString = async (x: number, y: number, str: string, id?: string): Promise<LineDimensions> => {
     const lineDimensions = mtext.putTextLn(style, x, y, str);
@@ -124,28 +124,28 @@ export async function useInfoPane({
       const { lineDiv } = lineDimensions;
 
       lineDiv.classList.add('hoverable');
-      lineDiv.onmouseover = function() {
+      lineDiv.onmouseover = function () {
         lineDiv.classList.add('hovering');
         reactiveTexts.mouseover.value = id;
       };
-      lineDiv.onmouseout = function() {
+      lineDiv.onmouseout = function () {
         lineDiv.classList.remove('hovering');
         reactiveTexts.mouseout.value = id;
       };
 
-      lineDiv.onclick = function() {
+      lineDiv.onclick = function () {
         reactiveTexts.click.value = id;
-      }
+      };
     }
     return lineDimensions;
-  }
+  };
 
 
   const clearScreen = async () => {
     await mtext.clearText();
     textTopCurr = textTopInit;
     textLeftCurr = textLeftInit;
-  }
+  };
 
   return {
     showLabel,
@@ -162,7 +162,7 @@ function labelToStringWithIds(label: Label, level: number, _parentClasses: strin
 
   const allProps: Record<string, string[]> = label?.props || {};
 
-  const classStrings = allProps['class'] || [];
+  const classStrings = allProps.class || [];
 
   const kvalStrings = _.join(_.map(
     _.toPairs(allProps), ([key, value]) => {
@@ -171,11 +171,11 @@ function labelToStringWithIds(label: Label, level: number, _parentClasses: strin
 
 
   const localClasses = _.filter(classStrings, c => c.startsWith('='))
-    .map(c => c.substring(1))
+    .map(c => c.substring(1));
 
 
   const propogatedClasses = _.filter(classStrings, c => c.startsWith('>'))
-    .map(c => c.substring(1))
+    .map(c => c.substring(1));
 
 
   const lpad: string = _.map(_.range(level + 1), () => '   ').join('');
@@ -189,7 +189,7 @@ function labelToStringWithIds(label: Label, level: number, _parentClasses: strin
     }
     return [];
   });
-  const shapestr = localShapes.join(', ')
+  const shapestr = localShapes.join(', ');
 
   const header = `${label.name} [${shapestr}] ${kvalStrings} .${localClasses.join('.')} >${propogatedClasses.join('.')}`;
   const labelId = deriveLabelId(label);

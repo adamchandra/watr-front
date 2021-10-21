@@ -60,7 +60,9 @@ export interface LTBounds {
 
 export class Point {
   public x: number;
+
   public y: number;
+
   public sys: CoordSys;
 
   public constructor(x: number, y: number, sys?: CoordSys) {
@@ -82,7 +84,9 @@ export class Point {
 
 class Line {
   public p1: Point;
+
   public p2: Point;
+
   public sys: CoordSys = CoordSys.Unknown;
 
   public constructor(p1: Point, p2: Point) {
@@ -103,6 +107,7 @@ class Line {
 
 class Trapezoid {
   public topLine: Line;
+
   public bottomLine: Line;
 
   public constructor(top: Line, bottom: Line) {
@@ -155,9 +160,13 @@ export function pointFloor(p: Point) {
  */
 export class BBox implements LTBounds {
   public left: number;
+
   public top: number;
+
   public width: number;
+
   public height: number;
+
   public sys: CoordSys;
 
   public constructor(
@@ -177,12 +186,15 @@ export class BBox implements LTBounds {
   get minX() {
     return this.left;
   }
+
   get minY() {
     return this.top;
   }
+
   get maxX() {
     return this.left + this.width;
   }
+
   get maxY() {
     return this.top + this.height;
   }
@@ -190,6 +202,7 @@ export class BBox implements LTBounds {
   get x() {
     return this.left;
   }
+
   get y() {
     return this.top;
   }
@@ -197,12 +210,15 @@ export class BBox implements LTBounds {
   get x1() {
     return this.left;
   }
+
   get x2() {
     return this.left + this.width;
   }
+
   get y1() {
     return this.top;
   }
+
   get y2() {
     return this.top + this.height;
   }
@@ -210,6 +226,7 @@ export class BBox implements LTBounds {
   get bottom() {
     return this.top + this.height;
   }
+
   get right() {
     return this.left + this.width;
   }
@@ -282,7 +299,7 @@ export function toBox(mm: MinMaxBox): BBox {
   const y = minY;
   const width = maxX - minX;
   const height = maxY - minY;
-  return new BBox(x, y, width, height)
+  return new BBox(x, y, width, height);
 }
 
 

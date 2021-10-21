@@ -21,12 +21,12 @@ export interface StanzaViewer {
 }
 
 export async function useStanzaViewer({
-  mountPoint
+  mountPoint,
 }: Args): Promise<StanzaViewer> {
 
   const superimposedElements = await useSuperimposedElements({
     includeElems: [ElementTypes.Text, ElementTypes.Svg, ElementTypes.Event],
-    mountPoint
+    mountPoint,
   });
 
   const size = 15;
@@ -34,11 +34,11 @@ export async function useStanzaViewer({
     size,
     style: 'normal',
     family: 'arial',
-    weight: 'normal'
+    weight: 'normal',
   };
 
   const mtext = useMeasuredTextOverlay({ superimposedElements });
-  const textDiv = superimposedElements.overlayElements.textDiv!;
+  const textDiv = superimposedElements.overlayElements.textDiv;
   const pageLeft = 0;
   const putTextLn: (o: ShowStanzaOpts) => PutTextLn =
     () => (lineNum: number, text: string) => {
@@ -54,6 +54,6 @@ export async function useStanzaViewer({
   };
 
   return {
-    showStanza
+    showStanza,
   };
 }

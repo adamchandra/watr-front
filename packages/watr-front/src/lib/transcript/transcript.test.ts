@@ -1,7 +1,7 @@
-import _ from 'lodash'
+import _ from 'lodash';
 // import { makeGlyphReprs } from './gen-testdata';
-import { Transcript } from './transcript'
-import { isIsomorphic } from '~/lib/codec-utils'
+import { Transcript } from './transcript';
+import { isIsomorphic } from '~/lib/codec-utils';
 
 
 describe('Transcripts', () => {
@@ -125,10 +125,10 @@ describe('Transcripts', () => {
             {
               name: 'PageText', range: [{ unit: 'page', at: 1 }], children: [
                 { name: 'BodyContent', range: [{ unit: 'text:line', at: [1, 3] }] },
-                { name: 'HeaderContent', range: [{ unit: 'text:line', at: [4, 10] }] }
-              ]
-            }
-          ]
+                { name: 'HeaderContent', range: [{ unit: 'text:line', at: [4, 10] }] },
+              ],
+            },
+          ],
         },
       ],
     };

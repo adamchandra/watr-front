@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _ from 'lodash';
 
 import {
   defineComponent,
@@ -6,36 +6,36 @@ import {
   provide,
   Ref,
   ref as deepRef,
-  shallowRef
-} from '@nuxtjs/composition-api'
+  shallowRef,
+} from '@nuxtjs/composition-api';
 
-import * as VC from '@nuxtjs/composition-api'
+import * as VC from '@nuxtjs/composition-api';
 
-import { divRef } from '~/lib/vue-composition-lib'
-import { awaitRefTask } from '~/components/basics/component-basics'
-import { usePdfPageViewer } from '~/components/single-pane/page-viewer'
-import { useStanzaViewer } from '~/components/single-pane/stanza-viewer'
-import { TranscriptIndex } from '~/lib/transcript/transcript-index'
-import { Label, PageRange, Range } from '~/lib/transcript/labels'
+import { divRef } from '~/lib/vue-composition-lib';
+import { awaitRefTask } from '~/components/basics/component-basics';
+import { usePdfPageViewer } from '~/components/single-pane/page-viewer';
+import { useStanzaViewer } from '~/components/single-pane/stanza-viewer';
+import { TranscriptIndex } from '~/lib/transcript/transcript-index';
+import { Label, PageRange, Range } from '~/lib/transcript/labels';
 
-import NarrowingFilter from '~/components/single-pane/narrowing-filter/index.vue'
+import NarrowingFilter from '~/components/single-pane/narrowing-filter/index.vue';
 import {
   ProvidedChoices,
-} from '~/components/single-pane/narrowing-filter/_inc'
+} from '~/components/single-pane/narrowing-filter/_inc';
 
 
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';
 import * as E from 'fp-ts/lib/Either';
-import { fetchAndDecodeTranscript } from '~/lib/data-fetch'
-import { useLabelOverlay } from '~/components/single-pane/label-overlay'
-import { getQueryParam } from '~/lib/url-utils'
+import { fetchAndDecodeTranscript } from '~/lib/data-fetch';
+import { useLabelOverlay } from '~/components/single-pane/label-overlay';
+import { getQueryParam } from '~/lib/url-utils';
 
-import SplitScreen from '~/components/basics/splitscreen/index.vue'
-import { useInfoPane } from '~/components/single-pane/info-pane/info-pane'
-import { getLabelProp } from '~/lib/transcript/tracelogs'
-import { Radix, } from '@watr/commonlib-shared';
-import { createDisplayTree, TreeNode } from '~/components/single-pane/narrowing-filter/display-tree'
+import SplitScreen from '~/components/basics/splitscreen/index.vue';
+import { useInfoPane } from '~/components/single-pane/info-pane/info-pane';
+import { getLabelProp } from '~/lib/transcript/tracelogs';
+import { Radix } from '@watr/commonlib-shared';
+import { createDisplayTree, TreeNode } from '~/components/single-pane/narrowing-filter/display-tree';
 
 interface AppState {
   showStanzaPane: boolean;
@@ -46,7 +46,7 @@ interface AppState {
 const TETap = <E, A>(tapf: (a: A) => unknown | Promise<unknown>) =>
   TE.chain<E, A, A>((a: A) => {
     return () => Promise.resolve(tapf(a))
-      .then(() => E.right(a))
+      .then(() => E.right(a));
   });
 
 function isPageRange(r: Range): r is PageRange {
@@ -63,16 +63,16 @@ export default defineComponent({
   components: { NarrowingFilter, SplitScreen },
 
   setup(_props, _context: SetupContext) {
-    const pageImageListDiv = divRef()
-    const stanzaListDiv = divRef()
-    const selectionFilterDiv = divRef()
-    const infoPaneDiv = divRef()
+    const pageImageListDiv = divRef();
+    const stanzaListDiv = divRef();
+    const selectionFilterDiv = divRef();
+    const infoPaneDiv = divRef();
 
     const showAllLabels: Ref<boolean> = deepRef(true);
 
     type DisplayTreeT = Radix<TreeNode<Label[]>>;
     const choicesRef: Ref<DisplayTreeT | null> = shallowRef(null);
-    provide(ProvidedChoices, choicesRef)
+    provide(ProvidedChoices, choicesRef);
 
     const pageLabelRefs: Array<Ref<Label[]>> = [];
 
@@ -87,13 +87,13 @@ export default defineComponent({
         const glabels = _.map(group, g => g[0]);
         pageLabelRefs[p].value = VC.markRaw(glabels);
       });
-    }
+    };
 
     const onItemsReset = () => {
       _.each(pageLabelRefs, (refs) => {
         refs.value = [];
-      })
-    }
+      });
+    };
 
     const appStateRef: VC.UnwrapRef<AppState> = VC.reactive({
       showStanzaPane: true,
@@ -124,7 +124,7 @@ export default defineComponent({
           allPageLabels,
           (label: Label) => {
             return _.concat(getLabelProp(label, 'outline'), 'LB.' + label.name);
-          }
+          },
         );
         VC.markRaw(displayTree);
 
@@ -136,10 +136,10 @@ export default defineComponent({
         }));
 
         const inits = _.map(transcript.pages, async (_, pageNumber) => {
-          const mount = document.createElement('div')
-          pageImageListDiv.appendChild(mount)
-          const mountPoint = divRef()
-          mountPoint.value = mount
+          const mount = document.createElement('div');
+          pageImageListDiv.appendChild(mount);
+          const mountPoint = divRef();
+          mountPoint.value = mount;
 
           return usePdfPageViewer({ mountPoint, transcriptIndex, pageNumber, entryId })
             .then(pdfPageViewer => useLabelOverlay({
@@ -158,18 +158,18 @@ export default defineComponent({
       TETap(({ infoPane }) => infoPane.putStringLn('initialized page viewers')),
       TE.bind('stanzaViewers', ({ stanzaListDiv, transcript, transcriptIndex }) => {
         const inits = _.map(transcript.stanzas, async (_, stanzaNumber) => {
-          const mount = document.createElement('div')
-          const mountPoint = divRef()
-          mountPoint.value = mount
-          stanzaListDiv.appendChild(mount)
+          const mount = document.createElement('div');
+          const mountPoint = divRef();
+          mountPoint.value = mount;
+          stanzaListDiv.appendChild(mount);
           return useStanzaViewer({ mountPoint })
             .then(stanzaViewer => stanzaViewer.showStanza(
               transcriptIndex,
               stanzaNumber, {
-              indexGranularity: 'none',
-              lineBegin: 0,
-              lineCount: 10
-            }));
+                indexGranularity: 'none',
+                lineBegin: 0,
+                lineCount: 10,
+              }));
         });
 
         return () => Promise.all(inits).then(E.right);
@@ -192,7 +192,7 @@ export default defineComponent({
       onItemsSelected,
       onItemsReset,
       showAllLabels,
-      ...appStateRefs
+      ...appStateRefs,
     };
-  }
+  },
 });

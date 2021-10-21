@@ -38,7 +38,7 @@ export function watchOnceFor<T>(tref: Ref<T | null | undefined>, fn: (t: T) => v
     fn(tval);
   }, {
     // lazy: true TODO check that this api change behaves correctly
-    immediate: false
+    immediate: false,
   });
 }
 
@@ -50,7 +50,7 @@ export function watchAll(rs?: Ref<any>[]): any {
   if (!rs) return toRefs(reactive({
     done: true,
     len: 0,
-    curr: 0
+    curr: 0,
   }));
 
   const curr = rs;
@@ -58,7 +58,7 @@ export function watchAll(rs?: Ref<any>[]): any {
   const state = toRefs(reactive({
     done: false,
     len: rs.length,
-    curr: 0
+    curr: 0,
   }));
 
   const stop = watch(next, () => {
@@ -83,7 +83,7 @@ export function watchAll(rs?: Ref<any>[]): any {
 
     startFlag.value = true;
   }, {
-    immediate: false
+    immediate: false,
   });
 
   next.value += 1;

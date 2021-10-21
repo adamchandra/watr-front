@@ -7,8 +7,8 @@
 import _ from 'lodash';
 import { Transcript } from './transcript';
 import { Glyph } from '~/lib/transcript/glyph';
-import { mk } from '~/lib/coord-sys'
-import RBush from 'rbush'
+import { mk } from '~/lib/coord-sys';
+import RBush from 'rbush';
 import { Rect } from './shapes';
 import { LineDimensions } from '../html-text-metrics';
 import { newIdGenerator } from '../misc-utils';
@@ -38,8 +38,11 @@ export interface TranscriptIndexable<T> extends RTreeIndexable {
 
 export class TranscriptIndex {
   transcript: Transcript;
+
   indexes: Record<RTreeIndexKey, RBush<TranscriptIndexable<any>>>;
+
   indexables: Record<string, TranscriptIndexable<any>>;
+
   nextId: () => number;
 
   constructor(t: Transcript) {
@@ -56,10 +59,11 @@ export class TranscriptIndex {
     _.each(pages, (page, pageNumber) => {
       _.each(page.labels, l => l.range.unshift({ unit: 'page', at: pageNumber }));
       const primaryKey = `page#${page.page}/glyphs`;
-      const rtree = new RBush<TranscriptIndexable<Glyph>>()
+      const rtree = new RBush<TranscriptIndexable<Glyph>>();
       this.indexes[primaryKey] = rtree;
     });
   }
+
   initIndexables(): void {
     const { pages } = this.transcript;
     _.each(pages, (page, pageNumber) => {
@@ -78,7 +82,7 @@ export class TranscriptIndex {
           primaryRect: glyph.rect,
           indexedRects,
           id: glyph.id.toString(),
-          minX, minY, maxX, maxY
+          minX, minY, maxX, maxY,
         };
 
         this.indexables[glyphOverlay.id] = glyphOverlay;
@@ -105,7 +109,7 @@ export class TranscriptIndex {
   public indexStanza(
     stanzaIndex: number,
     putTextLn: PutTextLn,
-    opts: RenderStanzaOpts
+    opts: RenderStanzaOpts,
   ): Rect {
     const { lineBegin, lineCount } = opts;
     const stanza = this.transcript.stanzas[stanzaIndex];
@@ -114,7 +118,7 @@ export class TranscriptIndex {
     const lend = lineCount === undefined ? stanza.lines.length : lbegin + lineCount;
 
     const primaryKey = `stanza#${stanzaIndex}`;
-    const rtree = new RBush<TranscriptIndexable<string | number>>()
+    const rtree = new RBush<TranscriptIndexable<string | number>>();
     this.indexes[primaryKey] = rtree;
     let maxWidth = 0;
     let totalHeight = 0;
@@ -141,7 +145,7 @@ export class TranscriptIndex {
             primaryRect: charDim,
             indexedRects: pageGlyph.indexedRects,
             id: glyphRef.toString(),
-            minX, minY, maxX, maxY
+            minX, minY, maxX, maxY,
           };
           return stanzaIndexable;
         }
@@ -151,7 +155,7 @@ export class TranscriptIndex {
           primaryRect: charDim,
           indexedRects: {},
           id: (-this.nextId()).toString(),
-          minX, minY, maxX, maxY
+          minX, minY, maxX, maxY,
         };
         return stanzaIndexable;
       });
@@ -162,12 +166,12 @@ export class TranscriptIndex {
       kind: 'rect',
       x: 0, y: 0,
       width: maxWidth,
-      height: totalHeight
+      height: totalHeight,
     };
   }
 
   public newKeyedIndex<T>(key: string) {
-    const rtree = new RBush<TranscriptIndexable<T>>()
+    const rtree = new RBush<TranscriptIndexable<T>>();
     this.indexes[key] = rtree;
   }
 

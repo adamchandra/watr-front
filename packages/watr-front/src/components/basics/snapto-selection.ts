@@ -76,9 +76,9 @@ export function queryHitsMBR(hits: MinMaxBox[]): BBox | undefined {
   const maxX = _.max(_.map(hits, 'maxX'));
   const minY = _.min(_.map(hits, 'minY'));
   const maxY = _.max(_.map(hits, 'maxY'));
-  const width = maxX! - minX!;
-  const height = maxY! - minY!;
+  const width = maxX - minX;
+  const height = maxY - minY;
 
-  return mk.fromLtwh(minX!, minY!, width, height);
+  return mk.fromLtwh(minX, minY, width, height);
 
 }

@@ -10,8 +10,8 @@ import { RTreeIndexable } from '~/components/basics/rtree-search';
 
 function isKind<T>(k: string): (v: any) => v is T {
   return function f(a: any): a is T {
-    return a['kind'] === k;
-  }
+    return a.kind === k;
+  };
 }
 
 export interface Point {
@@ -31,7 +31,7 @@ export const Point = new io.Type<Point, PointRepr, unknown>(
     PointRepr.validate(repr, c),
     E.chain(validRepr => io.success(uPoint(validRepr))),
   ),
-  (a: Point) => [floatToIntRep(a.x), floatToIntRep(a.y)]
+  (a: Point) => [floatToIntRep(a.x), floatToIntRep(a.y)],
 );
 
 export interface Circle {
@@ -47,9 +47,9 @@ export const Circle = new io.Type<Circle, CircleRepr, unknown>(
   'Circle', isKind('circle'),
   (repr: unknown, c: io.Context) => pipe(
     CircleRepr.validate(repr, c),
-    E.chain(validRepr => io.success(uCircle(validRepr)))
+    E.chain(validRepr => io.success(uCircle(validRepr))),
   ),
-  (a: Circle) => [Point.encode(a.p), floatToIntRep(a.r)]
+  (a: Circle) => [Point.encode(a.p), floatToIntRep(a.r)],
 );
 
 
@@ -66,9 +66,9 @@ export const Line = new io.Type<Line, LineRepr, unknown>(
   'Line', isKind('line'),
   (repr: unknown, c: io.Context) => pipe(
     LineRepr.validate(repr, c),
-    E.chain(validRepr => io.success(uLine(validRepr)))
+    E.chain(validRepr => io.success(uLine(validRepr))),
   ),
-  (a: Line) => [Point.encode(a.p1), Point.encode(a.p2)]
+  (a: Line) => [Point.encode(a.p1), Point.encode(a.p2)],
 );
 
 
@@ -86,9 +86,9 @@ export const Triangle = new io.Type<Triangle, TriangleRepr, unknown>(
   'Triangle', isKind('triangle'),
   (repr: unknown, c: io.Context) => pipe(
     TriangleRepr.validate(repr, c),
-    E.chain(validRepr => io.success(uTriangle(validRepr)))
+    E.chain(validRepr => io.success(uTriangle(validRepr))),
   ),
-  (a: Triangle) => [Point.encode(a.p1), Point.encode(a.p2), Point.encode(a.p3)]
+  (a: Triangle) => [Point.encode(a.p1), Point.encode(a.p2), Point.encode(a.p3)],
 );
 
 export interface Rect {
@@ -112,7 +112,7 @@ export const Rect = new io.Type<Rect, RectRepr, unknown>(
     E.map(foo => {
       return foo;
     }),
-    E.chain(validRepr => io.success(uRect(validRepr)))
+    E.chain(validRepr => io.success(uRect(validRepr))),
   ),
   (a: Rect) => {
     const { x, y, width, height } = a;
@@ -122,7 +122,7 @@ export const Rect = new io.Type<Rect, RectRepr, unknown>(
       floatToIntRep(width),
       floatToIntRep(height),
     ];
-  }
+  },
 );
 
 export interface Trapezoid {
@@ -135,7 +135,7 @@ export interface Trapezoid {
 
 export const TrapezoidRepr = io.tuple(
   [PointRepr, io.number, PointRepr, io.number],
-  'TrapezoidRepr'
+  'TrapezoidRepr',
 );
 
 export type TrapezoidRepr = io.TypeOf<typeof TrapezoidRepr>;
@@ -144,12 +144,12 @@ export const Trapezoid = new io.Type<Trapezoid, TrapezoidRepr, unknown>(
   'Trapezoid', isKind('trapezoid'),
   (repr: unknown, c: io.Context) => pipe(
     TrapezoidRepr.validate(repr, c),
-    E.chain(validRepr => io.success(uTrapezoid(validRepr)))
+    E.chain(validRepr => io.success(uTrapezoid(validRepr))),
   ),
   (a: Trapezoid) => [
     Point.encode(a.topLeft), floatToIntRep(a.topWidth),
-    Point.encode(a.bottomLeft), floatToIntRep(a.bottomWidth)
-  ]
+    Point.encode(a.bottomLeft), floatToIntRep(a.bottomWidth),
+  ],
 );
 
 /**
@@ -222,7 +222,7 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
         minY: shape.y - 1.5,
         maxX: shape.x + 1.5,
         maxY: shape.y + 1.5,
-        data: {}
+        data: {},
       };
     case 'line':
       return <LineSvg>{
@@ -268,10 +268,10 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
     case 'triangle': {
 
       const { p1, p2, p3 } = shape;
-      const minX = Math.min(p1.x, p2.x, p3.x)
-      const maxX = Math.max(p1.x, p2.x, p3.x)
-      const minY = Math.min(p1.y, p2.y, p3.y)
-      const maxY = Math.max(p1.y, p2.y, p3.y)
+      const minX = Math.min(p1.x, p2.x, p3.x);
+      const maxX = Math.max(p1.x, p2.x, p3.x);
+      const minY = Math.min(p1.y, p2.y, p3.y);
+      const maxY = Math.max(p1.y, p2.y, p3.y);
       return <PathSvg>{
         type: 'path',
         d: `M ${p1.x} ${p1.y} L ${p2.x} ${p2.y} L ${p3.x} ${p3.y} Z`,
@@ -297,8 +297,8 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
         d: `M ${topLeft.x} ${topLeft.y} L ${bottomLeft.x} ${bottomLeft.y} L ${bottomRight.x} ${bottomRight.y} L ${topRight.x} ${topRight.y} Z`,
         minX, minY, maxX, maxY,
         data: {},
-      }
-    };
+      };
+    }
   }
 }
 
@@ -322,7 +322,7 @@ function uCircle(repr: CircleRepr): Circle {
 
 function uTriangle(repr: TriangleRepr): Triangle {
   const [p1, p2, p3] = repr;
-  return { kind: 'triangle', p1: uPoint(p1), p2: uPoint(p2), p3: uPoint(p3), };
+  return { kind: 'triangle', p1: uPoint(p1), p2: uPoint(p2), p3: uPoint(p3) };
 }
 
 function uTrapezoid(repr: TrapezoidRepr): Trapezoid {
@@ -332,7 +332,7 @@ function uTrapezoid(repr: TrapezoidRepr): Trapezoid {
     topLeft: uPoint(tl),
     topWidth: uFloat(tw),
     bottomLeft: uPoint(bl),
-    bottomWidth: uFloat(bw)
+    bottomWidth: uFloat(bw),
   };
 }
 
@@ -348,7 +348,7 @@ export function uRect(repr: RectRepr): Rect {
     x: uFloat(x),
     y: uFloat(y),
     width: uFloat(w),
-    height: uFloat(h)
+    height: uFloat(h),
   };
 }
 export function minMaxToRect(mm: MinMaxBox): Rect {
@@ -357,22 +357,22 @@ export function minMaxToRect(mm: MinMaxBox): Rect {
   const y = minY;
   const width = maxX - minX;
   const height = maxY - minY;
-  return { kind: 'rect', x, y, width, height, };
+  return { kind: 'rect', x, y, width, height };
 }
 
 export function formatShape(shape: Shape): string {
   switch (shape.kind) {
-      case 'point':
-        return `(${shape.x},${shape.y})`;
-      case 'line':
-        return `l@{${formatShape(shape.p1)}->${formatShape(shape.p2)}}`;
-      case 'rect':
-        return `r@[(${shape.x},${shape.y}); w:${shape.width}; h:${shape.height}]`;
-      case 'circle':
-        return `c@${formatShape(shape.p)}, r:(${shape.r})`;
-      case 'triangle':
-        return `tri@<(${formatShape(shape.p1)}, ${formatShape(shape.p2)}, ${formatShape(shape.p3)}>`;
-      case 'trapezoid':
-        return `trap@<${formatShape(shape.topLeft)}->${shape.topWidth}, ${formatShape(shape.bottomLeft)}->${shape.bottomWidth}>`;
-  };
+    case 'point':
+      return `(${shape.x},${shape.y})`;
+    case 'line':
+      return `l@{${formatShape(shape.p1)}->${formatShape(shape.p2)}}`;
+    case 'rect':
+      return `r@[(${shape.x},${shape.y}); w:${shape.width}; h:${shape.height}]`;
+    case 'circle':
+      return `c@${formatShape(shape.p)}, r:(${shape.r})`;
+    case 'triangle':
+      return `tri@<(${formatShape(shape.p1)}, ${formatShape(shape.p2)}, ${formatShape(shape.p3)}>`;
+    case 'trapezoid':
+      return `trap@<${formatShape(shape.topLeft)}->${shape.topWidth}, ${formatShape(shape.bottomLeft)}->${shape.bottomWidth}>`;
+  }
 }

@@ -8,13 +8,13 @@ import * as E from 'fp-ts/lib/Either';
 
 const DocumentRange = io.type({
   unit: io.literal('document'),
-  at: io.string
+  at: io.string,
 });
 type DocumentRange = io.TypeOf<typeof DocumentRange>;
 
 const LabelRange = io.type({
   unit: io.literal('label'),
-  at: io.number
+  at: io.number,
 });
 type LabelRange = io.TypeOf<typeof LabelRange>;
 
@@ -25,28 +25,28 @@ export const TextLabelUnit = io.keyof({
 
 const TextRange = io.type({
   unit: TextLabelUnit,
-  at: Span
+  at: Span,
 }, 'TextRange');
 
 type TextRange = io.TypeOf<typeof TextRange>;
 
 const StanzaRange = io.type({
   unit: io.literal('stanza'),
-  at: io.number
+  at: io.number,
 });
 
 type StanzaRange = io.TypeOf<typeof StanzaRange>;
 
 const PageRange = io.type({
   unit: io.literal('page'),
-  at: PageNumber
+  at: PageNumber,
 });
 
 export type PageRange = io.TypeOf<typeof PageRange>;
 
 const GeometricRangeRepr = io.type({
   unit: io.literal('shape'),
-  at: ShapeRepr
+  at: ShapeRepr,
 }, 'GeometricRangeRepr');
 
 
@@ -70,15 +70,15 @@ type GeometricRange = {
 const GeometricRange = new io.Type<GeometricRange, GeometricRangeRepr, unknown>(
   'GeometricRange', (u: any): u is GeometricRange => (
     io.UnknownRecord.is(u)
-    && io.string.is(u['unit'])
-    && u['unit'] === 'shape'
+    && io.string.is(u.unit)
+    && u.unit === 'shape'
   ),
   (repr: unknown, _: io.Context) => pipe(
     GeometricRangeRepr.decode(repr),
     E.chain(r => Shape.decode(r.at)),
     E.chain(r => io.success({ unit: 'shape', at: r })),
   ),
-  (a: GeometricRange) => ({ unit: 'shape', at: Shape.encode(a.at) })
+  (a: GeometricRange) => ({ unit: 'shape', at: Shape.encode(a.at) }),
 );
 
 export const RangeRepr = io.union([
@@ -125,8 +125,8 @@ export const LabelRepr: io.Type<LabelRepr> = io.recursion(
   'LabelRepr',
   () => io.intersection([
     LabelNameRangeRepr,
-    LabelPartialsRepr
-  ], 'LabelRepr')
+    LabelPartialsRepr,
+  ], 'LabelRepr'),
 );
 
 export const LabelNameRangeRepr = io.type({
@@ -140,7 +140,7 @@ export type LabelNameRangeRepr = io.TypeOf<typeof LabelNameRangeRepr>;
 export const LabelPartialsRepr = io.partial({
   id: io.number,
   children: io.array(LabelRepr),
-  props: io.record(io.string, io.array(io.string))
+  props: io.record(io.string, io.array(io.string)),
 });
 export type LabelPartialsRepr = io.TypeOf<typeof LabelPartialsRepr>;
 
@@ -148,8 +148,8 @@ export const LabelPartials: io.Type<LabelPartials, LabelPartialsRepr, unknown> =
   'LabelPartials',
   () => io.partial({
     id: io.number,
-    children: io.array(Label)
-  })
+    children: io.array(Label),
+  }),
 );
 
 
@@ -157,7 +157,7 @@ export const Label = new io.Type<Label, LabelRepr, unknown>(
   'Label',
 
   (u: any): u is Label =>
-    io.string.is(u['name']) && io.array(Range).is(u['range']),
+    io.string.is(u.name) && io.array(Range).is(u.range),
 
   (unk: unknown, c: io.Context) => {
     try {
@@ -174,8 +174,8 @@ export const Label = new io.Type<Label, LabelRepr, unknown>(
       });
 
       const result: Label = {
-        name, range: rangeResult
-      }
+        name, range: rangeResult,
+      };
 
       if (children !== undefined) {
         const childResults: Label[] = children.map(ch => {
@@ -190,7 +190,7 @@ export const Label = new io.Type<Label, LabelRepr, unknown>(
       if (id !== undefined) result.id = id;
       if (props !== undefined) result.props = props;
 
-      return io.success(result)
+      return io.success(result);
 
     } catch (error) {
       console.log('error validating label', unk);
@@ -200,7 +200,7 @@ export const Label = new io.Type<Label, LabelRepr, unknown>(
   (a: Label) => {
     const lenc: LabelRepr = {
       name: a.name,
-      range: io.array(Range).encode(a.range)
+      range: io.array(Range).encode(a.range),
     };
     const partials = LabelPartials.encode(a);
     if (partials.id !== undefined) {
@@ -213,7 +213,7 @@ export const Label = new io.Type<Label, LabelRepr, unknown>(
       lenc.props = partials.props;
     }
     return lenc;
-  }
+  },
 );
 
 
@@ -221,7 +221,7 @@ const LabelWithContext = new io.Type<Label, LabelRepr, unknown>(
   'Label',
 
   (u: any): u is Label =>
-    io.string.is(u['name']) && io.array(Range).is(u['range']),
+    io.string.is(u.name) && io.array(Range).is(u.range),
 
   (unk: unknown, c: io.Context) => pipe(
     LabelRepr.validate(unk, c),
@@ -233,12 +233,12 @@ const LabelWithContext = new io.Type<Label, LabelRepr, unknown>(
     E.bind('props', ({ partials: { props } }) => props === undefined ? io.success({}) : io.success({ props })),
     E.bind('childArray', ({ partials: { children } }) => children === undefined ? io.success([]) : io.array(Label).validate(children, c)),
     E.bind('children', ({ childArray }) => childArray.length === 0 ? io.success({}) : io.success({ children: childArray })),
-    E.chain(({ label, id, children, props }) => io.success(_.merge(label, id, children, props)))
+    E.chain(({ label, id, children, props }) => io.success(_.merge(label, id, children, props))),
   ),
   (a: Label) => {
     const lenc: LabelRepr = {
       name: a.name,
-      range: io.array(Range).encode(a.range)
+      range: io.array(Range).encode(a.range),
     };
     const partials = LabelPartials.encode(a);
     if (partials.id !== undefined) {
@@ -251,5 +251,5 @@ const LabelWithContext = new io.Type<Label, LabelRepr, unknown>(
       lenc.props = partials.props;
     }
     return lenc;
-  }
+  },
 );

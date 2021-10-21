@@ -4,7 +4,7 @@ export type StoryEntry = {
   title: string;
   to: string;
   icon?: string;
-}
+};
 
 export const storyItems: StoryEntry[] = [
   { title: 'Split/Resize Windows', to: '/stories/autogen/splitScreen?' },

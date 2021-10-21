@@ -8,12 +8,12 @@ import { Label } from './labels';
 
 export const GlyphRef = io.union([
   io.Int,
-  io.string
+  io.string,
 ], 'GlyphRef');
 
 export const Line = io.strict({
   text: io.string,
-  glyphs: io.array(GlyphRef)
+  glyphs: io.array(GlyphRef),
 }, 'Line');
 
 export type Line = io.TypeOf<typeof Line>;
@@ -22,7 +22,7 @@ export const Page = io.strict({
   page: NonNegativeInt,
   bounds: Rect,
   glyphs: io.array(Glyph),
-  labels: io.array(Label)
+  labels: io.array(Label),
 }, 'Page');
 
 export type Page = io.TypeOf<typeof Page>;
@@ -30,7 +30,7 @@ export type Page = io.TypeOf<typeof Page>;
 export const Stanza = io.strict({
   id: NonNegativeInt,
   lines: io.array(Line),
-  labels: io.array(Label)
+  labels: io.array(Label),
 }, 'Stanza');
 
 export const BuildInfo = io.type({
@@ -38,7 +38,7 @@ export const BuildInfo = io.type({
   appVersion: io.string,
   gitCurrentBranch: io.string,
   gitHeadCommit: io.string,
-  scalaVersion: io.string
+  scalaVersion: io.string,
 }, 'BuildInfo');
 
 
@@ -46,7 +46,7 @@ export const Transcript = io.type({
   documentId: io.string,
   pages: io.array(Page),
   stanzas: io.array(Stanza),
-  labels: io.array(Label)
+  labels: io.array(Label),
   // buildInfo: BuildInfo,
 }, 'Transcript');
 

@@ -1,13 +1,13 @@
-import _ from 'lodash'
+import _ from 'lodash';
 
 import {
   defineComponent,
   SetupContext,
   ref as deepRef,
   watch,
-} from '@nuxtjs/composition-api'
+} from '@nuxtjs/composition-api';
 
-import { divRef } from '~/lib/vue-composition-lib'
+import { divRef } from '~/lib/vue-composition-lib';
 
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';
@@ -49,15 +49,15 @@ export default defineComponent({
           }
         });
 
-      })
+      }),
     );
 
     run();
 
     return {
       infoPaneDiv,
-      inputText
+      inputText,
     };
-  }
+  },
 
-})
+});

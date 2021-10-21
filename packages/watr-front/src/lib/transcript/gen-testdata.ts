@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _ from 'lodash';
 import { GlyphPropsRepr, GlyphRepr } from './glyph';
 
 export function rewriteChar(char: string): string {
@@ -30,7 +30,7 @@ export function makeGlyphRepr(char: string): GlyphRepr {
 }
 
 export function makeGlyphReprs(str: string): GlyphRepr[] {
-  const reprs = _.map(str, char => makeGlyphRepr(char))
+  const reprs = _.map(str, char => makeGlyphRepr(char));
   return reprs;
 }
 
@@ -46,23 +46,23 @@ export const sampleTranscript = {
       glyphs: [
         ['a', 0, [100, 200, 300, 400]],
         [' ', 1, [1, 2, 3, 4]],
-        ['ffi', 2, [10, 2, 3, 4], {kind: 'rewrite', gs: [['ﬃ', 3, [19, 94, 9, 10]]]}],
-        ['â', 4, [19, 94, 9, 10], {kind: 'rewrite', gs: [['a', 5, [19, 94, 9, 10]], ['^', 6, [19, 94, 9, 10]]]}]
-      ]
-    }
+        ['ffi', 2, [10, 2, 3, 4], { kind: 'rewrite', gs: [['ﬃ', 3, [19, 94, 9, 10]]] }],
+        ['â', 4, [19, 94, 9, 10], { kind: 'rewrite', gs: [['a', 5, [19, 94, 9, 10]], ['^', 6, [19, 94, 9, 10]]] }],
+      ],
+    },
   ],
   stanzas: [
     {
       lines: [
-        { glyphs: [0, 1] }
+        { glyphs: [0, 1] },
       ],
       labels: [
 
-      ]
+      ],
 
     },
   ],
   labels: [
-    { name: 'HasReferences', range: [{ unit: 'page', at: { page: 10 } }] }
-  ]
-}
+    { name: 'HasReferences', range: [{ unit: 'page', at: { page: 10 } }] },
+  ],
+};

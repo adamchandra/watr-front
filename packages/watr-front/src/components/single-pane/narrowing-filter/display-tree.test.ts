@@ -12,7 +12,7 @@ function item(p: string, title: string, tags: string): Item {
   return {
     path: p.split('.'),
     title,
-    tags: tags.split(/ +/g)
+    tags: tags.split(/ +/g),
   };
 }
 
@@ -23,7 +23,7 @@ const itemToString = (r0: RenderedItem) => renderItemTo<string[]>(
       [`${ri.tag}${ri.text}`],
       indented,
     );
-  }
+  },
 );
 
 describe('Display Trees', () => {
@@ -33,7 +33,7 @@ describe('Display Trees', () => {
       // item('a.b', 'A.B.Item', 'AT BT'),
       item('a.b.c', 'A.B.C.Item', 'AT BT CT'),
       // item('a.d', 'A.D.Item', 'AT DT')
-    ]
+    ];
     const displayItemTree = createDisplayTree<Item>(
       items,
       (it) => it.path,
@@ -46,20 +46,20 @@ describe('Display Trees', () => {
       ':ct',
       function getItemTerms(item: Item): string[] {
         return _.concat(item.tags, item.title);
-      }
+      },
     );
 
 
     const rendered = renderDisplayTree(
       displayItemTree,
       function renderDataNode(items: Item[]): RenderedItem {
-        const rs = items.map(it => span(it.title, 'li title'))
-        return span('', 'ul items', ...rs)
-      }
+        const rs = items.map(it => span(it.title, 'li title'));
+        return span('', 'ul items', ...rs);
+      },
     );
 
-    const rstr = rendered.map(t => itemToString(t.renderedItem))
-    prettyPrint({ rendered, rstr })
+    const rstr = rendered.map(t => itemToString(t.renderedItem));
+    prettyPrint({ rendered, rstr });
   });
 
   it.only('render abbrevs', () => {

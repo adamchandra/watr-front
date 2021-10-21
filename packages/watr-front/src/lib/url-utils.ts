@@ -1,22 +1,22 @@
 /**
  * Various URL related utility functions
  */
-import _ from 'lodash'
+import _ from 'lodash';
 
 export function corpusEntry(): string {
-  const entry = location.href.split('/').reverse()[0].split('?')[0]
-  return entry
+  const entry = location.href.split('/').reverse()[0].split('?')[0];
+  return entry;
 }
 
 export function getParameterByName(name: string, urlstr?: string) {
-  let url = urlstr
-  if (!url) { url = window.location.href }
-  const name0 = name.replace(/[[]]/g, '\\$&')
-  const regex = new RegExp(`[?&]${name0}(=([^&#]*)|&|#|$)`)
-  const results = regex.exec(url)
-  if (!results) { return null }
-  if (!results[2]) { return '' }
-  return decodeURIComponent(results[2].replace(/\+/g, ' '))
+  let url = urlstr;
+  if (!url) { url = window.location.href; }
+  const name0 = name.replace(/[[]]/g, '\\$&');
+  const regex = new RegExp(`[?&]${name0}(=([^&#]*)|&|#|$)`);
+  const results = regex.exec(url);
+  if (!results) { return null; }
+  if (!results[2]) { return ''; }
+  return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
 export function getURLQueryParams() {
@@ -36,7 +36,7 @@ export function getQueryParam(key: string): E.Either<any, string> {
   const v = ps.get(key);
 
   if (v === null) {
-    return E.left(undefined)
+    return E.left(undefined);
   }
-  return E.right(v)
+  return E.right(v);
 }

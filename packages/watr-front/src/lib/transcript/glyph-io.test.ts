@@ -15,16 +15,16 @@ describe('Glyph IO and representations', () => {
 
       ['ffi', 4, [10, 2, 3, 4], {
         kind: 'rewrite', gs: [
-          ['ﬃ', 5, [19, 94, 9, 10]]
-        ]
+          ['ﬃ', 5, [19, 94, 9, 10]],
+        ],
       }],
 
       ['â', 6, [19, 94, 9, 10], {
         kind: 'rewrite', gs: [
           ['a', 7, [19, 94, 9, 10]],
           ['^', 8, [19, 94, 9, 10]],
-        ]
-      }]
+        ],
+      }],
     ];
 
     const verbose = false;

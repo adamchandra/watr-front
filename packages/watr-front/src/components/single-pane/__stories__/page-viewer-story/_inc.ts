@@ -1,30 +1,30 @@
 import {
   ref as deepRef,
-  Ref
-} from '@nuxtjs/composition-api'
+  Ref,
+} from '@nuxtjs/composition-api';
 
 import _ from 'lodash';
-import { usePdfPageViewer } from '~/components/single-pane/page-viewer'
+import { usePdfPageViewer } from '~/components/single-pane/page-viewer';
 import { TranscriptIndex } from '~/lib/transcript/transcript-index';
 
 import { pipe } from 'fp-ts/lib/function';
 import * as E from 'fp-ts/lib/Either';
 import * as TE from 'fp-ts/lib/TaskEither';
-import { fetchAndDecodeTranscript } from '~/lib/data-fetch'
+import { fetchAndDecodeTranscript } from '~/lib/data-fetch';
 import { getURLQueryParam } from '~/lib/url-utils';
 import { useLabelOverlay } from '../../label-overlay';
 import { Label } from '~/lib/transcript/labels';
 
 export default {
   setup() {
-    const mountPoint: Ref<HTMLDivElement | null> = deepRef(null)
+    const mountPoint: Ref<HTMLDivElement | null> = deepRef(null);
     const showAllLabels: Ref<boolean> = deepRef(false);
 
     const entryId = getURLQueryParam('id') || 'missing-id';
     const pageNumber = 1;
 
-    let uri = window.location.search.substring(1);
-    let params = new URLSearchParams(uri);
+    const uri = window.location.search.substring(1);
+    const params = new URLSearchParams(uri);
     console.log('id', params.get('id'));
 
     const pageLabelRefs: Array<Ref<Label[]>> = [];
@@ -58,7 +58,7 @@ export default {
     run();
 
     return {
-      mountPoint
-    }
-  }
-}
+      mountPoint,
+    };
+  },
+};

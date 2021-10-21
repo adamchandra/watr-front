@@ -34,8 +34,8 @@ export function span(
     tag: 'span',
     text,
     classes: cls.split(/ +/g),
-    children: childs
-  }
+    children: childs,
+  };
 }
 
 export interface DataNode<D> {
@@ -110,7 +110,7 @@ export function emptyNode(): EmptyNode {
     getTotalVisible(): number {
       return this.visibleDescendantCount;
     },
-  }
+  };
 }
 
 export type TreeNode<D> = EmptyNode | DataNode<D>;
@@ -219,7 +219,7 @@ export function renderDisplayTree<ItemT>(
 
     const outlineHeader = _.last(path);
     const outlineDisplay = `> ${outlineHeader} (${ownVis}/${childVis})`;
-    const outlineRender = span(outlineDisplay, `header-${leveln}`)
+    const outlineRender = span(outlineDisplay, `header-${leveln}`);
 
     const showOutline = {
       level: leveln,
@@ -247,12 +247,12 @@ export function renderDisplayTree<ItemT>(
 
   return _.filter(
     _.flatten(renderedGroups),
-    v => v !== undefined
+    v => v !== undefined,
   );
 }
 
 export function renderItemTo<U>(
-  ritem: RenderedItem, f: (ritem: RenderedItem, uchilds: U[]) => U
+  ritem: RenderedItem, f: (ritem: RenderedItem, uchilds: U[]) => U,
 ): U {
   function traverseDF(init: RenderedItem, f: (ri: RenderedItem, rchildCount: number) => void): void {
     function _loop(rcurr: RenderedItem) {
@@ -260,7 +260,7 @@ export function renderItemTo<U>(
       rcurr.children.forEach(rchild => _loop(rchild));
     }
     _loop(init);
-  };
+  }
   const rstack: [RenderedItem, number][] = [];
 
   traverseDF(ritem, (ri, rchilds) => rstack.push([ri, rchilds]));
@@ -276,7 +276,7 @@ export function renderItemTo<U>(
 }
 
 export function renderAbbrevString0(strings: string[]): string {
-  const abbrevRadix = createRadix<number>()
+  const abbrevRadix = createRadix<number>();
   _.each(strings, str => {
     const chars = str.split('');
     radUpsert(abbrevRadix, chars, (count) => count === undefined ? 1 : count + 1);
@@ -295,7 +295,7 @@ export function renderAbbrevString0(strings: string[]): string {
   return abbrevs;
 }
 export function renderAbbrevString(strings: string[]): string {
-  const abbrevRadix = createRadix<number>()
+  const abbrevRadix = createRadix<number>();
   _.each(strings, str => {
     const chars = str.split('');
     radUpsert(abbrevRadix, chars, (count) => count === undefined ? 1 : count + 1);
@@ -311,7 +311,7 @@ export function renderAbbrevString(strings: string[]): string {
     return childAbbrev;
   });
 
-  const sortedAbbrevs = _.sortBy(_.uniq(abbrevs.split(/ +/)), s => s.length).reverse()
+  const sortedAbbrevs = _.sortBy(_.uniq(abbrevs.split(/ +/)), s => s.length).reverse();
 
   return sortedAbbrevs.join(' ');
 }

@@ -1,22 +1,22 @@
-import _ from 'lodash'
+import _ from 'lodash';
 
 import {
   defineComponent,
   SetupContext,
   Ref,
   ref as deepRef,
-} from '@nuxtjs/composition-api'
+} from '@nuxtjs/composition-api';
 
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';
-import { CorpusEntryList, fetchAndDecodeCorpusEntryList } from '~/lib/data-fetch'
+import { CorpusEntryList, fetchAndDecodeCorpusEntryList } from '~/lib/data-fetch';
 
 export default defineComponent({
   components: { },
 
   setup(_props, _context: SetupContext) {
     const emptyEntries: CorpusEntryList = {
-      entries: []
+      entries: [],
     };
 
     const corpusEntries: Ref<CorpusEntryList> = deepRef(emptyEntries);
@@ -37,8 +37,8 @@ export default defineComponent({
     run();
 
     return {
-      corpusEntries
-    }
-  }
+      corpusEntries,
+    };
+  },
 
-})
+});

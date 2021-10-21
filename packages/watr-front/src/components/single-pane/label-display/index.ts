@@ -8,7 +8,7 @@ import {
   // highlightShapesFillStroke,
   labelToSVGs,
   removeShapes,
-  updateSvgElement
+  updateSvgElement,
 } from '~/lib/transcript-rendering';
 
 
@@ -25,7 +25,7 @@ export async function useLabelDisplay({
   superimposedElements,
 }: Args): Promise<LabelDisplay> {
 
-  const svgElement = superimposedElements.overlayElements.svg!;
+  const svgElement = superimposedElements.overlayElements.svg;
 
   const defs = d3.select(svgElement)
     .append('defs')
@@ -46,7 +46,7 @@ export async function useLabelDisplay({
     .attr('offset', '100%')
     .attr('stop-opacity', '0.1')
     .attr('stop-color', 'blue')
-    ;
+  ;
 
 
   defs
@@ -60,7 +60,7 @@ export async function useLabelDisplay({
     .attr('orient', 'auto')
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 5 z')
-    ;
+  ;
 
   defs
     .append('marker')
@@ -73,7 +73,7 @@ export async function useLabelDisplay({
     .attr('orient', 'auto-start-reverse')
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 5 z')
-    ;
+  ;
 
 
   function showLabel(l: Label): void {
@@ -87,6 +87,6 @@ export async function useLabelDisplay({
 
   return {
     showLabel,
-    clearAll
+    clearAll,
   };
 }

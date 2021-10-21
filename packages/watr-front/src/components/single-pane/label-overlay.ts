@@ -3,7 +3,7 @@ import _ from 'lodash';
 import {
   Ref,
   watch,
-} from '@nuxtjs/composition-api'
+} from '@nuxtjs/composition-api';
 
 import { TranscriptIndex, TranscriptIndexable } from '~/lib/transcript/transcript-index';
 import { Label } from '~/lib/transcript/labels';
@@ -41,7 +41,7 @@ export async function useLabelOverlay({
   transcriptIndex,
   pageNumber,
   infoPane,
-  showAllLabels
+  showAllLabels,
 }: Args): Promise<LabelOverlay> {
   const { superimposedElements, eventlibCore } = pdfPageViewer;
 
@@ -56,10 +56,10 @@ export async function useLabelOverlay({
 
   let once = true;
   watch(pageLabelRef, (displayableLabels: Label[]) => {
-    const svgOverlay = superimposedElements.overlayElements.svg!;
+    const svgOverlay = superimposedElements.overlayElements.svg;
 
     if (once) {
-      once = false
+      once = false;
 
       const defs = d3.select(svgOverlay)
         .append('defs')
@@ -80,7 +80,7 @@ export async function useLabelOverlay({
         .attr('offset', '100%')
         .attr('stop-opacity', '0.1')
         .attr('stop-color', 'blue')
-        ;
+      ;
 
 
       defs
@@ -93,7 +93,7 @@ export async function useLabelOverlay({
         .attr('markerHeight', '6')
         .attr('orient', 'auto')
         .append('path')
-        .attr('d', 'M 0 0 L 10 5 L 0 5 z')
+        .attr('d', 'M 0 0 L 10 5 L 0 5 z');
 
       defs
         .append('marker')
@@ -105,7 +105,7 @@ export async function useLabelOverlay({
         .attr('markerHeight', '6')
         .attr('orient', 'auto-start-reverse')
         .append('path')
-        .attr('d', 'M 0 0 L 10 5 L 0 5 z')
+        .attr('d', 'M 0 0 L 10 5 L 0 5 z');
 
     }
 
@@ -114,7 +114,7 @@ export async function useLabelOverlay({
       removeShapes(svgOverlay);
       transcriptIndex.getKeyedIndex(indexKey).clear();
       return;
-    };
+    }
 
     infoPane.putStringLn(`Loaded ${displayableLabels.length} labels on page ${pageNumber}`);
 
@@ -126,7 +126,7 @@ export async function useLabelOverlay({
           cargo: svg,
           indexedRects: {},
           primaryKey: indexKey,
-          primaryRect: minMaxToRect(svg)
+          primaryRect: minMaxToRect(svg),
         };
         return asIndexable;
       });
@@ -140,7 +140,7 @@ export async function useLabelOverlay({
     if (showAll) {
       const allSvgs = _.flatMap(shapes, shape => {
         const itemSvg = shape.cargo;
-        const rootLabel: Label = itemSvg.data['rootLabel'];
+        const rootLabel: Label = itemSvg.data.rootLabel;
         const items = [itemSvg];
         if (rootLabel) {
           const svgs = labelToSVGs(rootLabel, [], true);
@@ -157,11 +157,11 @@ export async function useLabelOverlay({
   watch(flashlight.eventTargetRecs.mousemove, (mousemove) => {
     if (mousemove === undefined || mousemove.length == 0) return;
     if (freezeFlashlight) return;
-    const svgOverlay = superimposedElements.overlayElements.svg!;
+    const svgOverlay = superimposedElements.overlayElements.svg;
 
     const item = mousemove[0];
     const itemSvg = item.cargo;
-    const rootLabel: Label = itemSvg.data['rootLabel'];
+    const rootLabel: Label = itemSvg.data.rootLabel;
     const items = [itemSvg];
 
     if (rootLabel) {
@@ -176,7 +176,7 @@ export async function useLabelOverlay({
   });
 
   watch(infoPane.reactiveTexts.actions, (actions) => {
-    const svgOverlay = superimposedElements.overlayElements.svg!;
+    const svgOverlay = superimposedElements.overlayElements.svg;
     freezeFlashlight = actions.some(s => s === 'freeze');
     d3.select(svgOverlay).classed('inspecting', freezeFlashlight);
     if (freezeFlashlight) {
@@ -191,14 +191,14 @@ export async function useLabelOverlay({
       if (freezeFlashlight) return;
 
       const item = click[0];
-      const rootLabel: Label = item.cargo.data['rootLabel'];
+      const rootLabel: Label = item.cargo.data.rootLabel;
       if (rootLabel !== undefined) {
         infoPane.showLabel(rootLabel, true);
       }
     });
 
     watch(infoPane.reactiveTexts.mouseover, (hoveringId: string) => {
-      const svgOverlay = superimposedElements.overlayElements.svg!;
+      const svgOverlay = superimposedElements.overlayElements.svg;
       if (hoveringId === null) return;
       highlightShapesFillStroke(svgOverlay, hoveringId);
     });

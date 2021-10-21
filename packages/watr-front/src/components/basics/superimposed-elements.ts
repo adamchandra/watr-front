@@ -6,10 +6,10 @@ import {
   ref as deepRef,
 } from '@nuxtjs/composition-api';
 
-import { awaitRef } from '~/components/basics/component-basics'
+import { awaitRef } from '~/components/basics/component-basics';
 
 export const enum ElementTypes {
-  Canvas, Svg, Text, Img, Event
+  Canvas, Svg, Text, Img, Event,
 }
 
 export interface OverlayElements {
@@ -34,7 +34,7 @@ type Args = {
 };
 
 export async function useSuperimposedElements({
-  mountPoint, includeElems
+  mountPoint, includeElems,
 }: Args): Promise<SuperimposedElements> {
 
   const useElem: (et: ElementTypes) => boolean =
@@ -80,12 +80,12 @@ export async function useSuperimposedElements({
 
   await awaitRef(mountPoint);
 
-  const overlayContainer = mountPoint.value!;
+  const overlayContainer = mountPoint.value;
   overlayContainer.classList.add('layers');
   const { img, canvas, svg, textDiv, eventDiv } = overlayElements;
 
   if (img) {
-    img.onload = function() {
+    img.onload = function () {
       const { width, height } = img;
       dimensions.value = [width, height];
     };

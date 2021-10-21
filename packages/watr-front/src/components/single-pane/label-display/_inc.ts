@@ -1,13 +1,13 @@
-import _ from 'lodash'
+import _ from 'lodash';
 
 import {
   defineComponent,
   SetupContext,
   ref as deepRef,
   watch,
-} from '@nuxtjs/composition-api'
+} from '@nuxtjs/composition-api';
 
-import { divRef } from '~/lib/vue-composition-lib'
+import { divRef } from '~/lib/vue-composition-lib';
 
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';
@@ -18,19 +18,25 @@ import { ElementTypes, useSuperimposedElements } from '~/components/basics/super
 import { useInfoPane } from '~/components/single-pane/info-pane/info-pane';
 import { Label } from '~/lib/transcript/labels';
 
-import { isLeft, Either } from 'fp-ts/lib/Either'
-import { PathReporter } from 'io-ts/lib/PathReporter'
+import { isLeft, Either } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import { Errors } from 'io-ts';
 
+// TODO move to lib/transcript
 export function decodeLabel(input: unknown): Label | null {
-  const maybeDecoded: Either<Errors, Label> = Label.decode(input)
+  const maybeDecoded: Either<Errors, Label> = Label.decode(input);
   if (isLeft(maybeDecoded)) {
-    const report = PathReporter.report(maybeDecoded)
+    const report = PathReporter.report(maybeDecoded);
     console.log(report);
     return null;
   }
 
   return maybeDecoded.right;
+}
+
+// TODO move to lib/...
+export function taskifyPromise<E, A>(pa: Promise<A>): TE.TaskEither<E, A> {
+  return () => pa.then(E.right);
 }
 
 export default defineComponent({
@@ -45,18 +51,16 @@ export default defineComponent({
 
     const run = pipe(
       TE.right({}),
-      TE.bind('superimposedElements', ({ }) => () => useSuperimposedElements({ mountPoint: superimposedElemDiv, includeElems: [ElementTypes.Svg] }).then(E.right)),
-      TE.bind('infoPane', ({ }) => () => useInfoPane({ mountPoint: infoPaneDiv }).then(E.right)),
-      TE.bind('labelDisplay', ({ superimposedElements }) => () => useLabelDisplay({ superimposedElements }).then(E.right)),
+      TE.bind('superimposedElements', ({ }) => taskifyPromise(useSuperimposedElements({ mountPoint: superimposedElemDiv, includeElems: [ElementTypes.Svg] }))),
+      TE.bind('infoPane', ({ }) => taskifyPromise(useInfoPane({ mountPoint: infoPaneDiv }))),
+      TE.bind('labelDisplay', ({ superimposedElements }) => taskifyPromise(useLabelDisplay({ superimposedElements }))),
       TE.map(({ infoPane, superimposedElements, labelDisplay }) => {
 
         superimposedElements.setDimensions(800, 1000);
         const { showLabel, clearAll } = labelDisplay;
 
         const {
-          putString,
           putStringLn,
-          clearScreen,
         } = infoPane;
 
         putStringLn('Hello From Storyland!');
@@ -75,7 +79,7 @@ export default defineComponent({
             clearAll();
           }
         });
-      })
+      }),
     );
 
     run();
@@ -86,7 +90,7 @@ export default defineComponent({
       showBasicShapes,
       showCompoundShapes,
     };
-  }
+  },
 
 });
 
@@ -107,60 +111,60 @@ function drawBasicShapes(showLabel: (l: Label) => void) {
 
 function drawCompoundShapes(showLabel: (l: Label) => void) {
   const examples = [{
-    "children": [{
-      "children": [{
-        "props": {
-          "class": ["=eager"]
+    'children': [{
+      'children': [{
+        'props': {
+          'class': ['=eager'],
         },
-        "range": [{ "unit": "shape", "at": [29748, 75954, 381, 545] }],
-        "name": "FocalRect"
+        'range': [{ 'unit': 'shape', 'at': [29748, 75954, 381, 545] }],
+        'name': 'FocalRect',
       }, {
-        "range": [{ "unit": "shape", "at": [29748, 75954, 381, 2937] }],
-        "name": "HorizonRect"
+        'range': [{ 'unit': 'shape', 'at': [29748, 75954, 381, 2937] }],
+        'name': 'HorizonRect',
       }, {
-        "children": [{
-          "range": [{ "unit": "shape", "at": [29748, 76500, 381, 2391] }],
-          "name": "Query/Cell:Bottom"
+        'children': [{
+          'range': [{ 'unit': 'shape', 'at': [29748, 76500, 381, 2391] }],
+          'name': 'Query/Cell:Bottom',
         }],
-        "range": [],
-        "name": "SearchArea"
+        'range': [],
+        'name': 'SearchArea',
       }],
-      "range": [],
-      "name": "Octothorpe"
+      'range': [],
+      'name': 'Octothorpe',
     }, {
-      "children": [],
-      "range": [],
-      "name": "Found"
+      'children': [],
+      'range': [],
+      'name': 'Found',
     }],
-    "props": {
-      "class": [">lazy"],
-      "outline": ["FindMonoFontBlocks", "ConnectComponents", "WithAdjacentSkyline/Down"]
+    'props': {
+      'class': ['>lazy'],
+      'outline': ['FindMonoFontBlocks', 'ConnectComponents', 'WithAdjacentSkyline/Down'],
     },
-    "range": [],
-    "name": "OctSearch"
+    'range': [],
+    'name': 'OctSearch',
   }, {
-    "children": [{
-      "props": { "class": ["=eager"] },
-      "range": [{ "unit": "shape", "at": [7220, 29427, 46572, 500] }],
-      "name": "FocalRect"
+    'children': [{
+      'props': { 'class': ['=eager'] },
+      'range': [{ 'unit': 'shape', 'at': [7220, 29427, 46572, 500] }],
+      'name': 'FocalRect',
     }, {
-      "range": [{ "unit": "shape", "at": [7235, 31587, 46555, 500] }],
-      "name": "HitRect"
+      'range': [{ 'unit': 'shape', 'at': [7235, 31587, 46555, 500] }],
+      'name': 'HitRect',
     }, {
-      "range": [{ "unit": "shape", "at": [7235, 29927, 46555, 1660] }],
-      "name": "OcclusionQuery"
+      'range': [{ 'unit': 'shape', 'at': [7235, 29927, 46555, 1660] }],
+      'name': 'OcclusionQuery',
     }, {
-      "range": [],
-      "name": "Occlusions"
+      'range': [],
+      'name': 'Occlusions',
     }, {
-      "range": [{ "unit": "shape", "at": [7235, 31587, 46555, 500] }],
-      "name": "FinalHit"
+      'range': [{ 'unit': 'shape', 'at': [7235, 31587, 46555, 500] }],
+      'name': 'FinalHit',
     }],
-    "props": {
-      "class": [">lazy"],
+    'props': {
+      'class': ['>lazy'],
     },
-    "range": [],
-    "name": "FacingDownFind( BaselineMidriseBand )"
+    'range': [],
+    'name': 'FacingDownFind( BaselineMidriseBand )',
   }];
 
 

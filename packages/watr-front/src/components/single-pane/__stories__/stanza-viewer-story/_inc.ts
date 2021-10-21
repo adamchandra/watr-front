@@ -1,18 +1,18 @@
 import _ from 'lodash';
 
-import { defineComponent } from '@nuxtjs/composition-api'
-import { useStanzaViewer } from '~/components/single-pane/stanza-viewer'
-import { divRef } from '~/lib/vue-composition-lib'
+import { defineComponent } from '@nuxtjs/composition-api';
+import { useStanzaViewer } from '~/components/single-pane/stanza-viewer';
+import { divRef } from '~/lib/vue-composition-lib';
 import { pipe } from 'fp-ts/lib/function';
-import { TranscriptIndex } from '~/lib/transcript/transcript-index'
-import { getURLQueryParam } from '~/lib/url-utils'
+import { TranscriptIndex } from '~/lib/transcript/transcript-index';
+import { getURLQueryParam } from '~/lib/url-utils';
 import * as TE from 'fp-ts/lib/TaskEither';
-import { fetchAndDecodeTranscript } from '~/lib/data-fetch'
+import { fetchAndDecodeTranscript } from '~/lib/data-fetch';
 
 export default defineComponent({
   components: {},
   setup() {
-    const mountPoint = divRef()
+    const mountPoint = divRef();
 
     useStanzaViewer({ mountPoint }).then((stanzaViewer) => {
       const { showStanza } = stanzaViewer;
@@ -34,14 +34,14 @@ export default defineComponent({
             // lineBegin: 0,
             // lineCount: 20
           });
-        })
+        }),
 
       );
       return run();
     });
 
     return {
-      mountPoint
-    }
-  }
-})
+      mountPoint,
+    };
+  },
+});

@@ -1,9 +1,9 @@
 import { pipe } from 'fp-ts/lib/function';
 import * as E from 'fp-ts/lib/Either';
 import * as TE from 'fp-ts/lib/TaskEither';
-import { PathReporter } from 'io-ts/lib/PathReporter'
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import { getArtifactData, getEntryList } from './axios';
-import * as io from 'io-ts'
+import * as io from 'io-ts';
 import { Transcript } from './transcript/transcript';
 import { markRaw } from '@nuxtjs/composition-api';
 
@@ -18,10 +18,10 @@ export function fetchAndDecode<A, IO>(
       E.mapLeft(errors => {
         errors.map(err => {
           console.log({ err });
-        })
-        const report = PathReporter.report(E.left(errors))
+        });
+        const report = PathReporter.report(E.left(errors));
         return report;
-      })
+      }),
     ))),
   );
 }
@@ -33,15 +33,15 @@ export const fetchAndDecodeTranscript = (entryId: string): TE.TaskEither<string[
       : E.right(markRaw(data)));
 
   return fetchAndDecode(Transcript, fetcher);
-}
+};
 
 const CorpusEntry = io.type({
-  entryId: io.string
+  entryId: io.string,
 });
 export type CorpusEntry = io.TypeOf<typeof CorpusEntry>;
 
 const CorpusEntryList = io.type({
-  entries: io.array(CorpusEntry)
+  entries: io.array(CorpusEntry),
 });
 export type CorpusEntryList = io.TypeOf<typeof CorpusEntryList>;
 
@@ -52,4 +52,4 @@ export const fetchAndDecodeCorpusEntryList = (): TE.TaskEither<string[], CorpusE
       : E.right(data));
 
   return fetchAndDecode(CorpusEntryList, fetcher);
-}
+};

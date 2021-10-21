@@ -207,3 +207,20 @@ Include the path aliases in both `tsconfig.json` and `tsconfig.build.json` and t
 ```
 
 See the full example [here](examples/nestjs).
+
+
+
+
+
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-airbnb-typescript": "^14.0.1",
+    "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-plugin-chai-expect": "^2.2.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-airbnb-typescript": "^14.0.1",
+    "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-plugin-chai-expect": "^2.2.0",
+    "eslint-plugin-import": "^2.25.2",

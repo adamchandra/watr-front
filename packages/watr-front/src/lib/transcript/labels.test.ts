@@ -1,7 +1,7 @@
-import _ from 'lodash'
-import { isIsomorphic } from '~/lib/codec-utils'
+import _ from 'lodash';
+import { isIsomorphic } from '~/lib/codec-utils';
 
-import { Label, LabelRepr, Range, RangeRepr } from './labels'
+import { Label, LabelRepr, Range, RangeRepr } from './labels';
 
 describe('Label/Range IO', () => {
 
@@ -17,12 +17,12 @@ describe('Label/Range IO', () => {
       { unit: 'text:char', at: [1, 2] },
       { unit: 'document', at: 'Doc#23' },
       { unit: 'label', at: 32 },
-      {"unit": "shape", "at": [36184, 46472, 1255, 924]}
+      { 'unit': 'shape', 'at': [36184, 46472, 1255, 924] },
     ];
 
     _.each(examples, (example) => {
-      expect(isIsomorphic(RangeRepr, example, verbose)).toBe(true)
-      expect(isIsomorphic(Range, example, verbose)).toBe(true)
+      expect(isIsomorphic(RangeRepr, example, verbose)).toBe(true);
+      expect(isIsomorphic(Range, example, verbose)).toBe(true);
     });
   });
 
@@ -30,17 +30,17 @@ describe('Label/Range IO', () => {
     const examples: any[] = [
       { name: 'AnonLabel', range: [] },
       { name: 'AnonLabel', range: [], children: [{ name: 'AnonLabel', range: [] }] },
-      { name: 'AnonLabel', range: [{ unit: 'shape', at: [8454, 8483], }] },
+      { name: 'AnonLabel', range: [{ unit: 'shape', at: [8454, 8483] }] },
       { name: 'IdLabel', id: 21, range: [{ unit: 'page', at: 3 }] },
-      { name: 'LabelWithID', id: 22, range: [{ unit: 'text:line', at: [8454, 8483], }] },
+      { name: 'LabelWithID', id: 22, range: [{ unit: 'text:line', at: [8454, 8483] }] },
       { name: 'LabelWithProps', range: [], props: { key1: ['value'], key2: ['32'] } },
-      {"range": [{"unit": "shape", "at": [36184, 46472, 1255, 924]}], "name": "HorizonRect"},
+      { 'range': [{ 'unit': 'shape', 'at': [36184, 46472, 1255, 924] }], 'name': 'HorizonRect' },
 
-    ]
+    ];
 
     _.each(examples, (example) => {
-      expect(isIsomorphic(LabelRepr, example, verbose)).toBe(true)
-      expect(isIsomorphic(Label, example, verbose)).toBe(true)
+      expect(isIsomorphic(LabelRepr, example, verbose)).toBe(true);
+      expect(isIsomorphic(Label, example, verbose)).toBe(true);
     });
   });
 
@@ -54,30 +54,30 @@ describe('Label/Range IO', () => {
                 name: 'Author', range: [{ unit: 'text:char', at: [0, 20] }], children: [
                   { name: 'FirstName', range: [{ unit: 'text:char', at: [0, 4] }] },
                   { name: 'LastName', range: [{ unit: 'text:char', at: [5, 10] }] },
-                ]
+                ],
               },
-            ]
+            ],
           },
-        ]
+        ],
       },
       {
-        "name": "GlyphGraphNode",
-        "range": [
+        'name': 'GlyphGraphNode',
+        'range': [
         ],
-        "children": [
+        'children': [
           {
-            "name": "HorizonRect",
-            "range": [
-              {"unit": "shape", "at": [10, 20, 30, 40]}
-            ]
-          }
+            'name': 'HorizonRect',
+            'range': [
+              { 'unit': 'shape', 'at': [10, 20, 30, 40] },
+            ],
+          },
         ],
-      }
+      },
     ];
 
     _.each(examples, (example) => {
       // expect(isIsomorphic(LabelRepr, example, verbose)).toBe(true)
-      expect(isIsomorphic(Label, example, verbose)).toBe(true)
+      expect(isIsomorphic(Label, example, verbose)).toBe(true);
     });
   });
 
@@ -89,13 +89,13 @@ describe('Label/Range IO', () => {
       // { name: 'AnonLabel', range: [{ unit: 'shape', at: [8454, 8483], }] },
       // { name: 'LabelWithID', id: 22, range: [{ unit: 'text:line', at: [8454, 8483], }] },
       // { name: 'LabelWithProps', range: [], props: { key1: ['value'], key2: ['32'] } },
-      // {"range": [{"unit": "shape", "at": [36184, 46472, 1255, 924]}], "name": "HorizonRect"},
+      // {'range': [{'unit': 'shape', 'at': [36184, 46472, 1255, 924]}], 'name': 'HorizonRect'},
 
-    ]
+    ];
 
     _.each(examples, (example) => {
       // expect(isIsomorphic(LabelRepr, example, verbose)).toBe(true)
-      expect(isIsomorphic(Label, example, verbose)).toBe(false)
+      expect(isIsomorphic(Label, example, verbose)).toBe(false);
     });
   });
 

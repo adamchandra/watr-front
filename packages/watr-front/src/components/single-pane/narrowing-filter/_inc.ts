@@ -26,7 +26,7 @@ import {
   RenderedGroup,
   RenderedItem,
   span,
-  renderAbbrevString
+  renderAbbrevString,
 } from './display-tree';
 
 import { getLabelProp } from '~/lib/transcript/tracelogs';
@@ -46,7 +46,7 @@ function renderLabelGroup(labels: Label[]): RenderedItem {
   const tagSet = new Set<string>(terms);
   const abbrevTags = renderAbbrevString(Array.from(tagSet));
   const nameDisp = abbrevTags;
-  return span(nameDisp, 'label')
+  return span(nameDisp, 'label');
 }
 
 
@@ -54,7 +54,7 @@ async function updateDisplay(
   choices: DisplayTreeT,
   query: string,
   renderedRef: Ref<RenderedGroupT[]>,
-  priorAttempt?: Bluebird<void>
+  priorAttempt?: Bluebird<void>,
 ): Bluebird<void> {
   const delay = priorAttempt ? priorAttempt : Bluebird.resolve(undefined);
 
@@ -72,7 +72,7 @@ export default defineComponent({
   setup(_props, ctx: SetupContext) {
     const { emit } = ctx;
 
-    const currSelectionRef = shallowRef([] as RenderedGroupT[])
+    const currSelectionRef = shallowRef([] as RenderedGroupT[]);
     const queryTextRef = deepRef('');
 
     const choicesRef: Ref<DisplayTreeT | null> = inject(ProvidedChoices, shallowRef(null));
@@ -81,9 +81,9 @@ export default defineComponent({
 
       const items = _.flatMap(
         currSelectionRef.value, v => {
-          return v.nodeData ? v.nodeData : []
-        }
-      )
+          return v.nodeData ? v.nodeData : [];
+        },
+      );
       emit('items-selected', items);
     };
 
@@ -99,7 +99,7 @@ export default defineComponent({
 
       const updateSelection = (query: string) => {
         currUpdate = updateDisplay(choices, query, currSelectionRef, currUpdate);
-      }
+      };
       const debounced = _.debounce(updateSelection, 300);
 
       watch(queryTextRef, (queryText) => {
@@ -107,7 +107,7 @@ export default defineComponent({
       });
 
     }, {
-      deep: false
+      deep: false,
     });
 
     return {
@@ -118,5 +118,5 @@ export default defineComponent({
       onReset,
     };
 
-  }
+  },
 });
