@@ -2,9 +2,10 @@ import Koa, { Context } from 'koa';
 import Router from 'koa-router';
 import json from 'koa-json';
 import { arglib } from '@watr/commonlib-node';
-const { opt, config, registerCmd } = arglib;
 
 import { initFileBasedRoutes } from './corpusRoutes';
+
+const { opt, config, registerCmd } = arglib;
 
 const rootRouter = new Router();
 const app = new Koa();
@@ -16,10 +17,9 @@ registerCmd(
   config([
     opt.cwd,
     opt.existingDir('corpus-root: root directory for corpus files'),
-  ])
+  ]),
 )((args: any) => {
   const { corpusRoot } = args;
-
 
   const apiRouter = initFileBasedRoutes(corpusRoot);
 
@@ -38,13 +38,12 @@ registerCmd(
     .use(json({ pretty: false }))
   ;
 
-  app.listen(3100, function() {
+  app.listen(3100, () => {
     console.log('Koa is listening to http://localhost:3100');
   });
-
-
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 arglib.YArgs
   .demandCommand(1, 'You need at least one command before moving on')
   .strict()

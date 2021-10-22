@@ -1,15 +1,14 @@
 import _ from 'lodash';
 
+import commander from 'commander';
 import {
   setupVueComponent,
 } from './refactors';
 
 import {
-  setupStoryVues
+  setupStoryVues,
 } from './storybooks';
 
-
-import commander from 'commander';
 const program = new commander.Command();
 program.version('0.0.1');
 
@@ -22,8 +21,8 @@ program
   .alias('comp')
   .description('setup vue component')
   .option('-c, --tsconfig <path>', 'path to tsconfig.json for target project')
-  .action(function(name: string, root: string, options: any) {
-    const tsconfig = options.tsconfig;
+  .action((name: string, root: string, options: any) => {
+    const { tsconfig } = options;
     console.log(`vue component setup: tsconfig=${tsconfig}`);
     setupVueComponent(tsconfig, name, root);
   });
@@ -34,11 +33,10 @@ program
   .description('setup vue component')
   .option('-c, --tsconfig <path>', 'path to tsconfig.json for target project')
   .option('-n, --dryrun', 'just print output')
-  .action(function(options: any) {
-    const tsconfig = options.tsconfig;
-    const dryrun = options.dryrun;
+  .action((options: any) => {
+    const { tsconfig } = options;
+    const { dryrun } = options;
     setupStoryVues(tsconfig, dryrun);
   });
-
 
 program.parse(process.argv);

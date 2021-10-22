@@ -2,7 +2,7 @@ import _ from 'lodash';
 import path from 'path';
 import fs, { Dirent } from 'fs-extra';
 
-import { Project, Directory } from "ts-morph";
+import { Project, Directory } from 'ts-morph';
 
 interface StoryPaths {
   generatedStoryVueFile: string;
@@ -13,7 +13,6 @@ interface StoryPaths {
 }
 
 export function setupStoryVues(tsconfigPath: string, dryrun: boolean) {
-
   const project = new Project({
     tsConfigFilePath: tsconfigPath,
   });
@@ -21,20 +20,19 @@ export function setupStoryVues(tsconfigPath: string, dryrun: boolean) {
   const tsconfigRPath = fs.realpathSync(tsconfigPath);
   const tsconfigDir = path.dirname(tsconfigRPath);
 
-  const storyOutputDir = path.join(tsconfigDir,  'stories-autogen.d');
-
+  const storyOutputDir = path.join(tsconfigDir, 'stories-autogen.d');
 
   if (fs.existsSync(storyOutputDir)) {
-    console.log('autoDir exists, deleting...')
+    console.log('autoDir exists, deleting...');
     fs.removeSync(storyOutputDir);
   }
-  console.log(`creating autoDir ${storyOutputDir}...`)
+  console.log(`creating autoDir ${storyOutputDir}...`);
   fs.mkdir(storyOutputDir);
 
   const storyList = findStories(project);
 
   _.each(storyList, (storyPath: StoryPaths) => {
-    const storyBaseName = storyPath.storyBaseName;
+    const { storyBaseName } = storyPath;
     const vueContent = `
 <script lang="ts">
 import vueComponent from '${storyPath.vueImportName}'
@@ -43,22 +41,21 @@ export default { components: { vueComponent } }
 <template lang="html">
 <vueComponent />
 </template>
-`.trimLeft();
+`.trimStart();
 
     const fullStoryPath = path.join(storyOutputDir, storyPath.generatedStoryVueFile);
-    console.log(`creating story ${storyBaseName} in ${fullStoryPath}`)
+    console.log(`creating story ${storyBaseName} in ${fullStoryPath}`);
     console.log(vueContent);
 
     if (!dryrun) {
       fs.writeFileSync(fullStoryPath, vueContent);
     }
-
   });
 
   const storyRecs = _.map(storyList, (storyPath: StoryPaths) => {
     // const storyBaseName = storyPath.storyBaseName;
-    const storyUrl = storyPath.storyUrl;
-    const storyTitle = storyPath.storyTitle;
+    const { storyUrl } = storyPath;
+    const { storyTitle } = storyPath;
     const entry = `
 { title: '${storyTitle}', to: '/stories/autogen/${storyUrl}' },
 `.trim();
@@ -89,18 +86,17 @@ export const storyItems: StoryEntry[] = [
 function getStoryProp(fileContent: string, propname: string): string | undefined {
   const lines = fileContent.split('\n');
   const propLine = _.filter(lines, l => l.includes(`${propname}=`));
-  let propValue = undefined;
+  let propValue;
   if (propLine.length > 0) {
     const propDef: string = propLine[0];
     const splitAt = propDef.indexOf('=');
-    propValue = propDef.substr(splitAt+1).trim();
+    propValue = propDef.slice(splitAt + 1).trim();
     // propValue = propLine[0].split('=')[1].trim();
   }
   return propValue;
 }
 
 function genStoryProps(projSubdir: string, dirEntry: Dirent) {
-
   const vueFilePath = path.join(projSubdir, dirEntry.name);
   const fileContent = fs.readFileSync(vueFilePath).toString();
   const maybeStoryName = getStoryProp(fileContent, 'story-name');
@@ -108,27 +104,29 @@ function genStoryProps(projSubdir: string, dirEntry: Dirent) {
   const maybeStoryTitle = getStoryProp(fileContent, 'story-title');
   const postSrcPath = vueFilePath.split('/src/')[1];
   const pathParts = postSrcPath.split('/');
-  let storyBaseName = pathParts[pathParts.length-2];
+  let storyBaseName = pathParts[pathParts.length - 2];
 
   storyBaseName = _.camelCase(storyBaseName);
   storyBaseName = maybeStoryName || storyBaseName;
 
   const generatedStoryVueFile = `${storyBaseName}.vue`;
   const vueImportName = `~/${postSrcPath}`;
-  const storyTitle = maybeStoryTitle? maybeStoryTitle : storyBaseName;
+  const storyTitle = maybeStoryTitle || storyBaseName;
   let storyUrl = storyBaseName;
   if (maybeStoryQueryArgs !== undefined) {
-    storyUrl += `?${maybeStoryQueryArgs}`
+    storyUrl += `?${maybeStoryQueryArgs}`;
   }
 
   return [
-    { generatedStoryVueFile, storyBaseName, vueImportName, storyTitle, storyUrl }
+    {
+      generatedStoryVueFile, storyBaseName, vueImportName, storyTitle, storyUrl,
+    },
   ];
 }
 
 function findStories(project: Project): StoryPaths[] {
   const projectDirs = project.getDirectories();
-  const r: StoryPaths[]  = _.flatMap(projectDirs, (dir: Directory) => {
+  const r: StoryPaths[] = _.flatMap(projectDirs, (dir: Directory) => {
     const projSubdir = dir.getPath();
     const isStoryPath = projSubdir.includes('__stories__');
     const dirEntries = fs.readdirSync(projSubdir, { withFileTypes: true });
@@ -139,15 +137,12 @@ function findStories(project: Project): StoryPaths[] {
         if (!isVueFile) return [];
 
         return genStoryProps(projSubdir, dirEntry);
-
       });
     }
 
     const storyFiles = _.filter(dirEntries, e => e.isFile() && e.name.endsWith('story.vue'));
 
-    return _.flatMap(storyFiles, (dirEntry: Dirent) => {
-      return genStoryProps(projSubdir, dirEntry);
-    });
+    return _.flatMap(storyFiles, (dirEntry: Dirent) => genStoryProps(projSubdir, dirEntry));
   });
 
   return r;

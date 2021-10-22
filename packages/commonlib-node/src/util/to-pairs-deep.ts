@@ -7,7 +7,6 @@ export type QualifiedKey = Readonly<[PathPart[]]>;
 export type QualifiedKeyValue = Readonly<[PathPart[], Primitive]>;
 export type QualifiedPath = QualifiedKey | QualifiedKeyValue;
 
-
 // Indexed Qualified Paths
 export interface IndexedPathPart {
   key: PathPart;
@@ -19,7 +18,6 @@ export interface IndexedPathPart {
 export type IQualifiedKey = Readonly<[IndexedPathPart[]]>;
 export type IQualifiedKeyValue = Readonly<[IndexedPathPart[], Primitive]>;
 export type IQualifiedPath = IQualifiedKey | IQualifiedKeyValue;
-
 
 export function isIQualifiedKey(qp: IQualifiedPath): qp is IQualifiedKey {
   return qp.length === 1;
@@ -42,7 +40,7 @@ export function getQualifiedKey(qp: QualifiedPath): QualifiedKey {
 }
 
 export function getQualifiedValue(qp: QualifiedPath): [Primitive] | undefined {
-  if (isQualifiedKeyValue(qp))  {
+  if (isQualifiedKeyValue(qp)) {
     return [qp[1]];
   }
   return undefined;
@@ -71,38 +69,38 @@ type ArgType = any;
  * Recursively gather all paths and values in an object
  */
 export function toIQualifiedPaths(obj: ArgType): IQualifiedPath[] {
-
   function _loop(
     subobj: any,
-    parentPath: IndexedPathPart[]
+    parentPath: IndexedPathPart[],
   ): IQualifiedPath[] {
-
     if (_.isArray(subobj)) {
       const subPaths = _.flatMap(subobj, (entry, i) => {
         const pathPart: IndexedPathPart = {
-          key: i.toString(), i,
+          key: i.toString(),
+          i,
           n: subobj.length,
-          container: 'arr'
+          container: 'arr',
         };
         const subPath = _.concat(parentPath, pathPart);
         return _loop(entry, subPath);
       });
 
-      return _.concat([[parentPath]], subPaths)
+      return _.concat([[parentPath]], subPaths);
     }
 
     if (_.isObject(subobj)) {
       const kvs = _.toPairs(subobj);
       const subPaths = _.flatMap(kvs, ([k, v], i) => {
         const pathPart: IndexedPathPart = {
-          key: k, i,
+          key: k,
+          i,
           n: kvs.length,
-          container: 'obj'
+          container: 'obj',
         };
         const subPath = _.concat(parentPath, pathPart);
         return _loop(v, subPath);
       });
-      return _.concat([[parentPath]], subPaths)
+      return _.concat([[parentPath]], subPaths);
     }
     return [[parentPath, subobj]];
   }
@@ -117,7 +115,7 @@ export function toQualifiedKeyValues(arg: ArgType): QualifiedKeyValue[] {
       const pvp = toQualifiedKeyValue(qp);
       if (pvp === undefined) return [];
       return [pvp];
-    }
+    },
   );
   return pvs;
 }

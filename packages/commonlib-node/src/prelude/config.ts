@@ -1,10 +1,9 @@
 import path from 'path';
 import { makeHashEncodedPath } from '@watr/commonlib-shared';
 
-
 export const Env = {
   AppSharePath: 'APP_SHARE_PATH',
-}
+};
 
 export function getEnv(key: string): string | undefined {
   return process.env[key];
@@ -17,7 +16,7 @@ export function setEnv(key: string, value: string): void {
 // Root directory for storing application data
 export function getAppSharedDir(): string {
   const appSharePath = getEnv(Env.AppSharePath);
-  const workingDir = appSharePath ? appSharePath : 'app-share.d';
+  const workingDir = appSharePath || 'app-share.d';
   return workingDir;
 }
 

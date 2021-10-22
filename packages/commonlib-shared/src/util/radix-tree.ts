@@ -9,7 +9,7 @@ type RadixPath = string[];
 
 export const createRadix = <D>(): Radix<D> => ({
   data: undefined,
-  children: new Map()
+  children: new Map(),
 });
 
 function cleanPath(p: string | string[]): string[] {
@@ -22,14 +22,13 @@ function cleanPath(p: string | string[]): string[] {
 function radSet<T>(
   radix: Radix<T>,
   path: string | string[],
-  data: T
+  data: T,
 ): T | undefined {
-
   let radCurr = radix;
   _.each(path, p => {
     const nextChild = radCurr.children.get(p);
     if (nextChild === undefined) {
-      const child = createRadix<T>()
+      const child = createRadix<T>();
       radCurr.children.set(p, child);
       radCurr = child;
       return;
@@ -44,7 +43,7 @@ function radSet<T>(
 
 function radGet<T>(
   radix: Radix<T>,
-  path: string | string[]
+  path: string | string[],
 ): T | undefined {
   const pathCurr = _.concat(path);
   let radCurr = radix;
@@ -53,7 +52,7 @@ function radGet<T>(
     radCurr = radCurr.children.get(p);
   }
 
-  return radCurr? radCurr.data : undefined;
+  return radCurr ? radCurr.data : undefined;
 }
 
 export const radUpsert = <T>(
@@ -67,9 +66,7 @@ export const radUpsert = <T>(
   radSet(radix, valpath, upVal);
 };
 
-
-export const radInsert = <T>(radix: Radix<T>, path: string | string[], t: T): void =>
-  radUpsert(radix, path, () => t);
+export const radInsert = <T>(radix: Radix<T>, path: string | string[], t: T): void => radUpsert(radix, path, () => t);
 
 export const radTraverseDepthFirst = <T>(
   radix: Radix<T>,
@@ -91,10 +88,9 @@ export const radTraverseValues = <T>(
   radix: Radix<T>,
   f: (path: RadixPath, t: T) => void,
 ): void => radTraverseDepthFirst(radix, (path, maybeT) => {
-  if (maybeT === undefined) return;
-  f(path, maybeT);
-});
-
+    if (maybeT === undefined) return;
+    f(path, maybeT);
+  });
 
 export const radUnfold = <T, U>(
   radix: Radix<T>,
@@ -118,7 +114,6 @@ export interface FoldArgs<T, U> {
   node: Radix<T>;
 }
 
-
 export const radFoldUp = <T, U>(
   radix: Radix<T>,
   f: (path: RadixPath, args: FoldArgs<T, U>) => U,
@@ -135,7 +130,9 @@ export const radFoldUp = <T, U>(
     // prettyPrint({ currRStack: rstack.map(el => ({path: el[0], tval: el[1] })), ustack })
     const [ipath, nodeData, ichildCount, node] = rstack.pop();
     const childResults = ustack.splice(0, ichildCount);
-    const ures = f(ipath, { nodeData, index, childResults, node });
+    const ures = f(ipath, {
+      nodeData, index, childResults, node,
+    });
     // prettyPrint({ childResultsArgs: childResults, result: ures })
     ustack.unshift(ures);
     index += 1;

@@ -5,8 +5,7 @@ import path from 'path';
 import fs from 'fs-extra';
 
 const scratchDir = path.join('.', 'scratch.d');
-const corpusRoot = path.join(scratchDir, 'corpus-root.d')
-
+const corpusRoot = path.join(scratchDir, 'corpus-root.d');
 
 describe('read corpus entries', () => {
   const dirnames = _.map(_.range(1, 10), (i) => `entry_${i}.d`);
@@ -36,7 +35,7 @@ describe('read corpus entries', () => {
       _.each(artifactPaths, (p, i) => {
         const artifactPath = path.join(dir, p);
         fs.mkdirpSync(artifactPath);
-        _.each(_.range(0, i+2), num => {
+        _.each(_.range(0, i + 2), num => {
           const artifact = path.join(artifactPath, `artifact-${p}-#${num}`);
           fs.writeFileSync(artifact, '');
         });
@@ -45,18 +44,15 @@ describe('read corpus entries', () => {
       const pdfArtifact = path.join(dir, `the-paper-${i}.pdf`);
       fs.writeFileSync(pdfArtifact, 'pdf content');
     });
-
   });
-
 
   it('read entries', () => {
     // const entries = readCorpusEntries(corpusRoot, 0, 20);
     // console.log(entries);
   });
-
 });
 
-//10.1101-001875.d                                                                                                                         ⬆ ✱ ◼
+// 10.1101-001875.d                                                                                                                         ⬆ ✱ ◼
 //   001875.full.pdf
 //   bioarxiv.json
 //   page-images/

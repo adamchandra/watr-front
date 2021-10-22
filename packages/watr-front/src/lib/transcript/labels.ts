@@ -1,3 +1,6 @@
+// Rule is disabled to allow recursive definitions
+/* eslint-disable @typescript-eslint/no-use-before-define */
+
 import _ from 'lodash';
 
 import * as io from 'io-ts';
@@ -112,6 +115,21 @@ export interface Label extends LabelPartials {
   range: Range[];
 }
 
+export const LabelNameRangeRepr = io.type({
+  name: io.string,
+  range: io.array(RangeRepr),
+}, 'LabelNameRangeRepr');
+
+export type LabelNameRangeRepr = io.TypeOf<typeof LabelNameRangeRepr>;
+
+export const LabelPartials: io.Type<LabelPartials, LabelPartialsRepr, unknown> = io.recursion(
+  'LabelPartials',
+  () => io.partial({
+    id: io.number,
+    children: io.array(Label),
+  }),
+);
+
 export interface LabelRepr {
   name: string;
   id?: number;
@@ -128,26 +146,12 @@ export const LabelRepr: io.Type<LabelRepr> = io.recursion(
   ], 'LabelRepr'),
 );
 
-export const LabelNameRangeRepr = io.type({
-  name: io.string,
-  range: io.array(RangeRepr),
-}, 'LabelNameRangeRepr');
-export type LabelNameRangeRepr = io.TypeOf<typeof LabelNameRangeRepr>;
-
 export const LabelPartialsRepr = io.partial({
   id: io.number,
   children: io.array(LabelRepr),
   props: io.record(io.string, io.array(io.string)),
 });
 export type LabelPartialsRepr = io.TypeOf<typeof LabelPartialsRepr>;
-
-export const LabelPartials: io.Type<LabelPartials, LabelPartialsRepr, unknown> = io.recursion(
-  'LabelPartials',
-  () => io.partial({
-    id: io.number,
-    children: io.array(Label),
-  }),
-);
 
 export const Label = new io.Type<Label, LabelRepr, unknown>(
   'Label',
@@ -246,3 +250,6 @@ const LabelWithContext = new io.Type<Label, LabelRepr, unknown>(
     return lenc;
   },
 );
+
+// Rule is disabled to allow recursive definitions
+/* eslint-enable @typescript-eslint/no-use-before-define */

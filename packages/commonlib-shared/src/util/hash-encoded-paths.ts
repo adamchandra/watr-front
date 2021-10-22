@@ -21,8 +21,8 @@ export function makeHashEncodedPath(source: string, depth: number): HashEncodedP
     depth,
     leadingSegments,
     toPath() {
-      const leaf = `${hashedSource}.d`
+      const leaf = `${hashedSource}.d`;
       return path.join(leadingSegments.join('/'), leaf);
     },
-  }
+  };
 }

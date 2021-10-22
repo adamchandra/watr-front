@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import pumpify from 'pumpify';
 import { Stream, Readable } from 'stream';
-import { throughFunc, tapStream, filterStream, throughAccum, initEnv, WithEnv, unEnv, isWithEnv } from './stream-utils';
+import {
+  throughFunc, tapStream, filterStream, throughAccum, initEnv, WithEnv, unEnv, isWithEnv,
+} from './stream-utils';
 
 export type WithoutEnvCallback<ChunkT, R = void> = (data: ChunkT) => R;
 export type JustEnvCB<Env> = (env: Env) => void;
@@ -61,15 +63,13 @@ function bufferChunks<ChunkT, Env>(pb: PumpBuilder<ChunkT, Env>) {
   return appendStream(pb, throughAccum(
     (acc: ChunkT[],
       chunk: ChunkT | WithEnv<ChunkT, Env>,
-      _onerr?: (e: any) => void
-    ) => {
-      const [t,] = unEnv(chunk);
+      _onerr?: (e: any) => void) => {
+      const [t] = unEnv(chunk);
       acc.push(t);
       return acc;
     },
-    init
+    init,
   ));
-
 }
 
 function adaptOnDataFn<ChunkT, Env>(f: WithEnvCB<ChunkT, Env>): WithEnvCBAdapted<ChunkT, Env> {
@@ -84,8 +84,7 @@ function adaptOnDataFn<ChunkT, Env>(f: WithEnvCB<ChunkT, Env>): WithEnvCBAdapted
 }
 
 export function createPump<ChunkT, Env = undefined>(): PumpBuilder<ChunkT, Env> {
-  const merge = (builder: PumpBuilder<ChunkT, Env>, part: PartialPB<ChunkT, Env>) =>
-    _.merge({}, builder, part);
+  const merge = (builder: PumpBuilder<ChunkT, Env>, part: PartialPB<ChunkT, Env>) => _.merge({}, builder, part);
 
   const pb0: PumpBuilder<ChunkT, Env> = {
     streams: [],
@@ -124,7 +123,7 @@ export function createPump<ChunkT, Env = undefined>(): PumpBuilder<ChunkT, Env> 
     start(): Stream {
       const strm = this.toStream();
       if (!this.onDataF) {
-        strm.on('data', () => undefined);
+        strm.on('data', () => {});
       }
       return strm;
     },
@@ -157,21 +156,19 @@ export function createPump<ChunkT, Env = undefined>(): PumpBuilder<ChunkT, Env> 
     },
 
     toPromise(): Promise<ChunkT | undefined> {
-      const self = this;
+      const selfStream = this.toStream();
 
       return new Promise((resolve) => {
-        const selfStream = self.toStream();
         let lastChunk: ChunkT | undefined;
         selfStream.on('end', () => {
           resolve(lastChunk);
         });
-        selfStream.on('data', (data) => {
+        selfStream.on('data', (data: ChunkT) => {
           lastChunk = data;
         });
       });
-
-    }
-
+    },
   };
+
   return pb0;
 }

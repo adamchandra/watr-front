@@ -24,7 +24,7 @@ export function sortedUniqCountBy<T, U>(
   array: T[],
   iteratee?: (t: T) => U,
 ): [T, number][] {
-  return array !== null && array.length
+  return array !== null && array.length > 0
     ? baseSortedUniqCount(array, iteratee)
     : [];
 }
@@ -40,7 +40,7 @@ function baseSortedUniqCount<T, U>(
   let index = 0;
   let resIndex = 0;
 
-  const {length} = array;
+  const { length } = array;
   const result: [T, number][] = [];
 
   while (index < length) {

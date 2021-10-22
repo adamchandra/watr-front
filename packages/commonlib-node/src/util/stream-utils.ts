@@ -1,11 +1,11 @@
+/* eslint-disable promise/no-callback-in-promise */
 import _ from 'lodash';
 import fs from 'fs-extra';
 import through from 'through2';
-import { Transform, Readable } from 'stream';
+import stream, { Transform, Readable } from 'stream';
 import { prettyPrint } from '@watr/commonlib-shared';
 import split from 'split';
 import { ChildProcessWithoutNullStreams } from 'child_process';
-import stream from 'stream';
 
 export interface WithEnv<T, E> {
   kind: 'WithEnv';
@@ -15,10 +15,10 @@ export interface WithEnv<T, E> {
 
 export function isWithEnv(a: WithEnv<any, any> | any): a is WithEnv<any, any> {
   const isObject = typeof a === 'object';
-  return isObject &&
-    'kind' in a && a['kind'] === 'WithEnv'
+  return isObject
+    && 'kind' in a && a.kind === 'WithEnv'
     && 't' in a
-    && 'env' in a ;
+    && 'env' in a;
 }
 
 // TODO Parallel stream processing not yet working
@@ -26,18 +26,17 @@ export function throughFuncPar<T, R, E>(
   parallelFactor: number,
   f: (t: T, env: E, currTransform: Transform) => R,
 ): Transform {
-
   let buffer: R[] = [];
   let envs: E[] = [];
 
   const chunker = through.obj(
-    function(chunk: [T, E], _enc: string, next: (err: any, v: any) => void) {
-      const self = this;
+    function (chunk: [T, E], _enc: string, next: (err: any, v: any) => void) {
+      // const self = this;
       const [data, env] = chunk;
       const localEnv: any = _.clone(env);
-      localEnv['parNum'] = buffer.length;
+      localEnv.parNum = buffer.length;
 
-      const res = f(data, localEnv, self);
+      const res = f(data, localEnv, this);
       buffer.push(res);
       envs.push(localEnv);
 
@@ -62,7 +61,7 @@ export function throughFuncPar<T, R, E>(
           _.each(res, (r: R, i: number) => this.push([r, envs[i]]));
         })
         .then(() => cb())
-        ;
+      ;
     },
   );
   return chunker;
@@ -73,8 +72,8 @@ export function tapStream<T, Env>(f: (t: T, env: Env) => void): Transform {
     async (chunk: T | WithEnv<T, Env>, _enc: string, next: (err: any, v: any) => void) => {
       const [t, env] = unEnv(chunk);
       return Promise.resolve(f(t, env))
-        .then(() => next(null, chunk))
-    }
+        .then(() => next(null, chunk));
+    },
   );
 }
 
@@ -86,7 +85,7 @@ export function initEnv<T, E>(
       const initEnv = f(chunk);
       Promise.resolve(initEnv)
         .then((env) => next(null, { kind: 'WithEnv', env, t: chunk }));
-    }
+    },
   );
 }
 
@@ -94,7 +93,7 @@ export function throughFunc<T, R, E>(
   f: (t: T, env: E) => R,
 ): Transform {
   return through.obj(
-    function(chunk: T | WithEnv<T, E>, _enc: string, next: (err: any, v: any) => void) {
+    (chunk: T | WithEnv<T, E>, _enc: string, next: (err: any, v: any) => void) => {
       if (isWithEnv(chunk)) {
         const { t, env } = chunk;
         const res = f(t, env);
@@ -106,10 +105,9 @@ export function throughFunc<T, R, E>(
       const z: E = null as any as E;
       Promise.resolve(f(chunk, z))
         .then((res) => next(null, res));
-    }
+    },
   );
 }
-
 
 export function throughAccum<T, Acc>(
   f: (acc: Acc, t: T, onerr?: (e: any) => void) => Acc,
@@ -117,7 +115,7 @@ export function throughAccum<T, Acc>(
 ): Transform {
   let currAcc = init;
   const chunker = through.obj(
-    function(chunk: T, _enc: string, next: (err: any, v: any) => void) {
+    (chunk: T, _enc: string, next: (err: any, v: any) => void) => {
       const newAcc = f(currAcc, chunk, (err: any) => next(err, null));
       currAcc = newAcc;
       next(null, null);
@@ -152,7 +150,7 @@ export function unEnv<T, Env>(tdata: T | WithEnv<T, Env>): [T, Env] {
 
 export function filterStream<T, Env>(f: (t: T, env: Env) => boolean): Transform {
   return through.obj(
-    function(chunk: T | WithEnv<T, Env>, _enc: string, next: (err: any, v: any) => void) {
+    (chunk: T | WithEnv<T, Env>, _enc: string, next: (err: any, v: any) => void) => {
       let chunkData: T;
       let z: Env;
       if (isWithEnv(chunk)) {
@@ -169,9 +167,8 @@ export function filterStream<T, Env>(f: (t: T, env: Env) => boolean): Transform 
         return;
       }
       next(null, null);
-    }
+    },
   );
-
 }
 
 export function prettyPrintTrans(msg: string): Transform {
@@ -185,11 +182,11 @@ export function prettyPrintTrans(msg: string): Transform {
 
 export function sliceStream(start: number, len: number): Transform {
   let currIndex = -1;
-  return through.obj(function(
+  return through.obj((
     chunk: any,
     _enc: string,
     next: (err: any, v: any) => void,
-  ) {
+  ) => {
     currIndex++;
     if (start <= currIndex) {
       if (currIndex < start + len) {
@@ -203,7 +200,7 @@ export function sliceStream(start: number, len: number): Transform {
 
 export function progressCount(everyN?: number): Transform {
   let currIndex = 0;
-  const outputOn = everyN ? everyN : 1;
+  const outputOn = everyN || 1;
   return through.obj(
     (chunk: any, _enc: string, next: (err: any, v: any) => void) => {
       if (currIndex % outputOn === 0) {
@@ -236,7 +233,7 @@ export function stanzaChunker(
   let state = 'awaiting-start';
 
   const chunker = through.obj(
-    function(line: string, _enc: string, cb) {
+    (line: string, _enc: string, cb) => {
       const isStart = testStart(line);
       const isEnd = testEnd(line);
 
@@ -257,7 +254,7 @@ export function stanzaChunker(
 
       return cb(null, null);
     },
-    function flush(cb) {
+    (cb) => {
       // TODO handle error if buffer has leftovers w/o seeing end marker
       cb();
     },
@@ -266,12 +263,12 @@ export function stanzaChunker(
 }
 
 export function chunkStream<T>(
-  chunkSize: number
+  chunkSize: number,
 ): Transform {
   let buffer: T[] = [];
 
   const chunker = through.obj(
-    function(data: T, _enc: string, next: (err: any, v: any) => void) {
+    (data: T, _enc: string, next: (err: any, v: any) => void) => {
       if (buffer.length === chunkSize) {
         const r = buffer;
         buffer = [];
@@ -289,7 +286,6 @@ export function chunkStream<T>(
   return chunker;
 }
 
-
 /**
  * Create a Readable stream of chars by splitting string
  */
@@ -297,28 +293,28 @@ export function charStream(str: string): Readable {
   async function* genstr(s: string) {
     yield* s;
   }
-  return Readable.from(genstr(str))
+  return Readable.from(genstr(str));
 }
 
 export function arrayStream(arr: any[]): Readable {
   async function* genstr(a: any[]) {
     yield* a;
   }
-  return Readable.from(genstr(arr))
+  return Readable.from(genstr(arr));
 }
 
 export async function promisifyReadableEnd(readStream: Readable): Promise<void> {
   return new Promise((resolve) => {
-    readStream.on('end', function() {
+    readStream.on('end', () => {
       resolve();
     });
-    readStream.on('data', () => undefined);
+    readStream.on('data', () => {});
   });
 }
 
 export async function promisifyOn<T>(ev: string, readStream: Readable): Promise<T> {
   return new Promise((resolve) => {
-    readStream.on(ev, function(d: T) {
+    readStream.on(ev, (d: T) => {
       resolve(d);
     });
   });
@@ -335,15 +331,14 @@ export interface TransformProcess {
 }
 
 export function streamifyProcess(
-  proc: ChildProcessWithoutNullStreams
+  proc: ChildProcessWithoutNullStreams,
 ): TransformProcess {
-
   const outStreamR = new stream.Readable({
-    read() { /* noop */ }
+    read() { /* noop */ },
   });
 
   const errStreamR = new stream.Readable({
-    read() { /* noop */ }
+    read() { /* noop */ },
   });
 
   proc.stdout.on('data', (data) => {
@@ -353,7 +348,6 @@ export function streamifyProcess(
   proc.stderr.on('data', (data) => {
     errStreamR.push(data);
   });
-
 
   const procClose = new Promise<number>((resolve) => {
     proc.on('close', (code: number) => {
@@ -365,15 +359,11 @@ export function streamifyProcess(
 
   const outStream = outStreamR
     .pipe(split())
-    .pipe(throughFunc((t: string) => {
-      return t;
-    }))
+    .pipe(throughFunc((t: string) => t))
   ;
   const errStream = errStreamR
     .pipe(split())
-    .pipe(throughFunc((t: string) => {
-      return t;
-    }))
+    .pipe(throughFunc((t: string) => t))
   ;
 
   return {
@@ -382,3 +372,5 @@ export function streamifyProcess(
     errStream,
   };
 }
+
+/* eslint-enable promise/no-callback-in-promise */

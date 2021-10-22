@@ -1,16 +1,16 @@
 import 'chai';
 import _ from 'lodash';
 import { prettyPrint } from '@watr/commonlib-shared';
-import { getQualifiedKey, getQualifiedValue, toIQualifiedPaths, toQualifiedKeyValues, toQualifiedPath } from './to-pairs-deep';
-
+import {
+  getQualifiedKey, getQualifiedValue, toIQualifiedPaths, toQualifiedKeyValues, toQualifiedPath,
+} from './to-pairs-deep';
 
 describe('toPairsDeep implementation', () => {
-
   const sampleRec: Record<string, any> = {
     quux: [
       {
         alpha: {
-          omega: 1
+          omega: 1,
         },
         crux: null,
         crax: undefined,
@@ -25,13 +25,11 @@ describe('toPairsDeep implementation', () => {
           },
           'alpha',
           false,
-        ]
-      }
+        ],
+      },
     ],
     bar: 'some bar value',
   };
-
-
 
   it('should create a list of all paths/values in object', () => {
     const examples = [
@@ -46,7 +44,9 @@ describe('toPairsDeep implementation', () => {
         const qpath = toQualifiedPath(iqPath);
         const [pathKey] = getQualifiedKey(qpath);
         const pathValue = getQualifiedValue(qpath);
-        prettyPrint({ iqPath, qpath, pathKey, pathValue });
+        prettyPrint({
+          iqPath, qpath, pathKey, pathValue,
+        });
         if (pathValue) {
           const recValue = _.get(example, pathKey);
           expect(recValue).toBe(pathValue[0]);

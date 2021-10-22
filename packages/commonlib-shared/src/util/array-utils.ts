@@ -4,12 +4,12 @@ export type SlidingWindowFunc = <A>(xs: ReadonlyArray<A>) => ReadonlyArray<Reado
 
 export function slidingWindow(
   window: number,
-  offset: number = 1
+  offset: number = 1,
 ): SlidingWindowFunc {
   return xs => (
-    xs.length < window ? [] :
-      _.concat([xs.slice(0, window)], slidingWindow(window, offset)(xs.slice(offset)))
+    xs.length < window ? []
+      : _.concat([xs.slice(0, window)], slidingWindow(window, offset)(xs.slice(offset)))
   );
 }
 
-    // _.concat(     [xs.slice(0, window), ...slidingWindow(window, offset)(xs.slice(offset))]
+// _.concat(     [xs.slice(0, window), ...slidingWindow(window, offset)(xs.slice(offset))]

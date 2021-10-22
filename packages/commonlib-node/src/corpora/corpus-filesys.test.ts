@@ -1,15 +1,15 @@
 import _ from 'lodash';
-import { updateCorpusJsonFile, readCorpusJsonFile } from './corpus-file-walkers';
 import path from 'path';
 import fs from 'fs-extra';
 import { prettyPrint } from '@watr/commonlib-shared';
+import { updateCorpusJsonFile, readCorpusJsonFile } from './corpus-file-walkers';
 
-export function initTestCorpusDirs(scratchDir: string): { corpusRoot: string, corpusPath: string } {
+function initTestCorpusDirs(scratchDir: string): { corpusRoot: string, corpusPath: string } {
   if (fs.existsSync(scratchDir)) {
     fs.removeSync(scratchDir);
   }
   const corpusRoot = 'corpus-root.d';
-  const corpusPath = path.join(scratchDir, corpusRoot)
+  const corpusPath = path.join(scratchDir, corpusRoot);
 
   fs.mkdirpSync(corpusPath);
   const spiderInputCSV = path.join(scratchDir, 'input-recs.csv');
@@ -32,10 +32,7 @@ describe('Corpus filesystem access utilities', () => {
     fs.emptyDirSync(scratchTestDir);
   });
 
-  // it("should stream corpus entry directories", () => {});
-
   it('should read/write/update artifact files', () => {
-
     interface Foo {
       count: number;
     }
@@ -53,10 +50,10 @@ describe('Corpus filesystem access utilities', () => {
           }
 
           return { count: prev.count + 1 };
-        });
+        },
+      );
     });
     const finalUpdate = readCorpusJsonFile<Foo>(entry0Path, 'cache', 'cached-text.txt');
     expect(finalUpdate).toMatchObject({ count: 9 });
-
   });
 });

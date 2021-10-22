@@ -14,9 +14,8 @@ import {
 } from '@watr/commonlib-node';
 
 import {
-  putStrLn
+  putStrLn,
 } from '@watr/commonlib-shared';
-
 
 export async function readCorpusEntries(
   corpusRoot: string,
@@ -32,23 +31,20 @@ export async function readCorpusEntries(
       if (files === undefined) {
         return [];
       }
-      return _.flatten(files);
+      return files.flat();
     });
   const relative = _.map(allFilesP, f => path.relative(corpusRoot, f));
   const cleaned = _.filter(_.map(relative, f => f.replace('/', '')), f => f.length > 0);
   const entries = _.map(cleaned, entryId => ({ entryId }));
   return {
-    entries
+    entries,
   };
 }
 
-
-
 export async function resolveArtifact(
   entryPath: string,
-  remainingPath: string[]
+  remainingPath: string[],
 ): Promise<string | undefined> {
-
   const allpaths = await expandDirRecursive(entryPath);
 
   const isFile = (f: string) => fs.statSync(f).isFile();
@@ -87,11 +83,11 @@ export async function resolveArtifact(
 
 function withTrailingSegments(p: string): string {
   // return p + '/([^/]+)((/[^/]+)|/)*';
-  return p + '(/[^/]+)+';
+  return `${p}(/[^/]+)+`;
 }
 
 function getTrailingSegments(leadingPath:string, urlPath: string): string[] {
-  const endPath = urlPath.substr(leadingPath.length + 1)
+  const endPath = urlPath.slice(leadingPath.length + 1);
   return endPath.split('/');
 }
 
@@ -102,8 +98,7 @@ function regex(path: string): RegExp {
 export function initFileBasedRoutes(corpusRootPath: string): Router {
   putStrLn(`initializing server with root @${corpusRootPath}`);
 
-  const apiRouter = new Router({
-  });
+  const apiRouter = new Router({});
 
   apiRouter
     .get(regex('/api/corpus/entries'), async (ctx: Context, next) => {
@@ -112,7 +107,7 @@ export function initFileBasedRoutes(corpusRootPath: string): Router {
       try {
         const corpusEntries = await readCorpusEntries(corpusRootPath);
         ctx.body = corpusEntries;
-      } catch (error) {
+      } catch {
         putStrLn(`server: could not serve ${p}`);
       }
 
@@ -125,15 +120,14 @@ export function initFileBasedRoutes(corpusRootPath: string): Router {
       try {
         const [entryId, ...remainingPath] = getTrailingSegments('/api/corpus/entry', p);
         const entryPath = path.resolve(corpusRootPath, entryId);
-        const artifactPath = await resolveArtifact(entryPath, remainingPath)
+        const artifactPath = await resolveArtifact(entryPath, remainingPath);
 
         if (artifactPath) {
           const respRelFile = path.relative(corpusRootPath, artifactPath);
           putStrLn(`server: serving ${respRelFile}`);
           return await send(ctx, respRelFile, { root: corpusRootPath });
         }
-
-      } catch (error) {
+      } catch {
         putStrLn(`server: could not serve ${p}`);
       }
 
@@ -144,9 +138,7 @@ export function initFileBasedRoutes(corpusRootPath: string): Router {
       putStrLn(`Could not resolve path ${p}`);
       return next();
     })
-    ;
-
+  ;
 
   return apiRouter;
-
 }

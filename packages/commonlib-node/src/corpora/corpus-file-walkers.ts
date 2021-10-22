@@ -2,16 +2,14 @@ import _ from 'lodash';
 import { Readable } from 'stream';
 import path from 'path';
 import fs from 'fs-extra';
+import { shaEncodeAsHex } from '@watr/commonlib-shared';
 import { getDirWalkerStream, stringStreamFilter } from './dirstream';
 import { throughFunc } from '../util/stream-utils';
-import { shaEncodeAsHex } from '@watr/commonlib-shared';
-
 
 export interface ExpandedDir {
   dir: string;
   files: string[];
 }
-
 
 export interface CorpusArtifact {
   corpusEntry: CorpusEntry;
@@ -33,7 +31,6 @@ export function makeCorpusEntryLeadingPath(s: string): string {
   return leadingPath;
 }
 
-
 export function expandDir(path: string): ExpandedDir {
   const dirEntries = fs.readdirSync(path, { withFileTypes: true });
   const files = dirEntries
@@ -53,7 +50,7 @@ export function walkScrapyCacheCorpus(corpusRoot: string): Readable {
   const corpusDirStream = getDirWalkerStream(corpusRoot);
 
   const entryDirFilter = stringStreamFilter((dir: string) => {
-    const shaHexRE = /[\dabcdefABCDEF]{40}(\.d)?[/]?$/;
+    const shaHexRE = /[\dA-Fa-f]{40}(\.d)?\/?$/;
     return shaHexRE.test(dir);
   });
 
@@ -63,9 +60,7 @@ export function walkScrapyCacheCorpus(corpusRoot: string): Readable {
 export function walkDotDStyleCorpus(corpusRoot: string): Readable {
   const corpusDirStream = getDirWalkerStream(corpusRoot);
 
-  const entryDirFilter = stringStreamFilter((dir: string) => {
-    return /[/][^/]+\.d$/.test(dir);
-  });
+  const entryDirFilter = stringStreamFilter((dir: string) => /\/[^/]+\.d$/.test(dir));
 
   return corpusDirStream.pipe(entryDirFilter);
 }
@@ -73,7 +68,7 @@ export function walkDotDStyleCorpus(corpusRoot: string): Readable {
 const artifactSubdirO = {
   '.': null,
   'spidering-logs': null,
-  'cache': null,
+  cache: null,
   'ground-truth': null,
   'extracted-fields': null,
 };
@@ -87,7 +82,7 @@ const artifactSubdirs: ArtifactSubdir[] = [
   'cache',
   'ground-truth',
   'extracted-fields',
-]
+];
 
 export function resolveCorpusFile(entryPath: string, artifactDir: ArtifactSubdir, corpusFilename: string): string {
   return path.resolve(entryPath, artifactDir, corpusFilename);
@@ -136,7 +131,7 @@ export function writeCorpusJsonFile<T>(
   artifactDir: ArtifactSubdir,
   filename: string,
   content: T,
-  overwrite: boolean=false
+  overwrite: boolean = false,
 ): boolean {
   ensureArtifactDir(entryPath, artifactDir);
   const filePath = resolveCorpusFile(entryPath, artifactDir, filename);
@@ -150,7 +145,7 @@ export function writeCorpusTextFile(
   artifactDir: ArtifactSubdir,
   filename: string,
   content: string,
-  overwrite: boolean=false
+  overwrite: boolean = false,
 ): boolean {
   ensureArtifactDir(entryPath, artifactDir);
   const filePath = resolveCorpusFile(entryPath, artifactDir, filename);
@@ -164,7 +159,7 @@ export function updateCorpusJsonFile<T=never>(
   entryPath: string,
   artifactDir: ArtifactSubdir,
   filename: string,
-  modf: (prev?: T) => T
+  modf: (prev?: T) => T,
 ): void {
   ensureArtifactDir(entryPath, artifactDir);
   const artifactPath = resolveCorpusFile(entryPath, artifactDir, filename);
@@ -201,7 +196,7 @@ function readTextOrUndef(filePath: string): string | undefined {
 
 async function readTextOrUndefAsync(filePath: string): Promise<string | undefined> {
   if (!fs.existsSync(filePath)) return;
-  return fs.readFile(filePath).then(b => b.toString())
+  return fs.readFile(filePath).then(b => b.toString());
 }
 
 function writeText(filePath: string, content: string): boolean {

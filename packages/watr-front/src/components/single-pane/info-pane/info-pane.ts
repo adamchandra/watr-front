@@ -77,45 +77,6 @@ export async function useInfoPane({
   let textLeftCurr = textLeftInit;
   let textTopCurr = textTopInit;
 
-  // TODO move this showLabel function out of InfoPane class
-  const showLabel = async (l: Label, doFreeze: boolean) => {
-    await clearScreen();
-    if (doFreeze) {
-      actions.value.push('freeze');
-    }
-    const lstrings = labelToStringWithIds(l, 0, []);
-
-    const lineDimensions = await putStringLn('>>>== Label (Click here to clear) ==');
-    const { lineDiv } = lineDimensions;
-    lineDiv.classList.add('hoverable');
-    lineDiv.addEventListener('click', () => {
-      actions.value = actions.value.filter(s => s !== 'freeze');
-      clearScreen();
-    });
-
-    await Bromise.mapSeries(lstrings, async ([lstr, id]) => {
-      await putStringLn(lstr, id);
-      return Promise.resolve();
-    });
-
-    await putStringLn('<<<<==');
-  };
-  const putStringLn = async (str: string, id?: string): Promise<LineDimensions> => {
-    const x = textLeftCurr;
-    const y = textTopCurr;
-    textTopCurr += lineOffset;
-    textLeftCurr = textLeftInit;
-    const lineDimensions = await _putString(x, y, str, id);
-    return lineDimensions;
-  };
-
-  const putString = async (str: string, id?: string): Promise<LineDimensions> => {
-    const x = textLeftCurr;
-    const lineDimensions = await _putString(x, textTopCurr, str, id);
-    textLeftCurr += lineDimensions.width;
-    return lineDimensions;
-  };
-
   const _putString = async (x: number, y: number, str: string, id?: string): Promise<LineDimensions> => {
     const lineDimensions = mtext.putTextLn(style, x, y, str);
     if (id !== undefined) {
@@ -138,10 +99,50 @@ export async function useInfoPane({
     return lineDimensions;
   };
 
+  const putStringLn = async (str: string, id?: string): Promise<LineDimensions> => {
+    const x = textLeftCurr;
+    const y = textTopCurr;
+    textTopCurr += lineOffset;
+    textLeftCurr = textLeftInit;
+    const lineDimensions = await _putString(x, y, str, id);
+    return lineDimensions;
+  };
+
+  const putString = async (str: string, id?: string): Promise<LineDimensions> => {
+    const x = textLeftCurr;
+    const lineDimensions = await _putString(x, textTopCurr, str, id);
+    textLeftCurr += lineDimensions.width;
+    return lineDimensions;
+  };
+
   const clearScreen = async () => {
     await mtext.clearText();
     textTopCurr = textTopInit;
     textLeftCurr = textLeftInit;
+  };
+
+  // TODO move this showLabel function out of InfoPane class
+  const showLabel = async (l: Label, doFreeze: boolean) => {
+    await clearScreen();
+    if (doFreeze) {
+      actions.value.push('freeze');
+    }
+    const lstrings = labelToStringWithIds(l, 0, []);
+
+    const lineDimensions = await putStringLn('>>>== Label (Click here to clear) ==');
+    const { lineDiv } = lineDimensions;
+    lineDiv.classList.add('hoverable');
+    lineDiv.addEventListener('click', () => {
+      actions.value = actions.value.filter(s => s !== 'freeze');
+      clearScreen();
+    });
+
+    await Bromise.mapSeries(lstrings, async ([lstr, id]) => {
+      await putStringLn(lstr, id);
+      return Promise.resolve();
+    });
+
+    await putStringLn('<<<<==');
   };
 
   return {
@@ -187,5 +188,6 @@ function labelToStringWithIds(label: Label, level: number, _parentClasses: strin
   const labelId = deriveLabelId(label);
   const ret: TupleStrStr = [header, labelId];
 
-  return [..._, ret].concat(childStrings);
+  // TODO check if this was the info pane bug that cause non-display
+  return [ret].concat(childStrings);
 }

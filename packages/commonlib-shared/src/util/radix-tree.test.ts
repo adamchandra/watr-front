@@ -8,16 +8,14 @@ import {
   radTraverseDepthFirst,
   radUnfold,
   radFoldUp,
-  Radix
+  Radix,
 } from './radix-tree';
 
 function expectKeyVals<T>(rad: Radix<T>, expected: [string, T | undefined][]) {
-  const unfolded = radUnfold(rad, (path, maybeVal) => {
-    return [
-      path.join('.'),
-      maybeVal
-    ];
-  });
+  const unfolded = radUnfold(rad, (path, maybeVal) => [
+    path.join('.'),
+    maybeVal,
+  ]);
   // prettyPrint({ unfolded })
   expect(unfolded).toStrictEqual(expected);
 }
@@ -30,20 +28,20 @@ interface Foo {
 function foo(n: number): Foo {
   return {
     s: `hey#${n}`,
-    i: n
+    i: n,
   };
 }
 
 function foos(f1: Foo, f2: Foo): Foo {
   return {
     s: `${f1.s} & ${f2.s}`,
-    i: f1.i + f2.i
-  }
+    i: f1.i + f2.i,
+  };
 }
 
 function insertAndTest<T>(
   examples: Array<[string, T]>,
-  expected: Array<[string, T | undefined]>
+  expected: Array<[string, T | undefined]>,
 ) {
   const radTree = createRadix<T>();
   _.each(examples, e => {
@@ -57,7 +55,7 @@ function insertAndTest<T>(
 
 function upsertAndTest(
   examples: Array<[string, Foo]>,
-  expected: Array<[string, Foo | undefined]>
+  expected: Array<[string, Foo | undefined]>,
 ) {
   const radTree = createRadix<Foo>();
   _.each(examples, e => {
@@ -87,7 +85,6 @@ describe('Radix Tree Tests', () => {
       ['a.$', foo(25)],
     ]);
 
-
     radInsert(radTree, 'a.$.12._$.b', foo(26));
 
     expectKeyVals(radTree, [
@@ -99,9 +96,7 @@ describe('Radix Tree Tests', () => {
       ['a.$.12._$.b', foo(26)],
     ]);
 
-    radUpsert(radTree, 'a.$.12._$.b', prev => {
-      return prev ? foo(20) : foo(21);
-    });
+    radUpsert(radTree, 'a.$.12._$.b', prev => (prev ? foo(20) : foo(21)));
 
     expectKeyVals(radTree, [
       ['', undefined],
@@ -112,9 +107,7 @@ describe('Radix Tree Tests', () => {
       ['a.$.12._$.b', foo(20)],
     ]);
 
-    radUpsert(radTree, 'a.$.12._$.q', prev => {
-      return prev ? foo(20) : foo(21);
-    });
+    radUpsert(radTree, 'a.$.12._$.q', prev => (prev ? foo(20) : foo(21)));
 
     expectKeyVals(radTree, [
       ['', undefined],
@@ -125,13 +118,12 @@ describe('Radix Tree Tests', () => {
       ['a.$.12._$.b', foo(20)],
       ['a.$.12._$.q', foo(21)],
     ]);
-
   });
 
   it('should pass misc examples', () => {
     upsertAndTest([
       ['a', foo(1)],
-      ['a.b.c', foo(2)]
+      ['a.b.c', foo(2)],
     ], [
       ['', undefined],
       ['a', foo(1)],
@@ -141,7 +133,7 @@ describe('Radix Tree Tests', () => {
 
     upsertAndTest([
       ['a.b', foo(1)],
-      ['a.b', foo(2)]
+      ['a.b', foo(2)],
     ], [
       ['', undefined],
       ['a', undefined],
@@ -158,7 +150,6 @@ describe('Radix Tree Tests', () => {
     radTraverseDepthFirst(radTree, (path, maybeVal) => {
       prettyPrint({ path, maybeVal });
     });
-
   });
 
   it('should unfold all paths', () => {
@@ -167,12 +158,10 @@ describe('Radix Tree Tests', () => {
     radInsert(radTree, 'a.b', { s: 'ab-val', i: 123 });
     radInsert(radTree, 'd.e.f', { s: 'def-val', i: 345 });
 
-    const unfolded = radUnfold(radTree, (path, maybeVal) => {
-      return [
-        path.join(''),
-        maybeVal !== undefined
-      ];
-    });
+    const unfolded = radUnfold(radTree, (path, maybeVal) => [
+      path.join(''),
+      maybeVal !== undefined,
+    ]);
     const expected = [
       ['', false],
       ['a', false],
@@ -183,9 +172,7 @@ describe('Radix Tree Tests', () => {
     ];
 
     expect(unfolded).toStrictEqual(expected);
-
   });
-
 
   it.only('should foldUp', () => {
     const radTree = createRadix<Foo>();
@@ -201,9 +188,7 @@ describe('Radix Tree Tests', () => {
       return `${self}#${index}${d}${ch}`;
     });
 
-    const expected =  '#5(a#4!(a.b#3(a.b.c#2!), a.d#1(a.d.e#0!)))'
+    const expected = '#5(a#4!(a.b#3(a.b.c#2!), a.d#1(a.d.e#0!)))';
     expect(foldedResult).toStrictEqual(expected);
-
   });
-
 });

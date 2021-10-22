@@ -24,11 +24,7 @@ function resolveArgPath(argv: Arguments, pathkey: string): string | undefined {
 
   if (!path.isAbsolute(pathvalue)) {
     const wd = argv.cwd;
-    if (typeof wd === 'string') {
-      pathvalue = path.resolve(wd, pathvalue);
-    } else {
-      pathvalue = path.resolve(pathvalue);
-    }
+    pathvalue = typeof wd === 'string' ? path.resolve(wd, pathvalue) : path.resolve(pathvalue);
   }
   pathvalue = path.normalize(pathvalue);
   const ccKey = _.camelCase(pathkey);
@@ -39,13 +35,12 @@ function resolveArgPath(argv: Arguments, pathkey: string): string | undefined {
   return pathvalue;
 }
 
-export const setCwd = (ya: Argv): Argv =>
-  ya.option('cwd', {
-    describe: 'set working directory',
-    normalize: true,
-    type: 'string',
-    requiresArg: true,
-  });
+export const setCwd = (ya: Argv): Argv => ya.option('cwd', {
+  describe: 'set working directory',
+  normalize: true,
+  type: 'string',
+  requiresArg: true,
+});
 
 const optAndDesc = (optAndDesc: string, ext?: Options) => (ya: Argv): Argv => {
   const [optname, desc] = optAndDesc.includes(':')
@@ -88,13 +83,9 @@ const existingPath = (pathAndDesc: string) => (ya: Argv) => {
   return ya;
 };
 
-export const existingDir = (dirAndDesc: string): (ya: Argv) => Argv => {
-  return existingPath(dirAndDesc);
-};
+export const existingDir = (dirAndDesc: string): (ya: Argv) => Argv => existingPath(dirAndDesc);
 
-export const existingFile = (fileAndDesc: string): (ya: Argv) => Argv => {
-  return existingPath(fileAndDesc);
-};
+export const existingFile = (fileAndDesc: string): (ya: Argv) => Argv => existingPath(fileAndDesc);
 
 export const configFile = (ya: Argv): Argv => {
   ya.option('config', {
@@ -110,8 +101,8 @@ export const configFile = (ya: Argv): Argv => {
         throw new Error('Non-existent config file specified');
       }
       // Set working directory to config file dir if not already set
-      if (!argv['cwd']) {
-        argv['cwd'] = path.dirname(configFile);
+      if (!argv.cwd) {
+        argv.cwd = path.dirname(configFile);
       }
       const buf = fs.readFileSync(configFile);
       const conf = JSON.parse(buf.toString());
@@ -127,10 +118,7 @@ export const configFile = (ya: Argv): Argv => {
   return ya;
 };
 
-
-export const setOpt = (ya: Argv) => {
-  return ya.option;
-};
+export const setOpt = (ya: Argv) => ya.option;
 
 export function registerCmd(
   useYargs: Argv,
@@ -149,9 +137,9 @@ export function registerCmd(
           return;
         }
         cb(argv);
-      }
+      },
     );
-  }
+  };
 }
 
 export const opt = {

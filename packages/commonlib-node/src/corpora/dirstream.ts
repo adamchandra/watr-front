@@ -13,7 +13,7 @@ interface DirStackEntry {
 
 export async function expandDirRecursive(
   rootDir: string,
-  includeFiles: boolean = true
+  includeFiles: boolean = true,
 ): Promise<string[]> {
   const corpusDirStream = getDirWalkerStream(rootDir, includeFiles);
 
@@ -25,7 +25,7 @@ export async function expandDirRecursive(
       if (files === undefined) {
         return [];
       }
-      return _.flatten(files);
+      return files.flat();
     });
 
   return allFilesP;
@@ -33,14 +33,13 @@ export async function expandDirRecursive(
 
 export function getDirWalkerStream(
   root: string,
-  includeFiles: boolean = false
+  includeFiles: boolean = false,
 ): Readable {
-
   const rootExists = fs.existsSync(root);
   const rootIsDir = rootExists ? fs.statSync(root).isDirectory() : false;
   if (!rootIsDir) {
     const emptyStream = new stream.Readable({
-      read() { this.push(null); }
+      read() { this.push(null); },
     });
     return emptyStream;
   }
@@ -48,7 +47,7 @@ export function getDirWalkerStream(
   let stack: DirStackEntry[] = [{ fullpath: root, expanded: false, files: [] }];
 
   function expand(): DirStackEntry | undefined {
-    let top = _.last(stack)
+    let top = _.last(stack);
     while (top && !top.expanded) {
       const topPath = top.fullpath;
       const dirEntries = fs.readdirSync(top.fullpath, { withFileTypes: true });
@@ -69,8 +68,8 @@ export function getDirWalkerStream(
           return {
             fullpath,
             expanded: false,
-            files: []
-          }
+            files: [],
+          };
         })
         .value();
 
@@ -79,7 +78,7 @@ export function getDirWalkerStream(
       top.files = _.concat(top.files, fileNames);
       // stack.push(...dirNames);
       stack = _.concat(stack, dirNames);
-      top = _.last(stack)
+      top = _.last(stack);
     }
     const next = stack.pop();
     return next;
@@ -99,20 +98,19 @@ export function getDirWalkerStream(
       if (includeFiles) {
         data.files.forEach(f => this.push(f));
       }
-
-    }
+    },
   });
 
   return streamOut;
 }
 
-export function stringStreamFilter(test: (p: string) => boolean): Transform {
+export function stringStreamFilter(pred: (p: string) => boolean): Transform {
   return through.obj(
     (chunk: string, _enc: string, next: (err: any, v: string | null) => void) => {
-      if (test(chunk)) {
+      if (pred(chunk)) {
         return next(null, chunk);
       }
       return next(null, null);
-    }
+    },
   );
 }

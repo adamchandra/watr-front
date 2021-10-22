@@ -1,22 +1,21 @@
 import _ from 'lodash';
-import * as path from "path";
+import * as path from 'path';
 
-import { Project } from "ts-morph";
+import { Project } from 'ts-morph';
 
 export function listSrcFiles() {
   const project = new Project({
-    tsConfigFilePath: "~/../../ui-components/tsconfig.json"
+    tsConfigFilePath: '~/../../ui-components/tsconfig.json',
   });
 
-  const srcFiles = project.getSourceFiles()
-  const names = _.map(srcFiles, s => s.getBaseName())
+  const srcFiles = project.getSourceFiles();
+  const names = _.map(srcFiles, s => s.getBaseName());
   console.log('src', names);
 }
 
-
 export function organizeImports(tsconfigPath: string, componentName: string, _rootPath: string) {
   const project = new Project({
-    tsConfigFilePath: tsconfigPath
+    tsConfigFilePath: tsconfigPath,
   });
 
   const sourceFile = project.getSourceFile(componentName);
@@ -28,25 +27,22 @@ export function organizeImports(tsconfigPath: string, componentName: string, _ro
 
   console.log('pre\n', preText);
   console.log('post\n', afterText);
-
-
 }
 
 export function setupVueComponent(tsconfigPath: string, componentName: string, rootPath: string) {
-
   const project = new Project({
     tsConfigFilePath: tsconfigPath,
   });
 
   console.log(`vue component setup for component ${componentName} in root path=${rootPath}`);
-  const baseUrl = project.getCompilerOptions().baseUrl;
+  const { baseUrl } = project.getCompilerOptions();
 
   if (!baseUrl) return;
 
   const at = (fname: string) => {
-    const p = path.join(baseUrl, rootPath, componentName, fname)
+    const p = path.join(baseUrl, rootPath, componentName, fname);
     return p;
-  }
+  };
 
   const vueFile = at('index.vue');
   const nameParts = componentName.split('-');
@@ -64,8 +60,7 @@ export function setupVueComponent(tsconfigPath: string, componentName: string, r
   // const tsSource = project.createSourceFile(at(`${componentName}.ts`), '// TODO \n').saveSync();
 
   project.createSourceFile(vueFile, vueContent).saveSync();
-  project.createSourceFile(at(`index.ts`), '// TODO \n').saveSync();
-  project.createSourceFile(at(`_inc.html`), '<div> TODO </div>\n').saveSync();
-  project.createSourceFile(at(`_inc.scss`), '.todo {}\n').saveSync();
-
+  project.createSourceFile(at('index.ts'), '// TODO \n').saveSync();
+  project.createSourceFile(at('_inc.html'), '<div> TODO </div>\n').saveSync();
+  project.createSourceFile(at('_inc.scss'), '.todo {}\n').saveSync();
 }
