@@ -31,12 +31,13 @@ export function getURLQueryParam(key: string): string | undefined {
   const v = ps.get(key);
   return _.isString(v) ? v : undefined;
 }
-export function getQueryParam(key: string): E.Either<any, string> {
+
+export function getQueryParam(key: string): E.Either<string, string> {
   const ps = getURLQueryParams();
   const v = ps.get(key);
 
   if (v === null) {
-    return E.left();
+    return E.left(`no query param '${key}'`);
   }
   return E.right(v);
 }

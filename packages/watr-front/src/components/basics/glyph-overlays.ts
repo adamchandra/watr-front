@@ -19,9 +19,8 @@ import { useFlashlight } from './rtree-search';
 
 const { initStroke, initFill, initRect } = d3x;
 
-// export type SetGlyphOverlays = (glyphs: Glyph[], pageGeometry: Rect) => void;
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface GlyphOverlays {
-  // setGlyphOverlays: SetGlyphOverlays;
 }
 
 type Args = {

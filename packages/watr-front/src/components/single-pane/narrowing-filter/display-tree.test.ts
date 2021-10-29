@@ -21,7 +21,7 @@ function item(p: string, title: string, tags: string): Item {
 const itemToString = (r0: RenderedItem) => renderItemTo<string[]>(
   r0, (ri: RenderedItem, childs: string[][]) => {
     const indented = _.flatMap(childs, c => `  ${c}`);
-    return [..._, `${ri.tag}${ri.text}`].concat(
+    return [`${ri.tag}${ri.text}`].concat(
       indented,
     );
   },

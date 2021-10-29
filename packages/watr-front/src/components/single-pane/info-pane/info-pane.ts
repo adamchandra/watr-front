@@ -64,7 +64,7 @@ export async function useInfoPane({
     actions,
   };
 
-  const size = 9;
+  const size = 11;
   const lineOffset = size + 3;
   const style: TextStyle = {
     size,

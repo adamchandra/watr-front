@@ -43,7 +43,8 @@ function getLabelTerms(label: Label): string[] {
 function renderLabelGroup(labels: Label[]): RenderedItem {
   const terms = labels.flatMap(l => getLabelTerms(l));
   const tagSet = new Set<string>(terms);
-  const abbrevTags = renderAbbrevString([...tagSet]);
+  const tagArray = Array.from(tagSet);
+  const abbrevTags = renderAbbrevString(tagArray);
   const nameDisp = abbrevTags;
   return span(nameDisp, 'label');
 }

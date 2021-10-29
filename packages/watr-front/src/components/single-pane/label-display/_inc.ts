@@ -9,34 +9,14 @@ import {
 
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';
-import * as E from 'fp-ts/lib/Either';
-import { isLeft, Either } from 'fp-ts/lib/Either';
-import { PathReporter } from 'io-ts/lib/PathReporter';
-import { Errors } from 'io-ts';
 import { useLabelDisplay } from '.';
 import { ElementTypes, useSuperimposedElements } from '~/components/basics/superimposed-elements';
 
 import { useInfoPane } from '~/components/single-pane/info-pane/info-pane';
-import { Label } from '~/lib/transcript/labels';
+import { decodeLabel, Label } from '~/lib/transcript/labels';
 
 import { divRef } from '~/lib/vue-composition-lib';
-
-// TODO move to lib/transcript
-export function decodeLabel(input: unknown): Label | null {
-  const maybeDecoded: Either<Errors, Label> = Label.decode(input);
-  if (isLeft(maybeDecoded)) {
-    const report = PathReporter.report(maybeDecoded);
-    console.log(report);
-    return null;
-  }
-
-  return maybeDecoded.right;
-}
-
-// TODO move to lib/...
-export function taskifyPromise<E, A>(pa: Promise<A>): TE.TaskEither<E, A> {
-  return () => pa.then(E.right);
-}
+import { taskifyPromise } from '~/lib/fp-ts-extras';
 
 export default defineComponent({
   components: {},

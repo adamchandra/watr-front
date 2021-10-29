@@ -108,7 +108,8 @@ export const Glyph: io.Type<Glyph, GlyphRepr, unknown> = new io.Type<Glyph, Glyp
     E.bind('id', ({ repr: [_char, id, _rect, _props] }) => io.success(id)),
     E.bind('rect', ({ repr: [_char, _id, rect, _props] }) => Rect.decode(rect)),
     E.bind('props', ({ repr: [_char, _id, _rect, props] }) => (props !== undefined
-      ? decodeGlyphProps(props, ctx) : io.success())),
+      // eslint-disable-next-line unicorn/no-useless-undefined
+      ? decodeGlyphProps(props, ctx) : io.success(undefined))),
     E.chain(({
       char, id, rect, props,
     }) => {

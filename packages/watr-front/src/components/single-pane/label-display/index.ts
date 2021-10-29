@@ -27,7 +27,7 @@ export async function useLabelDisplay({
 
   const defs = d3.select(svgElement)
     .append('defs')
-    ;
+  ;
 
   defs
     .append('linearGradient')

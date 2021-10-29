@@ -122,7 +122,7 @@ function labelToTriggerSVG(label: Label, rootLabel: Label): ShapeSvg {
   }
 
   const children = label.children || [];
-  const childShape: ShapeSvg[] = _.find(
+  const childShape: ShapeSvg = _.find(
     _.flatMap(children, c => labelToTriggerSVG(c, rootLabel)),
     (c) => c !== undefined,
   );

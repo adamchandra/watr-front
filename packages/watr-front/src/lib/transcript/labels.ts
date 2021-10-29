@@ -6,8 +6,12 @@ import _ from 'lodash';
 import * as io from 'io-ts';
 import { pipe } from 'fp-ts/lib/function';
 import * as E from 'fp-ts/lib/Either';
-import { PageNumber, Span } from '~/lib/codec-utils';
+
+import { isLeft, Either } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
+import { Errors } from 'io-ts';
 import { Shape, ShapeRepr } from './shapes';
+import { PageNumber, Span } from '~/lib/codec-utils';
 
 const DocumentRange = io.type({
   unit: io.literal('document'),
@@ -250,6 +254,17 @@ const LabelWithContext = new io.Type<Label, LabelRepr, unknown>(
     return lenc;
   },
 );
+
+export function decodeLabel(input: unknown): Label | undefined {
+  const maybeDecoded: Either<Errors, Label> = Label.decode(input);
+  if (isLeft(maybeDecoded)) {
+    const report = PathReporter.report(maybeDecoded);
+    console.log(report);
+    return undefined;
+  }
+
+  return maybeDecoded.right;
+}
 
 // Rule is disabled to allow recursive definitions
 /* eslint-enable @typescript-eslint/no-use-before-define */

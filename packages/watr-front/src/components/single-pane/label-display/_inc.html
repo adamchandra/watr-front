@@ -1,46 +1,51 @@
 <story-layout>
 
-  <template v-slot:title>
-    Label Display
-  </template>
+    <template v-slot:title>
+        Label Display
+    </template>
 
-  <template v-slot:description>
-    Label Drawing
-  </template>
 
-  <template v-slot:controls>
-    Drawing Capabilities
+    <template v-slot:description>
+        Label Drawing
+    </template>
 
-    <ul class="h-indent-ul">
-      <li>
-        Basic shape Drawing: rect, circle, point, trapezoid, line
-        <v-switch class="d-inline-block mx-2" v-model="showBasicShapes" dense hide-details />
-      </li>
-      <li>Highlight on hover</li>
-      <li>Magnifying glass for flashlight</li>
-      <li>Click to select/deselect</li>
-    </ul>
+    <template v-slot:controls>
+        Drawing Capabilities
 
-    <ul class="h-indent-ul">
-      <li>Compound Shapes <v-switch class="d-inline-block mx-2" v-model="showCompoundShapes" dense hide-details /> </li>
-      <li>Sliding rectangular window</li>
-      <li>Rectangular grid</li>
-    </ul>
-    <ul class="h-indent-ul">
-      <li>Info Pane Messages</li>
-    </ul>
+        <ul class="h-indent-ul">
+            <li>
+                Basic shape Drawing: rect, circle, point, trapezoid, line
+                <v-switch class="d-inline-block mx-2" v-model="showBasicShapes" dense hide-details />
+            </li>
+            <li>Highlight on hover</li>
+            <li>Magnifying glass for flashlight</li>
+            <li>Click to select/deselect</li>
+        </ul>
+        <ul class="h-indent-ul">
+            <li>Line Types</li>
+            <li>Under/Overline, Left/Right Edge</li>
+        </ul>
 
-  </template>
+        <ul class="h-indent-ul">
+            <li>Compound Shapes <v-switch class="d-inline-block mx-2" v-model="showCompoundShapes" dense hide-details /> </li>
+            <li>Sliding rectangular window</li>
+            <li>Rectangular grid</li>
+        </ul>
+        <ul class="h-indent-ul">
+            <li>Info Pane Messages</li>
+        </ul>
 
-  <template v-slot:notes>
-  </template>
+    </template>
 
-  <template v-slot:main>
+    <template v-slot:notes>
+    </template>
 
-    <div class="d-flex mt-1 mb-1 space-between grey">
-      <div ref="superimposedElemDiv" class="labelDisplay ma-2" />
-      <div ref="infoPaneDiv" class="infoPane ma-2" />
-    </div>
-  </template>
+    <template v-slot:main>
+
+        <div class="d-flex mt-1 mb-1 space-between grey">
+            <div ref="superimposedElemDiv" class="labelDisplay ma-2" />
+            <div ref="infoPaneDiv" class="infoPane ma-2" />
+        </div>
+    </template>
 
 </story-layout>
