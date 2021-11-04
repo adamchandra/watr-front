@@ -3,7 +3,7 @@ import Router from 'koa-router';
 import json from 'koa-json';
 import { arglib } from '@watr/commonlib-node';
 
-import { initFileBasedRoutes } from './corpusRoutes';
+import { initFileBasedRoutes } from './corpus-routes';
 
 const { opt, config, registerCmd } = arglib;
 
@@ -21,7 +21,7 @@ registerCmd(
 )((args: any) => {
   const { corpusRoot } = args;
 
-  const apiRouter = initFileBasedRoutes(corpusRoot);
+  const apiRouter = initFileBasedRoutes(corpusRoot as string);
 
   rootRouter
     .use('/', ((ctx: Context, next) => {

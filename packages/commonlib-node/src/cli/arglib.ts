@@ -118,7 +118,9 @@ export const configFile = (ya: Argv): Argv => {
   return ya;
 };
 
-export const setOpt = (ya: Argv) => ya.option;
+export function setOpt(ya: Argv): typeof ya.option {
+  return ya.option;
+}
 
 export function registerCmd(
   useYargs: Argv,

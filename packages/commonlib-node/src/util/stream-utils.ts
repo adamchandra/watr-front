@@ -198,9 +198,9 @@ export function sliceStream(start: number, len: number): Transform {
   });
 }
 
-export function progressCount(everyN?: number): Transform {
+export function progressCount(everyN: number = 1): Transform {
   let currIndex = 0;
-  const outputOn = everyN || 1;
+  const outputOn = everyN;
   return through.obj(
     (chunk: any, _enc: string, next: (err: any, v: any) => void) => {
       if (currIndex % outputOn === 0) {

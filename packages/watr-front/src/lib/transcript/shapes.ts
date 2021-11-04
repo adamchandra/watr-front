@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-redeclare */
 /**
  * Shape types and serialization functions
  */
@@ -381,3 +382,5 @@ export function formatShape(shape: Shape): string {
       return `trap@<${formatShape(shape.topLeft)}->${shape.topWidth}, ${formatShape(shape.bottomLeft)}->${shape.bottomWidth}>`;
   }
 }
+
+/* eslint-enable @typescript-eslint/no-redeclare */

@@ -86,7 +86,7 @@ export const storyItems: StoryEntry[] = [
 function getStoryProp(fileContent: string, propname: string): string | undefined {
   const lines = fileContent.split('\n');
   const propLine = _.filter(lines, l => l.includes(`${propname}=`));
-  let propValue;
+  let propValue: string | undefined;
   if (propLine.length > 0) {
     const propDef: string = propLine[0];
     const splitAt = propDef.indexOf('=');

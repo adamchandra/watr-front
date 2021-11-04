@@ -155,7 +155,7 @@ export function updateSvgElement(svgElement: SVGElement, svgShapes: ShapeSvg[]) 
         .call(setSVGClasses)
         .each(function () {
           const shape = d3.select(this);
-          const shdata = shape.datum();
+          const shdata: ShapeSvg = shape.datum() as any;
           const classes = shdata.classes || [];
           _.each(classes, cls => {
             const classDefs = OctoAttrs[cls] || OctoAttrs['?'];
@@ -180,7 +180,7 @@ export function resetShapesFillStroke(svgElement: SVGElement) {
     .selectAll('.shape')
     .each(function () {
       const shape = d3.select(this);
-      const shdata = shape.datum();
+      const shdata: ShapeSvg = shape.datum() as any;
       const classes = shdata.classes || [];
       _.each(classes, cls => {
         const classDefs = OctoAttrs[cls];

@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import path from 'path';
 
-// import { readCorpusEntries } from "./corpusRoutes";
 import fs from 'fs-extra';
 
 const scratchDir = path.join('.', 'scratch.d');

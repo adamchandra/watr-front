@@ -36,7 +36,7 @@ export function parseJsonStripMargin(s: string): any | undefined {
 export function parseJson(s: string): any | undefined {
   return pipe(
     Js.parse(s),
-    E.mapLeft((syntaxError: any) => {
+    E.mapLeft((syntaxError: Error) => {
       console.log(`Parsing Error: ${syntaxError}`);
 
       const posRE = /position (\d+)/;
@@ -50,7 +50,6 @@ export function parseJson(s: string): any | undefined {
         const post = s.slice(errIndex + 1, end);
         console.log(`${syntaxError}\nContext:\n${pre} <-- Error\n${post}`);
       }
-      return;
     }),
   );
 }

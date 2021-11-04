@@ -3,7 +3,6 @@ import {
   Ref,
 } from '@nuxtjs/composition-api';
 
-export function divRef(div?: HTMLDivElement): Ref<HTMLDivElement | null> {
-  const d = div || null;
-  return deepRef(d);
+export function divRef(div: HTMLDivElement | null = null): Ref<HTMLDivElement | null> {
+  return deepRef(div);
 }

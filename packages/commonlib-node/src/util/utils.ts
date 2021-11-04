@@ -7,9 +7,11 @@ export function getOrDie<T>(v: T | null | undefined, msg: string = 'null|undef')
   return v;
 }
 
-export const delay = (t: number) => new Promise(resolve => setTimeout(resolve, t));
+export function delay(t: number): Promise<number> {
+  return new Promise(resolve => setTimeout(resolve, t));
+}
 
-export function newIdGenerator(start: number) {
+export function newIdGenerator(start: number): () => number {
   let currId = start - 1;
   const nextId = () => {
     currId += 1;

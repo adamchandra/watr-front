@@ -71,7 +71,7 @@ export function watchAll(rs?: Ref<any>[]): any {
     }
 
     const startFlag = deepRef(false);
-    const rhead = curr.shift()!;
+    const rhead = curr.shift();
 
     const stopInner = watch([rhead, startFlag], () => {
       const rval = rhead.value;

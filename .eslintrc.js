@@ -40,23 +40,26 @@ module.exports = {
                         allowDestructuring: true, // Allow `const { props, state } = this`; false by default
                         allowedNames: ['self'] // Allow `const self = this`; `[]` by default
                 }],
+                /////////////////
                 /// Desired Rules
                 '@typescript-eslint/indent': ['off'],
+                'unicorn/prevent-abbreviations': 'off',
+                'react/destructuring-assignment': 'off',
+                // These two are disabled b/c they rely on react rules (no react used in these projects)
+                'react/jsx-filename-extension': 'off',
+                'unicorn/prefer-node-protocol': ['off'],
 
+                // Disabled b/c it interferes with idomatic identical naming of type/const value in io-types decoders
+                // '@typescript-eslint/no-redeclare': ['error', { ignoreDeclarationMerge: true }],
+                '@typescript-eslint/no-redeclare': ['off'],
 
-                /// Temporarily disabled Rules (enable and fix as appropriate)
-                // '@typescript-eslint/ban-ts-comment': ['off'],
-                // '@typescript-eslint/explicit-function-return-type': ['off'],
-                // '@typescript-eslint/explicit-module-boundary-types': ['off'],
+                /////////////////
+                //// Temporarily disabled Rules (enable and fix as appropriate)
                 '@typescript-eslint/naming-convention': ['off'],
-                // '@typescript-eslint/no-empty-interface': ['off'],
                 '@typescript-eslint/no-explicit-any': ['off'],
                 '@typescript-eslint/no-floating-promises': ['off'],
                 '@typescript-eslint/no-inferrable-types': ['off'],
                 '@typescript-eslint/no-misused-promises': ['off'],
-                // '@typescript-eslint/no-namespace': ['off'],
-                '@typescript-eslint/no-non-null-assertion': ['off'],
-                '@typescript-eslint/no-redeclare': ['off'],
                 '@typescript-eslint/no-shadow': ['off'],
                 '@typescript-eslint/no-unsafe-argument': ['off'],
                 '@typescript-eslint/no-unsafe-assignment': ['off'],
@@ -93,21 +96,12 @@ module.exports = {
                 'no-multi-assign': ['off'],
                 'no-param-reassign': ['off'],
                 'no-plusplus': ['off'],
-                'no-prototype-builtins': 'off',
                 'no-restricted-globals': ['off'],
                 'no-underscore-dangle': ['off'],
-                'no-unused-vars': 0,
-                'no-use-before-define': ['error', { functions: false, classes: true, variables: true },],
-                'no-use-before-define': ['off'],
-                'no-useless-return': ['off'],
                 'promise/always-return': ['off'],
                 'promise/catch-or-return': ['off'],
                 'promise/no-callback-in-promise': ['off'],
-                'quotes': ['warn', 'single', { avoidEscape: true }],
-                'react/destructuring-assignment': 'off',
-                'react/jsx-filename-extension': 'off',
                 'semi-style': ['off'],
-                'space-before-function-paren': ['off'],
                 'unicorn/consistent-destructuring': ['off'],
                 'unicorn/consistent-function-scoping': ['off'],
                 'unicorn/filename-case': ['off'],
@@ -115,17 +109,8 @@ module.exports = {
                 'unicorn/no-array-callback-reference': ['off'],
                 'unicorn/no-array-for-each': 'off',
                 'unicorn/no-null': ['off'],
-                'unicorn/prefer-default-parameters': ['off'],
                 'unicorn/prefer-dom-node-text-content': ['off'],
-                'unicorn/prefer-node-protocol': ['off'],
-                'unicorn/prefer-spread': ['off'],
-                'unicorn/prevent-abbreviations': 'off',
-                'vue/attributes-order': ['off'],
-                'vue/html-indent': ['off'],
-                'vue/max-attributes-per-line': ['off'],
-                'vue/multiline-html-element-content-newline': 0,
-                'vue/no-unused-components': 0,
-                'vue/script-indent': ['off'],
+                'unicorn/prefer-spread': ['off']
         },
 
         overrides: [

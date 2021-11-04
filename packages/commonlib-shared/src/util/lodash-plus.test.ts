@@ -1,7 +1,7 @@
 /* tslint:disable: no-console */
 
 import _ from 'lodash';
-import { sortedUniqCountBy } from './LodashPlus';
+import { sortedUniqCountBy } from './lodash-plus';
 
 type TupleAN = readonly [any, number];
 

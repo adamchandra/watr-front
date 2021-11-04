@@ -101,7 +101,7 @@ export class TranscriptIndex {
     });
   }
 
-  public getLabels(labelNames: string[], pageNumber: number | undefined): Label[] {
+  public getLabels(labelNames: string[], pageNumber?: number): Label[] {
     const { pages } = this.transcript;
     const pageNs = pageNumber === undefined ? pages : [pages[pageNumber]];
     const labels = _.flatMap(pageNs, p => p.labels);

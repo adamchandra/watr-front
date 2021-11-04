@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import _ from 'lodash';
 
 import commander from 'commander';
@@ -14,7 +15,7 @@ program.version('0.0.1');
 
 program
   .version('0.0.1')
-;
+  ;
 
 program
   .command('setup-component <name> <indir>')
@@ -24,7 +25,7 @@ program
   .action((name: string, root: string, options: any) => {
     const { tsconfig } = options;
     console.log(`vue component setup: tsconfig=${tsconfig}`);
-    setupVueComponent(tsconfig, name, root);
+    setupVueComponent(tsconfig as string, name, root);
   });
 
 program
@@ -36,7 +37,9 @@ program
   .action((options: any) => {
     const { tsconfig } = options;
     const { dryrun } = options;
-    setupStoryVues(tsconfig, dryrun);
+    setupStoryVues(tsconfig as string, dryrun as boolean);
   });
 
 program.parse(process.argv);
+
+/* eslint-enable @typescript-eslint/no-unsafe-assignment */

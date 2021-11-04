@@ -74,7 +74,6 @@ describe('Pump Builder', () => {
         if (n % 2 === 0) {
           return n;
         }
-        return;
       })
       .guard(isDefined)
       .gather()

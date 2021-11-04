@@ -36,7 +36,7 @@ export function showText0(
   atY: number,
   _charWidthCache: Record<string, number>,
 ): LineDimensions {
-  div.innerText = text;
+  div.textContent = text;
 
   const lineWidth = div.offsetWidth;
   const lineHeight = div.offsetHeight;

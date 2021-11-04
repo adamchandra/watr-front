@@ -195,8 +195,9 @@ export async function useLabelOverlay({
       if (hoveringId === null) return;
       highlightShapesFillStroke(svgOverlay, hoveringId);
     });
+
     watch(infoPane.reactiveTexts.mouseout, (hoveringId: string) => {
-      if (hoveringId === null) return;
+      // if (hoveringId === null) return;
     });
   }
 
