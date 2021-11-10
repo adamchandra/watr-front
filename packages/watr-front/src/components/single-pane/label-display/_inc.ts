@@ -20,7 +20,6 @@ import { taskifyPromise } from '~/lib/fp-ts-extras';
 import { label, range } from '~/lib/transcript/gen-testdata';
 import { line, point, rect } from '~/lib/transcript/shapes';
 
-
 export default defineComponent({
   components: {},
 
@@ -75,9 +74,9 @@ export default defineComponent({
 function drawBasicShapes(showLabel: (l: Label) => void) {
   // const modifiers = [
   //   // For lines:
-  //   { role: 'underline' }, // arrow|extents-brace(left,right,..)
+  //   { dhint: 'underline' }, // arrow|extents-brace(left,right,..)
   //   // For rectangles:
-  //   { role: 'outline' }, // area
+  //   { dhint: 'outline' }, // area
   // ];
   const examples: Label[] = [
     label('Baseline')

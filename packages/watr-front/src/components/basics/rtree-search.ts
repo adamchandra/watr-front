@@ -14,7 +14,7 @@ import {
 import { EventlibCore } from './eventlib-core';
 import { EMouseEvent, MouseHandlerInit, MouseEventT } from '~/lib/EventlibHandlers';
 import { TranscriptIndex, TranscriptIndexable } from '~/lib/transcript/transcript-index';
-import { boxCenteredAt, MinMaxBox } from '~/lib/transcript/shape-conversions';
+import { boxCenteredAt, MinMaxBox } from '~/lib/shape-compat';
 import { point } from '~/lib/transcript/shapes';
 
 /**

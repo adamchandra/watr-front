@@ -9,7 +9,7 @@ import { useEventlibSelect } from '~/components/basics/eventlib-select';
 import { EMouseEvent, MouseHandlerInit } from '~/lib/EventlibHandlers';
 
 import { useSuperimposedElements, ElementTypes } from '~/components/basics/superimposed-elements';
-import { BBox } from '~/lib/transcript/shape-conversions';
+import { BBox } from '~/lib/shape-compat';
 
 function setup() {
   const mountPoint = ref(null);

@@ -8,14 +8,16 @@ import {
 import * as d3 from 'd3-selection';
 import { TranscriptIndex, TranscriptIndexable } from '~/lib/transcript/transcript-index';
 import { Label } from '~/lib/transcript/labels';
-import { minMaxToRect, ShapeSvg } from '~/lib/transcript/shape-conversions';
 import { PdfPageViewer } from './page-viewer';
 import { useFlashlight } from '../basics/rtree-search';
 
 import {
   dimShapesFillStroke, highlightShapesFillStroke, labelToSVGs, removeShapes, updateSvgElement,
-} from '~/lib/transcript-rendering';
+} from '~/lib/transcript/label-to-svg';
+
 import { InfoPane } from './info-pane/info-pane';
+import { minMaxToRect } from '~/lib/shape-compat';
+import { ShapeSvg } from '~/lib/transcript/shape-to-svg';
 
 type Args = {
   transcriptIndex: TranscriptIndex;

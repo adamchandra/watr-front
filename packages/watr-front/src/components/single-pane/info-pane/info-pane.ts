@@ -9,8 +9,8 @@ import { Label } from '~/lib/transcript/labels';
 import { formatShape } from '~/lib/transcript/shapes';
 import { LineDimensions, TextStyle } from '~/lib/html-text-metrics';
 import { useSuperimposedElements, ElementTypes } from '~/components/basics/superimposed-elements';
-import { deriveLabelId } from '~/lib/d3-extras';
 import { useMeasuredTextOverlay } from '~/components/basics/measured-text-overlay';
+import { deriveLabelId } from '~/lib/transcript/shape-to-svg';
 
 type Args = {
   mountPoint: Ref<HTMLDivElement | null>;

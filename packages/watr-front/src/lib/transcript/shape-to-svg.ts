@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import { RTreeIndexable } from '~/components/basics/rtree-search';
+import { Label } from './labels';
 import {
- point, Point, Rect, rect, Shape
+    formatShape,
+    Shape
 } from './shapes';
 
 export interface BaseSvg extends RTreeIndexable {
@@ -37,13 +39,34 @@ export interface PathSvg extends BaseSvg {
     d: string;
 }
 
+
+export function deriveLabelId(label: Label): string {
+  const rangeShape = _.flatMap(label.range, range => {
+    if (range.unit === 'shape') {
+      return [deriveShapeId(range.at)];
+    }
+    return [];
+  });
+  const rangeStr = rangeShape.join('_');
+  const name = label.name.replace(/\W/g, '_');
+  return `${name}${rangeStr}`;
+}
+
+export function deriveShapeId(shape: Shape): string {
+  return formatShape(shape)
+    .replace(/\W/g, '_')
+  ;
+}
+
 export type ShapeSvg = PointSvg | LineSvg | RectSvg | PathSvg;
 
 export function shapeToSvg(shape: Shape): ShapeSvg {
+    const id = deriveShapeId(shape);
     switch (shape.kind) {
         case 'point':
             return <PointSvg>{
                 type: 'circle',
+                id,
                 r: 3,
                 cx: shape.x,
                 cy: shape.y,
@@ -56,6 +79,7 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
         case 'line':
             return <LineSvg>{
                 type: 'line',
+                id,
                 x1: shape.p1.x,
                 y1: shape.p1.y,
                 x2: shape.p2.x,
@@ -69,6 +93,7 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
         case 'rect':
             return <RectSvg>{
                 type: 'rect',
+                id,
                 x: shape.x,
                 y: shape.y,
                 width: Math.max(shape.width, 2),
@@ -85,6 +110,7 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
             const r2 = r / 2;
             return <PointSvg>{
                 type: 'circle',
+                id,
                 r: shape.r,
                 cx: shape.p.x,
                 cy: shape.p.y,
@@ -102,6 +128,7 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
             const maxY = Math.max(p1.y, p2.y, p3.y);
             return <PathSvg>{
                 type: 'path',
+                id,
                 d: `M ${p1.x} ${p1.y} L ${p2.x} ${p2.y} L ${p3.x} ${p3.y} Z`,
                 minX,
                 minY,
@@ -126,6 +153,7 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
 
             return <PathSvg>{
                 type: 'path',
+                id,
                 d: `M ${topLeft.x} ${topLeft.y} L ${bottomLeft.x} ${bottomLeft.y} L ${bottomRight.x} ${bottomRight.y} L ${topRight.x} ${topRight.y} Z`,
                 minX,
                 minY,
@@ -136,135 +164,3 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
         }
     }
 }
-
-/** Same interface used by RTree (as implemented in RBush library) */
-export interface MinMaxBox {
-    minX: number;
-    minY: number;
-    maxX: number;
-    maxY: number;
-}
-
-export function minMaxToRect(mm: MinMaxBox): Rect {
-  const {
- minX, minY, maxX, maxY
-} = mm;
-  const x = minX;
-  const y = minY;
-  const width = maxX - minX;
-  const height = maxY - minY;
-  return rect(x, y, width, height);
-}
-
-/**
- *  General purpose bounding box data that meets the interface requirements
- *  for the various libraries in use
- */
-export class BBox {
-    public left: number;
-
-    public top: number;
-
-    public width: number;
-
-    public height: number;
-
-    public constructor(
-        l: number,
-        t: number,
-        w: number,
-        h: number,
-    ) {
-        this.left = l;
-        this.top = t;
-        this.width = w;
-        this.height = h;
-    }
-
-    get minX() {
-        return this.left;
-    }
-
-    get minY() {
-        return this.top;
-    }
-
-    get maxX() {
-        return this.left + this.width;
-    }
-
-    get maxY() {
-        return this.top + this.height;
-    }
-
-    get x() {
-        return this.left;
-    }
-
-    get y() {
-        return this.top;
-    }
-
-    get x1() {
-        return this.left;
-    }
-
-    get x2() {
-        return this.left + this.width;
-    }
-
-    get y1() {
-        return this.top;
-    }
-
-    get y2() {
-        return this.top + this.height;
-    }
-
-    get bottom() {
-        return this.top + this.height;
-    }
-
-    get right() {
-        return this.left + this.width;
-    }
-
-    get topLeft() {
-        return point(this.left, this.top);
-    }
-
-    public toString() {
-        return `BBox(${this.left}, ${this.top}, ${this.width}, ${this.height})`;
-    }
-
-    public svgShape() {
-        return rect(
-            this.x,
-            this.y,
-            this.width,
-            this.height
-        );
-    }
-}
-
-export function bbox(l: number, t: number, w: number, h: number): BBox {
-    return new BBox(l, t, w, h);
-}
-
-export function boxCenteredAt(p: Point, width: number, height: number): BBox {
-  const left = p.x - width / 2;
-  const top = p.y - height / 2;
-  return bbox(left, top, width, height);
-}
-
-// export const mk = {
-//   fromLtwh: (l: number, t: number, w: number, h: number) => new BBox(l, t, w, h),
-
-//   fromArray: (ltwh: [number, number, number, number]) => {
-//     const left = ltwh[0] / 100;
-//     const top = ltwh[1] / 100;
-//     const width = ltwh[2] / 100;
-//     const height = ltwh[3] / 100;
-//     return new BBox(left, top, width, height);
-//   },
-// };

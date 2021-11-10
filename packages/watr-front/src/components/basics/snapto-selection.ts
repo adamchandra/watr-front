@@ -16,7 +16,7 @@ import {
 } from '@nuxtjs/composition-api';
 
 import { EventlibSelect } from '~/components/basics/eventlib-select';
-import { bbox, BBox, MinMaxBox } from '~/lib/transcript/shape-conversions';
+import { bbox, BBox, MinMaxBox } from '~/lib/shape-compat';
 // import { RTreeIndex } from '~/components/basics/rtree-search';
 // import { tweenBBox } from '~/lib/tweening';
 // import { GlyphOverlay } from './glyph-overlays';

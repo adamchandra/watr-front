@@ -19,7 +19,7 @@ import * as d3x from '~/lib/d3-extras';
 
 import { SuperimposedElements } from './superimposed-elements';
 import { point, Point } from '~/lib/transcript/shapes';
-import { BBox } from '~/lib/transcript/shape-conversions';
+import { BBox } from '~/lib/shape-compat';
 
 const { initStroke, initFill, initRect } = d3x;
 

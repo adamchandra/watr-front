@@ -13,7 +13,7 @@ import { LineDimensions } from '../html-text-metrics';
 import { newIdGenerator } from '../misc-utils';
 import { RTreeIndexable } from '~/components/basics/rtree-search';
 import { Label } from './labels';
-import { bbox } from './shape-conversions';
+import { bbox, MinMaxBox } from '../shape-compat';
 
 type RTreeIndexKey = string;
 
@@ -23,7 +23,7 @@ export type RenderStanzaOpts = {
   lineCount?: number
 };
 
-export interface TranscriptIndexable<T> extends RTreeIndexable {
+export interface TranscriptIndexable<T> extends RTreeIndexable, MinMaxBox {
   cargo: T;
   // cross-ref for other indexed rects corresponding to this one
   //   e.g., pdf-page glyph vs. stanza text glyph
