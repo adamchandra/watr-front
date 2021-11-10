@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { SuperimposedElements } from '~/components/basics/superimposed-elements';
 import { Label } from '~/lib/transcript/labels';
 import {
-    initSVGDefs,
+  initSVGDefs,
   labelToSVGs,
   removeShapes,
   updateSvgElement,

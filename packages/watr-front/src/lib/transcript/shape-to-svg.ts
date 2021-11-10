@@ -1,25 +1,29 @@
 import _ from 'lodash';
 import { RTreeIndexable } from '~/components/basics/rtree-search';
 import { Label } from './labels';
+
 import {
-    formatShape,
-    Shape
+  formatShape,
+  Shape
 } from './shapes';
 
+/**
+ * SVG element data with additional properties
+ * */
 export interface BaseSvg extends RTreeIndexable {
     id: string;
     classes?: string[];
     data: Record<string, any>;
 }
 export interface PointSvg extends BaseSvg {
-    type: 'circle';
+    tag: 'circle';
     r: number;
     cx: number;
     cy: number;
 }
 
 export interface LineSvg extends BaseSvg {
-    type: 'line';
+    tag: 'line';
     x1: number;
     y1: number;
     x2: number;
@@ -27,7 +31,7 @@ export interface LineSvg extends BaseSvg {
 }
 
 export interface RectSvg extends BaseSvg {
-    type: 'rect';
+    tag: 'rect';
     x: number;
     y: number;
     width: number;
@@ -35,27 +39,27 @@ export interface RectSvg extends BaseSvg {
 }
 
 export interface PathSvg extends BaseSvg {
-    type: 'path';
+    tag: 'path';
     d: string;
 }
 
 
 export function deriveLabelId(label: Label): string {
-  const rangeShape = _.flatMap(label.range, range => {
-    if (range.unit === 'shape') {
-      return [deriveShapeId(range.at)];
-    }
-    return [];
-  });
-  const rangeStr = rangeShape.join('_');
-  const name = label.name.replace(/\W/g, '_');
-  return `${name}${rangeStr}`;
+    const rangeShape = _.flatMap(label.range, range => {
+        if (range.unit === 'shape') {
+            return [deriveShapeId(range.at)];
+        }
+        return [];
+    });
+    const rangeStr = rangeShape.join('_');
+    const name = label.name.replace(/\W/g, '_');
+    return `${name}${rangeStr}`;
 }
 
 export function deriveShapeId(shape: Shape): string {
-  return formatShape(shape)
-    .replace(/\W/g, '_')
-  ;
+    return formatShape(shape)
+        .replace(/\W/g, '_')
+        ;
 }
 
 export type ShapeSvg = PointSvg | LineSvg | RectSvg | PathSvg;
@@ -65,7 +69,7 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
     switch (shape.kind) {
         case 'point':
             return <PointSvg>{
-                type: 'circle',
+                tag: 'circle',
                 id,
                 r: 3,
                 cx: shape.x,
@@ -78,7 +82,7 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
             };
         case 'line':
             return <LineSvg>{
-                type: 'line',
+                tag: 'line',
                 id,
                 x1: shape.p1.x,
                 y1: shape.p1.y,
@@ -92,7 +96,7 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
             };
         case 'rect':
             return <RectSvg>{
-                type: 'rect',
+                tag: 'rect',
                 id,
                 x: shape.x,
                 y: shape.y,
@@ -109,7 +113,7 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
             const { r } = shape;
             const r2 = r / 2;
             return <PointSvg>{
-                type: 'circle',
+                tag: 'circle',
                 id,
                 r: shape.r,
                 cx: shape.p.x,
@@ -127,7 +131,7 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
             const minY = Math.min(p1.y, p2.y, p3.y);
             const maxY = Math.max(p1.y, p2.y, p3.y);
             return <PathSvg>{
-                type: 'path',
+                tag: 'path',
                 id,
                 d: `M ${p1.x} ${p1.y} L ${p2.x} ${p2.y} L ${p3.x} ${p3.y} Z`,
                 minX,
@@ -152,7 +156,7 @@ export function shapeToSvg(shape: Shape): ShapeSvg {
             const maxY = Math.max(topLeft.y, bottomLeft.y);
 
             return <PathSvg>{
-                type: 'path',
+                tag: 'path',
                 id,
                 d: `M ${topLeft.x} ${topLeft.y} L ${bottomLeft.x} ${bottomLeft.y} L ${bottomRight.x} ${bottomRight.y} L ${topRight.x} ${topRight.y} Z`,
                 minX,
