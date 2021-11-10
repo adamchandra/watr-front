@@ -4,6 +4,7 @@
     "target": "es5",
     "sourceMap": true,
     "noEmitOnError": true,
+    "noEmit": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "types": [

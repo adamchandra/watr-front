@@ -15,10 +15,11 @@ import {
 
 import { EMouseEvent, MouseHandlerInit } from '~/lib/EventlibHandlers';
 import { EventlibCore } from './eventlib-core';
-import { BBox, Point } from '~/lib/coord-sys';
 import * as d3x from '~/lib/d3-extras';
 
 import { SuperimposedElements } from './superimposed-elements';
+import { point, Point } from '~/lib/transcript/shapes';
+import { BBox } from '~/lib/transcript/shape-conversions';
 
 const { initStroke, initFill, initRect } = d3x;
 
@@ -57,8 +58,8 @@ export function useEventlibSelect({
 
   const { refs, handlers } = selectExtentHandlers();
 
-  let originPt: Point = new Point(0, 0);
-  let currentPt: Point = new Point(0, 0);
+  let originPt: Point = point(0, 0);
+  let currentPt: Point = point(0, 0);
   let currBBox: BBox;
 
   function initSvgRect() {
@@ -85,17 +86,17 @@ export function useEventlibSelect({
   }
 
   watch(refs.origin, ([x, y]) => {
-    originPt = currentPt = new Point(x, y);
+    originPt = currentPt = point(x, y);
     initSvgRect();
   });
 
   watch(refs.current, ([x, y]) => {
-    currentPt = new Point(x, y);
+    currentPt = point(x, y);
     updateCurrentRect();
   });
 
   watch(refs.final, ([[], [x2, y2]]) => {
-    currentPt = new Point(x2, y2);
+    currentPt = point(x2, y2);
     updateCurrentRect();
 
     currSvgRect

@@ -8,7 +8,7 @@ import {
 import * as d3 from 'd3-selection';
 import { TranscriptIndex, TranscriptIndexable } from '~/lib/transcript/transcript-index';
 import { Label } from '~/lib/transcript/labels';
-import { minMaxToRect, ShapeSvg } from '~/lib/transcript/shapes';
+import { minMaxToRect, ShapeSvg } from '~/lib/transcript/shape-conversions';
 import { PdfPageViewer } from './page-viewer';
 import { useFlashlight } from '../basics/rtree-search';
 
@@ -196,7 +196,7 @@ export async function useLabelOverlay({
       highlightShapesFillStroke(svgOverlay, hoveringId);
     });
 
-    watch(infoPane.reactiveTexts.mouseout, (hoveringId: string) => {
+    watch(infoPane.reactiveTexts.mouseout, (_hoveringId: string) => {
       // if (hoveringId === null) return;
     });
   }

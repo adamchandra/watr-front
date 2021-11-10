@@ -8,12 +8,12 @@ import _ from 'lodash';
 import RBush from 'rbush';
 import { Transcript } from './transcript';
 import { Glyph } from '~/lib/transcript/glyph';
-import { mk } from '~/lib/coord-sys';
 import { Rect } from './shapes';
 import { LineDimensions } from '../html-text-metrics';
 import { newIdGenerator } from '../misc-utils';
 import { RTreeIndexable } from '~/components/basics/rtree-search';
 import { Label } from './labels';
+import { bbox } from './shape-conversions';
 
 type RTreeIndexKey = string;
 
@@ -74,7 +74,7 @@ export class TranscriptIndex {
         const {
           x, y, width, height,
         } = glyph.rect;
-        const charBounds = mk.fromLtwh(x, y, width, height);
+        const charBounds = bbox(x, y, width, height);
         const {
           minX, minY, maxX, maxY,
         } = charBounds;
@@ -142,7 +142,7 @@ export class TranscriptIndex {
         const {
           x, y, width, height,
         } = charDim;
-        const charBounds = mk.fromLtwh(x, y, width, height);
+        const charBounds = bbox(x, y, width, height);
         const {
           minX, minY, maxX, maxY,
         } = charBounds;

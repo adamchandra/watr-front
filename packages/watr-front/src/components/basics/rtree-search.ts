@@ -12,14 +12,15 @@ import {
 } from '@nuxtjs/composition-api';
 
 import { EventlibCore } from './eventlib-core';
-import * as coords from '~/lib/coord-sys';
 import { EMouseEvent, MouseHandlerInit, MouseEventT } from '~/lib/EventlibHandlers';
 import { TranscriptIndex, TranscriptIndexable } from '~/lib/transcript/transcript-index';
+import { boxCenteredAt, MinMaxBox } from '~/lib/transcript/shape-conversions';
+import { point } from '~/lib/transcript/shapes';
 
 /**
  * Minimal interface required for RTree index
  */
-export interface RTreeIndexable extends coords.MinMaxBox {
+export interface RTreeIndexable extends MinMaxBox {
   id: string;
 }
 
@@ -52,8 +53,8 @@ export function useFlashlight({
 
   const mousemove = (e: EMouseEvent) => {
     const { pos } = e;
-    const mousePt = coords.mkPoint.fromXy(pos.x, pos.y);
-    const queryBox = coords.boxCenteredAt(mousePt, flashlightRadius, flashlightRadius);
+    const mousePt = point(pos.x, pos.y);
+    const queryBox = boxCenteredAt(mousePt, flashlightRadius, flashlightRadius);
 
     const rtree = transcriptIndex.getKeyedIndex(indexKey);
     const hits = rtree.search(queryBox);
@@ -63,8 +64,8 @@ export function useFlashlight({
 
   const click = (e: EMouseEvent) => {
     const { pos } = e;
-    const mousePt = coords.mkPoint.fromXy(pos.x, pos.y);
-    const queryBox = coords.boxCenteredAt(mousePt, 1, 1);
+    const mousePt = point(pos.x, pos.y);
+    const queryBox = boxCenteredAt(mousePt, 1, 1);
 
     const rtree = transcriptIndex.getKeyedIndex(indexKey);
     const hits = rtree.search(queryBox);

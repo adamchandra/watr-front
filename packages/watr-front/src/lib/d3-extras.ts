@@ -12,9 +12,9 @@ import {
 
 import { SelectionOrTransition } from 'd3-transition';
 
-import { BBox } from '~/lib/coord-sys';
 import { formatShape, Shape } from './transcript/shapes';
 import { Label } from './transcript/labels';
+import { BBox } from './transcript/shape-conversions';
 
 export function initRect<GElement extends BaseType, Datum, PElement extends BaseType, PDatum>(
   sel: SelectionOrTransition<GElement, Datum, PElement, PDatum>,

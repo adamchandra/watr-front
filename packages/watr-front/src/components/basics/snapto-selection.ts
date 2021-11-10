@@ -14,13 +14,9 @@ import _ from 'lodash';
 import {
   watch,
 } from '@nuxtjs/composition-api';
-import {
-  mk,
-  BBox,
-  MinMaxBox,
-} from '~/lib/coord-sys';
 
 import { EventlibSelect } from '~/components/basics/eventlib-select';
+import { bbox, BBox, MinMaxBox } from '~/lib/transcript/shape-conversions';
 // import { RTreeIndex } from '~/components/basics/rtree-search';
 // import { tweenBBox } from '~/lib/tweening';
 // import { GlyphOverlay } from './glyph-overlays';
@@ -76,5 +72,5 @@ export function queryHitsMBR(hits: MinMaxBox[]): BBox | undefined {
   const width = maxX - minX;
   const height = maxY - minY;
 
-  return mk.fromLtwh(minX, minY, width, height);
+  return bbox(minX, minY, width, height);
 }

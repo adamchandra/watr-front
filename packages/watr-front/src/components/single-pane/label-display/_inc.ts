@@ -17,6 +17,9 @@ import { decodeLabel, Label } from '~/lib/transcript/labels';
 
 import { divRef } from '~/lib/vue-composition-lib';
 import { taskifyPromise } from '~/lib/fp-ts-extras';
+import { label, range } from '~/lib/transcript/gen-testdata';
+import { line, point, rect } from '~/lib/transcript/shapes';
+
 
 export default defineComponent({
   components: {},
@@ -36,10 +39,7 @@ export default defineComponent({
       TE.map(({ infoPane, superimposedElements, labelDisplay }) => {
         superimposedElements.setDimensions(800, 1000);
         const { showLabel, clearAll } = labelDisplay;
-
-        const {
-          putStringLn,
-        } = infoPane;
+        const { putStringLn } = infoPane;
 
         putStringLn('Hello From Storyland!');
 
@@ -73,77 +73,66 @@ export default defineComponent({
 });
 
 function drawBasicShapes(showLabel: (l: Label) => void) {
-  const examples: any[] = [
-    { range: [{ unit: 'shape', at: [[8684, 6472], [9255, 4024]] }], name: 'HorizonLine' },
-    { range: [{ unit: 'shape', at: [3684, 6472, 4255, 4024] }], name: 'HorizonRect' },
+  // const modifiers = [
+  //   // For lines:
+  //   { role: 'underline' }, // arrow|extents-brace(left,right,..)
+  //   // For rectangles:
+  //   { role: 'outline' }, // area
+  // ];
+  const examples: Label[] = [
+    label('Baseline')
+      .withRange(range(line(point(10, 20), point(300, 40))))
+      .withProps('role', ['underline']).get(),
+    label('Arrow')
+      .withRange(range(line(point(10, 30), point(200, 50))))
+      .withProps('role', ['arrow']).get(),
+    label('OutlineRegion')
+      .withRange(range(rect(10, 50, 300, 400)))
+      .withProps('role', ['outline']).get(),
+    label('ShadedArea')
+      .withRange(range(rect(10, 50, 300, 400)))
+      .withProps('role', ['shaded']).get(),
   ];
 
-  _.each(examples, (ex) => {
-    const l: Label | null = decodeLabel(ex);
+  _.each(examples, (l: Label) => {
     showLabel(l);
   });
 }
 
 function drawCompoundShapes(showLabel: (l: Label) => void) {
-  const examples = [{
-    children: [{
-      children: [{
-        props: {
-          class: ['=eager'],
-        },
-        range: [{ unit: 'shape', at: [29_748, 75_954, 381, 545] }],
-        name: 'FocalRect',
-      }, {
-        range: [{ unit: 'shape', at: [29_748, 75_954, 381, 2937] }],
-        name: 'HorizonRect',
-      }, {
-        children: [{
-          range: [{ unit: 'shape', at: [29_748, 76_500, 381, 2391] }],
-          name: 'Query/Cell:Bottom',
-        }],
-        range: [],
-        name: 'SearchArea',
-      }],
-      range: [],
-      name: 'Octothorpe',
-    }, {
-      children: [],
-      range: [],
-      name: 'Found',
-    }],
-    props: {
-      class: ['>lazy'],
-      outline: ['FindMonoFontBlocks', 'ConnectComponents', 'WithAdjacentSkyline/Down'],
-    },
-    range: [],
-    name: 'OctSearch',
-  }, {
-    children: [{
-      props: { class: ['=eager'] },
-      range: [{ unit: 'shape', at: [7220, 29_427, 46_572, 500] }],
-      name: 'FocalRect',
-    }, {
-      range: [{ unit: 'shape', at: [7235, 31_587, 46_555, 500] }],
-      name: 'HitRect',
-    }, {
-      range: [{ unit: 'shape', at: [7235, 29_927, 46_555, 1660] }],
-      name: 'OcclusionQuery',
-    }, {
-      range: [],
-      name: 'Occlusions',
-    }, {
-      range: [{ unit: 'shape', at: [7235, 31_587, 46_555, 500] }],
-      name: 'FinalHit',
-    }],
-    props: {
-      class: ['>lazy'],
-    },
-    range: [],
-    name: 'FacingDownFind( BaselineMidriseBand )',
-  }];
+  const xoffset = 60;
+  const yoffset = 50;
+  const rows = 4;
+  const cols = 6;
+  const xscale = 20;
+  const yscale = 14;
 
-  _.each(examples, (ex) => {
-    const l: Label | null = decodeLabel(ex);
+  const indexes = _.flatMap(
+    _.range(rows),
+    (rown) => _.map(_.range(cols), (coln) => [rown, coln])
+  );
+
+  const cellLabels = _.map(
+    indexes,
+    ([row, col]) => {
+      const x = (col * xscale) + xoffset;
+      const y = (row * yscale) + yoffset;
+      const l = label(`c[${row},${col}]`)
+        .withRange(range(rect(x, y, xscale, yscale)));
+
+      if (x === 1 && y === 1) {
+        return l.withProps('role', ['icon']).get();
+      }
+      return l.get();
+    }
+  );
+  const examples: Label[] = [
+    label('GridCells')
+      .withProps('display', ['icon'])
+      .withChildren(cellLabels)
+      .get(),
+  ];
+  _.each(examples, (l: Label) => {
     showLabel(l);
   });
 }

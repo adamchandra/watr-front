@@ -1,5 +1,7 @@
 import _ from 'lodash';
 import { GlyphPropsRepr, GlyphRepr } from './glyph';
+import { line, point, Shape } from './shapes';
+import { Label, Range } from './labels';
 
 export function rewriteChar(char: string): string {
   switch (char) {
@@ -7,10 +9,6 @@ export function rewriteChar(char: string): string {
   }
   return char;
 }
-
-// function rewriteStr(str: string): string {
-//   return _.map(str, s => rewriteChar(s));
-// }
 
 export function makeGlyphRepr(char: string): GlyphRepr {
   let gchar = char;
@@ -66,3 +64,58 @@ export const sampleTranscript = {
     { name: 'HasReferences', range: [{ unit: 'page', at: { page: 10 } }] },
   ],
 };
+
+export class LabelBuilder {
+  lbl: Label;
+
+  public constructor(name: string) {
+    this.lbl = { name, range: [] };
+  }
+
+  public withRange(r: Range): LabelBuilder {
+    this.lbl.range.push(r);
+    return this;
+  }
+
+  public withProps(key: string, vals: string[]): LabelBuilder {
+    if (this.lbl.props === undefined) {
+      this.lbl.props = {};
+    }
+    _.merge(this.lbl.props, { key, vals });
+
+    return this;
+  }
+
+  public withChildren(childs: Label[]): LabelBuilder {
+    if (this.lbl.children === undefined) {
+      this.lbl.children = [];
+    }
+    this.lbl.children = _.concat(this.lbl.children, childs);
+    return this;
+  }
+
+  public get(): Label {
+    return this.lbl;
+  }
+}
+
+export const examples: any[] = [
+  label('HorizonLine')
+    .withRange(range(line(point(10, 20), point(30, 40))))
+    .withProps('role', ['underline']),
+];
+
+export function range(
+  shape: Shape
+): Range {
+  return {
+    unit: 'shape',
+    at: shape
+  };
+}
+
+export function label(
+  name: string,
+): LabelBuilder {
+  return new LabelBuilder(name);
+}

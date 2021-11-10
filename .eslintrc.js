@@ -52,6 +52,7 @@ module.exports = {
                 // Disabled b/c it interferes with idomatic identical naming of type/const value in io-types decoders
                 // '@typescript-eslint/no-redeclare': ['error', { ignoreDeclarationMerge: true }],
                 '@typescript-eslint/no-redeclare': ['off'],
+                '@typescript-eslint/comma-dangle': ['off'],
 
                 /////////////////
                 //// Temporarily disabled Rules (enable and fix as appropriate)
@@ -73,8 +74,8 @@ module.exports = {
                 '@typescript-eslint/restrict-template-expressions': ['off'],
                 '@typescript-eslint/unbound-method': ['off'],
                 'array-callback-return': ['off'],
+                'arrow-body-style': ['off'],
                 'arrow-parens': ['off'],
-                'comma-dangle': ['off'],
                 'consistent-return': ['off'],
                 'default-case': ['off'],
                 'func-names': ['off'],
@@ -94,6 +95,7 @@ module.exports = {
                 'no-console': ['off'],
                 'no-empty-pattern': ['off'],
                 'no-multi-assign': ['off'],
+                'no-multiple-empty-lines': ['error', { 'max': 2, 'maxBOF': 0, 'maxEOF': 1 }],
                 'no-param-reassign': ['off'],
                 'no-plusplus': ['off'],
                 'no-restricted-globals': ['off'],

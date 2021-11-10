@@ -1,16 +1,16 @@
 import 'chai/register-should';
 
 import anime from 'animejs';
-import { tweenBBox } from './tweening';
-import * as coords from '~/lib/coord-sys';
+import { tweenRect } from './tweening';
+import { rect } from './transcript/shapes';
 
 describe('Tweening support', () => {
   it.only('all tests disabled', () => {});
 
   it('tweens bbox', async () => {
-    const b1 = coords.mk.fromLtwh(10, 10, 100, 200);
-    const b2 = coords.mk.fromLtwh(20, 30, 40, 40);
-    const p = tweenBBox(b1, b2, (_curr) => {
+    const b1 = rect(10, 10, 100, 200);
+    const b2 = rect(20, 30, 40, 40);
+    const p = tweenRect(b1, b2, (_curr) => {
       // prettyPrint({ m: 'Current', curr })
     }).then((_b) => {
       // prettyPrint({ m: 'Ending', b })

@@ -63,16 +63,6 @@ type GeometricRange = {
   at: Shape
 };
 
-// const GeometricRangeStrict = new io.Type<GeometricRange, GeometricRangeRepr, unknown>(
-//   'GeometricRange', (u: any): u is GeometricRange => io.string.is(u['unit']) && u['unit'] === 'shape',
-//   (repr: unknown, c: io.Context) => pipe(
-//     GeometricRangeRepr.validate(repr, c),
-//     E.chain(r => Shape.validate(r.at, c)),
-//     E.chain(r => io.success({ unit: 'shape', at: r })),
-//   ),
-//   (a: GeometricRange) => ({ unit: 'shape', at: Shape.encode(a.at) })
-// );
-
 const GeometricRange = new io.Type<GeometricRange, GeometricRangeRepr, unknown>(
   'GeometricRange', (u: any): u is GeometricRange => (
     io.UnknownRecord.is(u)

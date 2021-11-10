@@ -2,8 +2,9 @@ import _ from 'lodash';
 
 import * as d3 from 'd3-selection';
 import { Label } from '~/lib/transcript/labels';
-import { ShapeSvg, shapeToSvg } from '~/lib/transcript/shapes';
+// import { ShapeSvg, shapeToSvg } from '~/lib/transcript/shapes';
 import { deriveLabelId } from './d3-extras';
+import { ShapeSvg, shapeToSvg } from './transcript/shape-conversions';
 
 function initSVGDimensions(r: any) {
   const shape = r.node().nodeName.toLowerCase();

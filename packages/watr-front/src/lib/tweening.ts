@@ -1,8 +1,7 @@
 import anime from 'animejs';
-import * as coords from '~/lib/coord-sys';
-import { BBox } from '~/lib/coord-sys';
+import { Rect } from './transcript/shapes';
 
-export async function tweenBBox(start: BBox, end: BBox, onUpdate: (bbox: BBox) => void): Promise<BBox> {
+export async function tweenRect(start: Rect, end: Rect, onUpdate: (bbox: Rect) => void): Promise<Rect> {
   const initial = {
     x: start.x,
     y: start.y,
@@ -19,13 +18,17 @@ export async function tweenBBox(start: BBox, end: BBox, onUpdate: (bbox: BBox) =
     easing: 'linear',
     duration: 100,
     update: () => {
-      const b = coords.mk.fromLtwh(initial.x, initial.y, initial.width, initial.height);
-      onUpdate(b);
+      // TODO rewrite w/rect from bbox
+      // const b = coords.mk.fromLtwh(initial.x, initial.y, initial.width, initial.height);
+      // onUpdate(b);
+      onUpdate(start);
     },
   });
 
-  return anim0.finished.then(() => {
-    const b = coords.mk.fromLtwh(initial.x, initial.y, initial.width, initial.height);
-    return b;
-  });
+  // TODO rewrite w/rect from bbox
+  // return anim0.finished.then(() => {
+  //   const b = coords.mk.fromLtwh(initial.x, initial.y, initial.width, initial.height);
+  //   return b;
+  // });
+  return anim0.finished.then(() => start);
 }
