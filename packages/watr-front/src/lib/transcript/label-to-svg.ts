@@ -4,198 +4,115 @@ import * as d3 from 'd3-selection';
 import { Label } from '~/lib/transcript/labels';
 import { deriveLabelId, ShapeSvg, shapeToSvg } from './shape-to-svg';
 
-export function labelToSVGs(label: Label, parentClasses: string[], forceEval: boolean): ShapeSvg[] {
-  const classStrings = label?.props?.class || [];
-
-  const isLazy = _.some(classStrings, s => s === '>lazy');
-
-  if (isLazy && !forceEval) {
-    return [labelToTriggerSVG(label, label)];
+function getProp(label: Label, key: string): string[] {
+  const { props } = label;
+  if (props === undefined) {
+    return [];
   }
+  const values = props[key];
+  if (values === undefined) {
+    return [];
+  }
+  return values;
+}
 
-  const localClasses = _.filter(classStrings, c => c.startsWith('='))
-    .map(c => c.slice(1));
+export function labelToSVGs(
+  label: Label
+): ShapeSvg[] {
+  return _labelToSVGs(label, [], false);
+}
 
-  const propogatedClasses = _.filter(classStrings, c => c.startsWith('>'))
-    .map(c => c.slice(1));
+function _labelToSVGs(
+  label: Label,
+  displayables: string[],
+  forceEval: boolean
+): ShapeSvg[] {
+  const displayProp = getProp(label, 'display');
+  const aggregateDisplayables = _.concat(displayProp, displayables);
+  const children = label.children || [];
+  const childSVGs: ShapeSvg[] = _.flatMap(children, c => _labelToSVGs(c, aggregateDisplayables, forceEval));
 
-  propogatedClasses.push(label.name);
+  const roleProp = getProp(label, 'role');
 
-  const childShapes: ShapeSvg[] = label.children === undefined ? []
-    : _.flatMap(label.children, c => labelToSVGs(c, propogatedClasses, forceEval));
+  const displayableRoles = _.intersection(roleProp, aggregateDisplayables);
+
+  const isDisplayable = displayableRoles.length > 0;
+  const displayClass = isDisplayable ? 'display' : 'nodisplay';
 
   const labelId = deriveLabelId(label);
 
-  const localShapes = _.flatMap(label.range, range => {
+  const localSVGs = _.flatMap(label.range, range => {
     if (range.unit === 'shape') {
       const svg = shapeToSvg(range.at);
       svg.data.rootLabel = label;
-      svg.classes = _.concat(localClasses, parentClasses, propogatedClasses);
+      svg.classes.push(displayClass);
       svg.id = labelId;
       return [svg];
     }
     return [];
   });
 
-  const allShapes = _.concat(localShapes, childShapes);
-
-  return allShapes;
+  return _.concat(localSVGs, childSVGs);
 }
 
-function labelToTriggerSVG(label: Label, rootLabel: Label): ShapeSvg {
-  const classStrings = label?.props?.class || [];
-  const isTrigger = _.some(classStrings, s => s === '=eager');
-  // console.log('labelToTriggerSVG', label);
-
-  if (isTrigger) {
-    const localClasses = _.filter(classStrings, c => c.startsWith('='))
-      .map(c => c.slice(1));
-
-    // console.log('  isTrigger: localClasses', localClasses);
-
-    const localShapes = _.flatMap(label.range, range => {
-      if (range.unit === 'shape') {
-        const svg = shapeToSvg(range.at);
-        svg.data.rootLabel = rootLabel;
-        svg.classes = localClasses;
-        const labelId = deriveLabelId(label);
-        svg.id = labelId;
-        return [svg];
-      }
-      return [];
-    });
-
-    // console.log('  isTrigger: localShapes', localShapes);
-
-    return localShapes[0];
-  }
-
-  const children = label.children || [];
-  const childShape: ShapeSvg = _.find(
-    _.flatMap(children, c => labelToTriggerSVG(c, rootLabel)),
-    (c) => c !== undefined,
-  );
-
-  // console.log('  notTrigger: childShapes', childShapes);
-
-  return childShape;
-}
-
-const OctoAttrs = {
-  '?': ['black', 0.2, 'magenta ', 0.2],
-  FocalRect: ['blue', 0.2, 'lightblue', 0.1],
-  HorizonRect: ['black', 0.1, 'gray', 0.1],
-  SearchArea: ['black', 0.1, 'yellow', 0.1],
-  Found: ['black', 0.5, 'green', 0.2],
-  FinalHit: ['black', 0.5, 'green', 0.2],
-};
-
-
-function initSVGDimensions(r: any) {
-  const shape = r.node().nodeName.toLowerCase();
-
-  switch (shape) {
+function initEachDimensions(r: d3.Selection<SVGElement, ShapeSvg, null, unknown>): void {
+  r.classed('shape', true);
+  const d = r.datum();
+  switch (d.tag) {
     case 'rect':
-      return r.attr('x', (d: any) => d.x)
-        .attr('y', (d: any) => d.y)
-        .attr('width', (d: any) => d.width)
-        .attr('height', (d: any) => d.height)
-        .attr('id', (d: any) => d.id);
+      r.attr('x', () => d.x)
+        .attr('y', () => d.y)
+        .attr('width', () => d.width)
+        .attr('height', () => d.height)
+        .attr('id', () => d.id);
+      break;
 
     case 'circle':
-      return r.attr('cx', (d: any) => d.cx)
-        .attr('cy', (d: any) => d.cy)
-        .attr('r', (d: any) => d.r)
-        .attr('id', (d: any) => d.id);
+      r.attr('cx', () => d.cx)
+        .attr('cy', () => d.cy)
+        .attr('r', () => d.r)
+        .attr('id', () => d.id);
+      break;
 
     case 'line':
-      return r.attr('x1', (d: any) => d.x1)
-        .attr('y1', (d: any) => d.y1)
-        .attr('x2', (d: any) => d.x2)
-        .attr('y2', (d: any) => d.y2)
-        .attr('id', (d: any) => d.id)
-        .attr('marker-start', () => 'url(#arrow)')
-        .attr('marker-end', () => 'url(#arrow)')
-      ;
+      r.attr('x1', () => d.x1)
+        .attr('y1', () => d.y1)
+        .attr('x2', () => d.x2)
+        .attr('y2', () => d.y2)
+        .attr('id', () => d.id);
+      break;
+
     case 'path':
-      return r.attr('d', (d: any) => d.d)
-        .attr('id', (d: any) => d.id);
+      r.attr('d', () => d.d)
+        .attr('id', () => d.id);
+      break;
   }
-
-  return r;
 }
 
-function setSVGColors(r: any) {
-  return r
-    // .attr('opacity', (d: any) => d.classes.some((cls: string) => cls === 'eager') ? 0.3 : 0.2)
-    .attr('fill-opacity', (d: any) => (d.classes.includes('eager') ? 0.3 : 0.2))
-    .attr('stroke-opacity', (d: any) => (d.classes.includes('eager') ? 0.3 : 0.2))
+function setSVGColors(r: d3.Selection<SVGElement, ShapeSvg, null, unknown>): void {
+  r.attr('fill-opacity', () => 0.8)
+    .attr('stroke-opacity', () => 1)
     .attr('stroke-width', 1)
-    // .attr('fill', (d: any) => d.classes.some((cls: string) => cls === 'eager') ? 'blue' : 'yellow')
     .attr('fill', () => 'url(#grad1)')
-    .attr('stroke', (d: any) => (d.classes.includes('eager') ? 'blue' : 'red'))
-  ;
+    .attr('stroke', () => 'blue');
 }
 
-function setSVGClasses(r: any) {
-  return r.classed('shape', true);
-}
-
-export function updateSvgElement(svgElement: SVGElement, svgShapes: ShapeSvg[]) {
-  const dataSelection: d3.Selection<d3.BaseType, ShapeSvg, SVGElement, unknown> = d3.select(svgElement)
-    .selectAll('.shape')
-    .data(svgShapes, (sh: any) => sh.id);
+export function addSvgElements(svgElement: SVGElement, svgShapes: ShapeSvg[]): void {
+  const svgSelection = d3.select<SVGElement, ShapeSvg>(svgElement);
+  const dataSelection = svgSelection
+    .selectAll<SVGElement, ShapeSvg>('.shape')
+    .data(svgShapes, (sh: ShapeSvg) => sh.id);
 
   dataSelection.enter()
-    .each(function (shape: any) {
+    .each(function(shape: ShapeSvg) {
       const self = d3.select(this);
-      return self.append(shape.type)
-        .call(initSVGDimensions)
+      return self.append<SVGElement>(shape.tag)
+        .call(initEachDimensions)
         .call(setSVGColors)
-        .call(setSVGClasses)
-        .each(function () {
-          const shape = d3.select(this);
-          const shdata: ShapeSvg = shape.datum() as any;
-          const classes = shdata.classes || [];
-          _.each(classes, cls => {
-            const classDefs = OctoAttrs[cls] || OctoAttrs['?'];
-            const [stroke, sop, fill, fop] = classDefs;
-            shape
-              .attr('stroke', () => stroke)
-              .attr('stroke-opacity', () => sop)
-              // .attr('fill', () => 'url(#grad1)')
-              .attr('fill', () => fill)
-              .attr('fill-opacity', () => fop)
-            ;
-          });
-          shape.classed(classes.join(' '), true);
-        });
-    });
-
-  // dataSelection.exit().remove();
-}
-
-export function resetShapesFillStroke(svgElement: SVGElement) {
-  d3.select(svgElement)
-    .selectAll('.shape')
-    .each(function () {
-      const shape = d3.select(this);
-      const shdata: ShapeSvg = shape.datum() as any;
-      const classes = shdata.classes || [];
-      _.each(classes, cls => {
-        const classDefs = OctoAttrs[cls];
-        if (_.isArray(classDefs)) {
-          const [stroke, sop, fill, fop] = OctoAttrs[cls];
-          shape
-            .attr('stroke', () => stroke)
-            .attr('stroke-opacity', () => sop)
-            .attr('fill', () => fill)
-            .attr('fill-opacity', () => fop)
-          ;
-        }
-      });
+        .call((a) => a);
     });
 }
+
 export function removeShapes(svgElement: SVGElement) {
   d3.select(svgElement)
     .selectAll('.shape')
@@ -206,15 +123,15 @@ export function highlightShapesFillStroke(svgElement: SVGElement, shapeId: strin
   dimShapesFillStroke(svgElement);
   d3.select(svgElement)
     .select(`#${shapeId}`)
-    .each(function () {
+    .each(function() {
       d3.select(this)
         .attr('stroke', () => 'black')
         .attr('stroke-opacity', () => 1)
         .attr('fill', () => 'blue')
-        .attr('fill-opacity', () => '0.3')
-      ;
+        .attr('fill-opacity', () => '0.3');
     });
 }
+
 export function dimShapesFillStroke(svgElement: SVGElement) {
   d3.select(svgElement)
     .selectAll('.shape')
@@ -246,8 +163,7 @@ export function initSVGDefs(svgElement: SVGElement) {
     .append('stop')
     .attr('offset', '100%')
     .attr('stop-opacity', '0.1')
-    .attr('stop-color', 'blue')
-  ;
+    .attr('stop-color', 'blue');
 
   defs
     .append('marker')
@@ -259,8 +175,7 @@ export function initSVGDefs(svgElement: SVGElement) {
     .attr('markerHeight', '6')
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 0 0 L 10 5 L 0 5 z')
-  ;
+    .attr('d', 'M 0 0 L 10 5 L 0 5 z');
 
   defs
     .append('marker')

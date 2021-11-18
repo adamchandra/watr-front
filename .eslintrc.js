@@ -42,12 +42,16 @@ module.exports = {
                 }],
                 /////////////////
                 /// Desired Rules
-                '@typescript-eslint/indent': ['off'],
+                '@typescript-eslint/lines-between-class-members': ['off'],
+                '@typescript-eslint/space-before-function-paren': ['off'],
+                '@typescript-eslint/space-infix-ops': ['off'],
                 'unicorn/prevent-abbreviations': 'off',
                 'react/destructuring-assignment': 'off',
                 // These two are disabled b/c they rely on react rules (no react used in these projects)
                 'react/jsx-filename-extension': 'off',
                 'unicorn/prefer-node-protocol': ['off'],
+                // 'object-curly-newline': ["error", { "multiline": true }],
+                'object-curly-newline': ['off'],
 
                 // Disabled b/c it interferes with idomatic identical naming of type/const value in io-types decoders
                 // '@typescript-eslint/no-redeclare': ['error', { ignoreDeclarationMerge: true }],
@@ -95,7 +99,7 @@ module.exports = {
                 'no-console': ['off'],
                 'no-empty-pattern': ['off'],
                 'no-multi-assign': ['off'],
-                'no-multiple-empty-lines': ['error', { 'max': 2, 'maxBOF': 0, 'maxEOF': 1 }],
+                'no-multiple-empty-lines': ['warn', { 'max': 2, 'maxBOF': 0, 'maxEOF': 1 }],
                 'no-param-reassign': ['off'],
                 'no-plusplus': ['off'],
                 'no-restricted-globals': ['off'],

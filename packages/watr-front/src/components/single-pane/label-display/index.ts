@@ -6,7 +6,7 @@ import {
   initSVGDefs,
   labelToSVGs,
   removeShapes,
-  updateSvgElement,
+  addSvgElements,
 } from '~/lib/transcript/label-to-svg';
 
 type Args = {
@@ -18,7 +18,6 @@ export interface LabelDisplay {
   clearAll(): void;
 }
 
-
 export async function useLabelDisplay({
   superimposedElements,
 }: Args): Promise<LabelDisplay> {
@@ -27,8 +26,8 @@ export async function useLabelDisplay({
   initSVGDefs(svgElement);
 
   function showLabel(l: Label): void {
-    const svgs = labelToSVGs(l, [], false);
-    updateSvgElement(svgElement, svgs);
+    const svgs = labelToSVGs(l);
+    addSvgElements(svgElement, svgs);
   }
 
   function clearAll(): void {

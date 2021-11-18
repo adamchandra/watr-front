@@ -12,7 +12,7 @@ import { PdfPageViewer } from './page-viewer';
 import { useFlashlight } from '../basics/rtree-search';
 
 import {
-  dimShapesFillStroke, highlightShapesFillStroke, labelToSVGs, removeShapes, updateSvgElement,
+  dimShapesFillStroke, highlightShapesFillStroke, labelToSVGs, removeShapes, addSvgElements,
 } from '~/lib/transcript/label-to-svg';
 
 import { InfoPane } from './info-pane/info-pane';
@@ -120,7 +120,7 @@ export async function useLabelOverlay({
     infoPane.putStringLn(`Loaded ${displayableLabels.length} labels on page ${pageNumber}`);
 
     const shapes = _.flatMap(displayableLabels, (label: Label) => {
-      const asSVGs = labelToSVGs(label, [], false);
+      const asSVGs = labelToSVGs(label);
       return _.map(asSVGs, svg => {
         const asIndexable: TranscriptIndexable<ShapeSvg> = {
           ...svg,
@@ -142,12 +142,12 @@ export async function useLabelOverlay({
         const { rootLabel } = itemSvg.data;
         const items = [itemSvg];
         if (rootLabel) {
-          const svgs = labelToSVGs(rootLabel, [], true);
+          const svgs = labelToSVGs(rootLabel);
           items.push(...svgs);
         }
         return items;
       });
-      updateSvgElement(svgOverlay, allSvgs);
+      addSvgElements(svgOverlay, allSvgs);
     }
   });
   watch(flashlight.eventTargetRecs.mousemove, (mousemove) => {
@@ -161,13 +161,13 @@ export async function useLabelOverlay({
     const items = [itemSvg];
 
     if (rootLabel) {
-      const svgs = labelToSVGs(rootLabel, [], true);
+      const svgs = labelToSVGs(rootLabel);
       items.push(...svgs);
 
       infoPane.showLabel(rootLabel, false);
     }
 
-    updateSvgElement(svgOverlay, items);
+    addSvgElements(svgOverlay, items);
   });
 
   watch(infoPane.reactiveTexts.actions, (actions) => {

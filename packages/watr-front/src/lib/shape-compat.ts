@@ -1,5 +1,5 @@
 import {
-    Point, point, Rect, rect
+  Point, point, Rect, rect
 } from './transcript/shapes';
 
 /**
@@ -7,118 +7,115 @@ import {
  *  for the various libraries in use
  */
 export class BBox {
-    public left: number;
+  public left: number;
+  public top: number;
+  public width: number;
+  public height: number;
 
-    public top: number;
+  public constructor(
+    l: number,
+    t: number,
+    w: number,
+    h: number,
+  ) {
+    this.left = l;
+    this.top = t;
+    this.width = w;
+    this.height = h;
+  }
 
-    public width: number;
+  get minX() {
+    return this.left;
+  }
 
-    public height: number;
+  get minY() {
+    return this.top;
+  }
 
-    public constructor(
-        l: number,
-        t: number,
-        w: number,
-        h: number,
-    ) {
-        this.left = l;
-        this.top = t;
-        this.width = w;
-        this.height = h;
-    }
+  get maxX() {
+    return this.left + this.width;
+  }
 
-    get minX() {
-        return this.left;
-    }
+  get maxY() {
+    return this.top + this.height;
+  }
 
-    get minY() {
-        return this.top;
-    }
+  get x() {
+    return this.left;
+  }
 
-    get maxX() {
-        return this.left + this.width;
-    }
+  get y() {
+    return this.top;
+  }
 
-    get maxY() {
-        return this.top + this.height;
-    }
+  get x1() {
+    return this.left;
+  }
 
-    get x() {
-        return this.left;
-    }
+  get x2() {
+    return this.left + this.width;
+  }
 
-    get y() {
-        return this.top;
-    }
+  get y1() {
+    return this.top;
+  }
 
-    get x1() {
-        return this.left;
-    }
+  get y2() {
+    return this.top + this.height;
+  }
 
-    get x2() {
-        return this.left + this.width;
-    }
+  get bottom() {
+    return this.top + this.height;
+  }
 
-    get y1() {
-        return this.top;
-    }
+  get right() {
+    return this.left + this.width;
+  }
 
-    get y2() {
-        return this.top + this.height;
-    }
+  get topLeft() {
+    return point(this.left, this.top);
+  }
 
-    get bottom() {
-        return this.top + this.height;
-    }
+  public toString() {
+    return `BBox(${this.left}, ${this.top}, ${this.width}, ${this.height})`;
+  }
 
-    get right() {
-        return this.left + this.width;
-    }
-
-    get topLeft() {
-        return point(this.left, this.top);
-    }
-
-    public toString() {
-        return `BBox(${this.left}, ${this.top}, ${this.width}, ${this.height})`;
-    }
-
-    public svgShape() {
-        return rect(
-            this.x,
-            this.y,
-            this.width,
-            this.height
-        );
-    }
+  public svgShape() {
+    return rect(
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    );
+  }
 }
 
 export function bbox(l: number, t: number, w: number, h: number): BBox {
-    return new BBox(l, t, w, h);
+  return new BBox(l, t, w, h);
 }
 
 export function boxCenteredAt(p: Point, width: number, height: number): BBox {
-    const left = p.x - width / 2;
-    const top = p.y - height / 2;
-    return bbox(left, top, width, height);
+  const left = p.x - width / 2;
+  const top = p.y - height / 2;
+  return bbox(left, top, width, height);
 }
 
 
 /** Same interface used by RTree (as implemented in RBush library) */
 export interface MinMaxBox {
-    minX: number;
-    minY: number;
-    maxX: number;
-    maxY: number;
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
 }
 
 export function minMaxToRect(mm: MinMaxBox): Rect {
-    const {
-        minX, minY, maxX, maxY
-    } = mm;
-    const x = minX;
-    const y = minY;
-    const width = maxX - minX;
-    const height = maxY - minY;
-    return rect(x, y, width, height);
+  const {
+    minX, minY, maxX, maxY
+  } = mm;
+  const x = minX;
+  const y = minY;
+  const width = maxX - minX;
+  const height = maxY - minY;
+  return rect(x, y, width, height);
 }
