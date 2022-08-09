@@ -49,9 +49,7 @@ describe('Arglib tests', () => {
   async function runCmd(args: string, ...fs: ArgvApp[]): Promise<Record<string, unknown>> {
     return new Promise((resolve, reject) => {
       yargs.command(
-        'testcmd', 'desc',
-        config(fs),
-        (argv: any) => resolve(argv),
+        'testcmd', 'desc', config(fs), (argv: any) => resolve(argv),
       );
       const argtokens = args.split(' ');
       const allargs = _.concat(['testcmd'], argtokens);

@@ -8,7 +8,7 @@ export function getOrDie<T>(v: T | null | undefined, msg: string = 'null|undef')
 }
 
 export function delay(t: number): Promise<number> {
-  return new Promise(resolve => setTimeout(resolve, t));
+  return new Promise(resolve => { setTimeout(resolve, t); });
 }
 
 export function newIdGenerator(start: number): () => number {

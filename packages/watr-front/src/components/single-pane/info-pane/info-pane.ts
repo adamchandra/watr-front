@@ -105,6 +105,7 @@ export async function useInfoPane({
     textTopCurr += lineOffset;
     textLeftCurr = textLeftInit;
     const lineDimensions = await _putString(x, y, str, id);
+
     return lineDimensions;
   };
 

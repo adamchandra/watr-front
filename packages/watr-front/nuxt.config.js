@@ -35,7 +35,6 @@ export default {
     '~/assets/sass/main.scss'
   ],
   plugins: [
-    '~/plugins/composition-api',
     '~/plugins/global-components'
   ],
   buildModules: [

@@ -45,12 +45,10 @@ function pointFromRepr(repr: PointRepr): Point {
 }
 
 export const Point = new io.Type<Point, PointRepr, unknown>(
-  'Point', isKind('point'),
-  (repr: unknown, c: io.Context) => pipe(
+  'Point', isKind('point'), (repr: unknown, c: io.Context) => pipe(
     PointRepr.validate(repr, c),
     E.chain(validRepr => io.success(pointFromRepr(validRepr))),
-  ),
-  (a: Point) => [floatToRepr(a.x), floatToRepr(a.y)],
+  ), (a: Point) => [floatToRepr(a.x), floatToRepr(a.y)],
 );
 
 /// ==========
@@ -65,12 +63,10 @@ export const CircleRepr = io.tuple([PointRepr, io.number], 'CircleRepr');
 export type CircleRepr = io.TypeOf<typeof CircleRepr>;
 
 export const Circle = new io.Type<Circle, CircleRepr, unknown>(
-  'Circle', isKind('circle'),
-  (repr: unknown, c: io.Context) => pipe(
+  'Circle', isKind('circle'), (repr: unknown, c: io.Context) => pipe(
     CircleRepr.validate(repr, c),
     E.chain(validRepr => io.success(circleFromRepr(validRepr))),
-  ),
-  (a: Circle) => [Point.encode(a.p), floatToRepr(a.r)],
+  ), (a: Circle) => [Point.encode(a.p), floatToRepr(a.r)],
 );
 
 export function circle(p: Point, r: number): Circle {
@@ -94,12 +90,10 @@ export const LineRepr = io.tuple([PointRepr, PointRepr], 'LineRepr');
 export type LineRepr = io.TypeOf<typeof LineRepr>;
 
 export const Line = new io.Type<Line, LineRepr, unknown>(
-  'Line', isKind('line'),
-  (repr: unknown, c: io.Context) => pipe(
+  'Line', isKind('line'), (repr: unknown, c: io.Context) => pipe(
     LineRepr.validate(repr, c),
     E.chain(validRepr => io.success(lineFromRepr(validRepr))),
-  ),
-  (a: Line) => [Point.encode(a.p1), Point.encode(a.p2)],
+  ), (a: Line) => [Point.encode(a.p1), Point.encode(a.p2)],
 );
 
 export function line(p1: Point, p2: Point): Line {
@@ -132,12 +126,10 @@ function triangleFromRepr(repr: TriangleRepr): Triangle {
 }
 
 export const Triangle = new io.Type<Triangle, TriangleRepr, unknown>(
-  'Triangle', isKind('triangle'),
-  (repr: unknown, c: io.Context) => pipe(
+  'Triangle', isKind('triangle'), (repr: unknown, c: io.Context) => pipe(
     TriangleRepr.validate(repr, c),
     E.chain(validRepr => io.success(triangleFromRepr(validRepr))),
-  ),
-  (a: Triangle) => [Point.encode(a.p1), Point.encode(a.p2), Point.encode(a.p3)],
+  ), (a: Triangle) => [Point.encode(a.p1), Point.encode(a.p2), Point.encode(a.p3)],
 );
 
 
@@ -171,12 +163,10 @@ export function rectFromRepr(repr: RectRepr): Rect {
 }
 
 export const Rect = new io.Type<Rect, RectRepr, unknown>(
-  'Rect', isKind('rect'),
-  (u: unknown, c: io.Context) => pipe(
+  'Rect', isKind('rect'), (u: unknown, c: io.Context) => pipe(
     RectRepr.validate(u, c),
     E.chain(validRepr => io.success(rectFromRepr(validRepr))),
-  ),
-  (a: Rect) => {
+  ), (a: Rect) => {
     const {
       x, y, width, height,
     } = a;
@@ -233,12 +223,10 @@ function trapezoidFromRepr(repr: TrapezoidRepr): Trapezoid {
 }
 
 export const Trapezoid = new io.Type<Trapezoid, TrapezoidRepr, unknown>(
-  'Trapezoid', isKind('trapezoid'),
-  (repr: unknown, c: io.Context) => pipe(
+  'Trapezoid', isKind('trapezoid'), (repr: unknown, c: io.Context) => pipe(
     TrapezoidRepr.validate(repr, c),
     E.chain(validRepr => io.success(trapezoidFromRepr(validRepr))),
-  ),
-  (a: Trapezoid) => [
+  ), (a: Trapezoid) => [
     Point.encode(a.topLeft), floatToRepr(a.topWidth),
     Point.encode(a.bottomLeft), floatToRepr(a.bottomWidth),
   ],

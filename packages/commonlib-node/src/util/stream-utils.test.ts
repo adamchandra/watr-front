@@ -16,7 +16,7 @@ import {
 const pipeline = util.promisify(stream.pipeline);
 
 describe('Stream utils', () => {
-  const delay = (t: number) => new Promise(resolve => setTimeout(resolve, t));
+  const delay = (t: number) => new Promise(resolve => { setTimeout(resolve, t); });
 
   async function doAsyncStuff(s: string): Promise<string> {
     return delay(300).then(() => `${s}_${s}`);

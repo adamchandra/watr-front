@@ -83,6 +83,7 @@ module.exports = {
                 'consistent-return': ['off'],
                 'default-case': ['off'],
                 'func-names': ['off'],
+                'function-paren-newline': ['off'],
                 'import/extensions': ['error', 'never', { 'vue': 'always' }],
                 'import/no-cycle': ['off'],
                 'import/no-default-export': ['off'],

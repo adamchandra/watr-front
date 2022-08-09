@@ -16,3 +16,9 @@ Vue.component('CorpusBrowser', CorpusBrowser);
 // Vue.component('Splitpanes', Splitpanes);
 // Vue.component('Pane', Pane);
 // import 'splitpanes/dist/splitpanes.css'
+
+// Install Composition Api
+
+// import Vue from 'vue'
+// import VueCompositionApi from '@nuxtjs/composition-api';
+// Vue.use(VueCompositionApi);

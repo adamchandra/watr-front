@@ -68,13 +68,11 @@ const GeometricRange = new io.Type<GeometricRange, GeometricRangeRepr, unknown>(
     io.UnknownRecord.is(u)
     && io.string.is(u.unit)
     && u.unit === 'shape'
-  ),
-  (repr: unknown, _: io.Context) => pipe(
+  ), (repr: unknown, _: io.Context) => pipe(
     GeometricRangeRepr.decode(repr),
     E.chain(r => Shape.decode(r.at)),
     E.chain(r => io.success({ unit: 'shape', at: r })),
-  ),
-  (a: GeometricRange) => ({ unit: 'shape', at: Shape.encode(a.at) }),
+  ), (a: GeometricRange) => ({ unit: 'shape', at: Shape.encode(a.at) }),
 );
 
 export const RangeRepr = io.union([

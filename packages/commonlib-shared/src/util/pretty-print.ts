@@ -15,25 +15,23 @@ function getCallerContext() {
   lines = _.takeWhile(lines, l => !l.includes('node_modules'));
   lines = _.take(lines, 3);
   let lpad = '  ';
-  const callerContext = _.join(
-    _.map(_.reverse(lines), l => {
-      let line = _.trim(l);
-      const index = line.indexOf('at ');
-      line = line.slice(index + 3, line.length);
-      const parts = _.split(line, '(');
-      const callingContext = _.trim(parts[0]);
-      const [path, lineNum, col] = _.split(parts[1], ':');
+  const callerContext = _.join(_.map(_.reverse(lines), l => {
+    let line = _.trim(l);
+    const index = line.indexOf('at ');
+    line = line.slice(index + 3, line.length);
+    const parts = _.split(line, '(');
+    const callingContext = _.trim(parts[0]);
+    const [path, lineNum, col] = _.split(parts[1], ':');
 
-      _.dropRight(col, 1);
+    _.dropRight(col, 1);
 
-      const pathParts = _.split(path, '/');
-      const endPath = _.join(_.slice(pathParts, pathParts.length - 2, pathParts.length), '/');
-      const result = `>${lpad}${callingContext}: ${endPath}: ${lineNum}`;
-      lpad += lpad;
+    const pathParts = _.split(path, '/');
+    const endPath = _.join(_.slice(pathParts, pathParts.length - 2, pathParts.length), '/');
+    const result = `>${lpad}${callingContext}: ${endPath}: ${lineNum}`;
+    lpad += lpad;
 
-      return result;
-    }), '\n',
-  );
+    return result;
+  }), '\n');
 
   return callerContext;
 }

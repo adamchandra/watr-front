@@ -161,7 +161,8 @@ export default defineComponent({
           return useStanzaViewer({ mountPoint })
             .then(stanzaViewer => stanzaViewer.showStanza(
               transcriptIndex,
-              stanzaNumber, {
+              stanzaNumber,
+              {
                 indexGranularity: 'none',
                 lineBegin: 0,
                 lineCount: 10,

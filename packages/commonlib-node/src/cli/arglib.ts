@@ -3,13 +3,13 @@ import _ from 'lodash';
 import fs from 'fs-extra';
 import path from 'path';
 
-import yargs, { Argv, Arguments, Options } from 'yargs';
+import { Argv, Arguments, Options } from 'yargs';
 
 import { prettyPrint } from '@watr/commonlib-shared';
 
+
 export type ArgvApp = (ya: Argv) => Argv;
 
-export const YArgs = yargs;
 
 export function config(fs: ArgvApp[]): ArgvApp {
   return ya => _.reduce(fs, (acc, f) => f(acc), ya);
@@ -130,7 +130,8 @@ export function registerCmd(
 ): (cb: (parsedArgs: any) => void) => void {
   return (cb: (parsedArgs: any) => void) => {
     useYargs.command(
-      name, description,
+      name,
+      description,
       config(fs),
       (argv: any) => {
         if (_.isArray(argv.errors)) {
@@ -154,3 +155,6 @@ export const opt = {
   cwd: setCwd,
   ion: optAndDesc,
 };
+
+
+export { default as YArgs } from 'yargs';

@@ -8,6 +8,7 @@ import {
   removeShapes,
   addSvgElements,
 } from '~/lib/transcript/label-to-svg';
+import { ShapeSvg } from '~/lib/transcript/shape-to-svg';
 
 type Args = {
   superimposedElements: SuperimposedElements
@@ -15,6 +16,7 @@ type Args = {
 
 export interface LabelDisplay {
   showLabel(l: Label): void;
+  showSVGShapes(svgs: ShapeSvg[]): void;
   clearAll(): void;
 }
 
@@ -30,12 +32,17 @@ export async function useLabelDisplay({
     addSvgElements(svgElement, svgs);
   }
 
+  function showSVGShapes(svgs: ShapeSvg[]): void {
+    addSvgElements(svgElement, svgs);
+  }
+
   function clearAll(): void {
     removeShapes(svgElement);
   }
 
   return {
     showLabel,
+    showSVGShapes,
     clearAll,
   };
 }

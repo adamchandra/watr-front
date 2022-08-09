@@ -43,8 +43,7 @@ describe('Corpus filesystem access utilities', () => {
     fs.mkdirSync(entry0Path);
     _.each(_.range(10), () => {
       updateCorpusJsonFile<Foo>(
-        entry0Path, 'cache', 'cached-text.txt',
-        (prev: any) => {
+        entry0Path, 'cache', 'cached-text.txt', (prev: any) => {
           if (!prev) {
             return { count: 0 };
           }

@@ -18,6 +18,7 @@ import {
 import { InfoPane } from './info-pane/info-pane';
 import { minMaxToRect } from '~/lib/shape-compat';
 import { ShapeSvg } from '~/lib/transcript/shape-to-svg';
+import { useLabelDisplay } from './label-display';
 
 type Args = {
   transcriptIndex: TranscriptIndex;
@@ -48,6 +49,8 @@ export async function useLabelOverlay({
 }: Args): Promise<LabelOverlay> {
   const { superimposedElements, eventlibCore } = pdfPageViewer;
 
+  const labelDisplay = await useLabelDisplay({ superimposedElements });
+
   const indexKey = `page#${pageNumber}/labels`;
 
   transcriptIndex.newKeyedIndex(indexKey);
@@ -58,61 +61,12 @@ export async function useLabelOverlay({
   });
   let freezeFlashlight = false;
 
-  let once = true;
   watch(pageLabelRef, (displayableLabels: Label[]) => {
-    const svgOverlay = superimposedElements.overlayElements.svg;
-
-    if (once) {
-      once = false;
-
-      const defs = d3.select(svgOverlay)
-        .append('defs')
-      ;
-
-      defs
-        .append('linearGradient')
-        .attr('id', 'grad1')
-        .append('stop')
-        .attr('offset', '0%')
-        .attr('stop-opacity', '1.0')
-        .attr('stop-color', 'blue')
-        .append('stop')
-        .attr('offset', '50%')
-        .attr('stop-opacity', '0.5')
-        .attr('stop-color', 'blue')
-        .append('stop')
-        .attr('offset', '100%')
-        .attr('stop-opacity', '0.1')
-        .attr('stop-color', 'blue')
-      ;
-
-      defs
-        .append('marker')
-        .attr('id', 'arrow')
-        .attr('viewBox', '0 0 10 10')
-        .attr('refX', '0')
-        .attr('refY', '5')
-        .attr('markerWidth', '6')
-        .attr('markerHeight', '6')
-        .attr('orient', 'auto')
-        .append('path')
-        .attr('d', 'M 0 0 L 10 5 L 0 5 z');
-
-      defs
-        .append('marker')
-        .attr('id', 'arrow-rear')
-        .attr('viewBox', '0 0 10 10')
-        .attr('refX', '0')
-        .attr('refY', '5')
-        .attr('markerWidth', '6')
-        .attr('markerHeight', '6')
-        .attr('orient', 'auto-start-reverse')
-        .append('path')
-        .attr('d', 'M 0 0 L 10 5 L 0 5 z');
-    }
+    // const svgOverlay = superimposedElements.overlayElements.svg;
 
     if (displayableLabels.length === 0) {
-      removeShapes(svgOverlay);
+      labelDisplay.clearAll();
+      // removeShapes(svgOverlay);
       transcriptIndex.getKeyedIndex(indexKey).clear();
       return;
     }
@@ -147,7 +101,7 @@ export async function useLabelOverlay({
         }
         return items;
       });
-      addSvgElements(svgOverlay, allSvgs);
+      labelDisplay.showSVGShapes(allSvgs);
     }
   });
   watch(flashlight.eventTargetRecs.mousemove, (mousemove) => {
