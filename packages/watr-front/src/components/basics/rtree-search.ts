@@ -26,7 +26,7 @@ export interface RTreeIndexable extends MinMaxBox {
 
 type HitTarget = TranscriptIndexable<any>;
 type HitTargets = HitTarget[];
-type EventTargetRecord = Partial<Record<MouseEventT, Ref<HitTargets>>>;
+type EventTargetRecord = Record<MouseEventT, Ref<HitTargets>>;
 
 interface Flashlight {
   off(): void;
@@ -46,9 +46,20 @@ export function useFlashlight({
   flashlightRadius,
   eventlibCore,
 }: Args): Flashlight {
-  const eventTargetRecs = toRefs(reactive({
+
+  const eventTargetRecs: EventTargetRecord = toRefs(reactive({
     mousemove: [],
     click: [],
+    auxclick: [],
+    contextmenu: [],
+    dblclick: [],
+    mousedown: [],
+    mouseenter: [],
+    mouseleave: [],
+    mouseout: [],
+    mouseover: [],
+    mouseup: [],
+    wheel: [],
   }));
 
   const mousemove = (e: EMouseEvent) => {

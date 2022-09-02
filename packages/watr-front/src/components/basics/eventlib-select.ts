@@ -3,7 +3,9 @@
  */
 import _ from 'lodash';
 import * as d3 from 'd3-selection';
-import { SelectionOrTransition } from 'd3-transition';
+import { transition, SelectionOrTransition } from 'd3-transition';
+
+transition();
 
 import {
   ref as deepRef,
@@ -49,7 +51,7 @@ export function useEventlibSelect({
   const selectionRef: Ref<BBox | null> = deepRef(null);
   const clickedPointRef: Ref<Point | null> = deepRef(null);
 
-  const svgLayer = superimposedElements.overlayElements.svg;
+  const svgLayer = superimposedElements.overlayElements.svg!;
   const svgSelect = d3.select(svgLayer);
 
   let currSvgRect: SelectionOrTransition<SVGRectElement, BBox, SVGElement, unknown>;

@@ -37,7 +37,7 @@ export async function useStanzaViewer({
   };
 
   const mtext = useMeasuredTextOverlay({ superimposedElements });
-  const { textDiv } = superimposedElements.overlayElements;
+  const textDiv = superimposedElements.overlayElements.textDiv!;
   const pageLeft = 0;
   const putTextLn: (o: ShowStanzaOpts) => PutTextLn = () => (lineNum: number, text: string) => {
     const lineY = (size + 2) * lineNum;

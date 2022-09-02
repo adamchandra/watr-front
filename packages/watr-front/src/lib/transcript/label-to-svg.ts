@@ -55,7 +55,8 @@ function _labelToSVGs(
   return _.concat(localSVGs, childSVGs);
 }
 
-function initEachDimensions(r: d3.Selection<SVGElement, ShapeSvg, null, unknown>): void {
+// function initEachDimensions(r: d3.Selection<SVGElement, ShapeSvg, null, unknown>): void {
+function initEachDimensions(r: d3.Selection<SVGElement, any, null, unknown>): void {
   r.classed('shape', true);
   const d = r.datum();
   switch (d.tag) {
@@ -89,7 +90,8 @@ function initEachDimensions(r: d3.Selection<SVGElement, ShapeSvg, null, unknown>
   }
 }
 
-function setSVGColors(r: d3.Selection<SVGElement, ShapeSvg, null, unknown>): void {
+// function setSVGColors(r: d3.Selection<SVGElement, ShapeSvg, null, unknown>): void {
+function setSVGColors(r: d3.Selection<SVGElement, any, null, unknown>): void {
   r.attr('fill-opacity', () => 0.8)
     .attr('stroke-opacity', () => 1)
     .attr('stroke-width', 1)
@@ -106,6 +108,7 @@ export function addSvgElements(svgElement: SVGElement, svgShapes: ShapeSvg[]): v
   dataSelection.enter()
     .each(function(shape: ShapeSvg) {
       const self = d3.select(this);
+
       return self.append<SVGElement>(shape.tag)
         .call(initEachDimensions)
         .call(setSVGColors)

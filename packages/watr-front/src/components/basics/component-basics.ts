@@ -17,7 +17,7 @@ export async function awaitRef<T>(tref: Ref<T | null | undefined>): Promise<T> {
   });
 }
 
-export function awaitRefTask<T>(ref: Ref<T>): TE.TaskEither<never, T> {
+export function awaitRefTask<T, E>(ref: Ref<T>): TE.TaskEither<E, T> {
   return () => awaitRef(ref).then(x => E.right(x));
 }
 
@@ -73,14 +73,16 @@ export function watchAll(rs?: Ref<any>[]): any {
     const startFlag = deepRef(false);
     const rhead = curr.shift();
 
-    const stopInner = watch([rhead, startFlag], () => {
-      const rval = rhead.value;
-      if (rval !== null && rval !== undefined) {
-        stopInner();
-        state.curr.value += 1;
-        next.value += 1;
-      }
-    }, { immediate: false });
+    if (rhead) {
+      const stopInner = watch([rhead, startFlag], () => {
+        const rval = rhead.value;
+        if (rval !== null && rval !== undefined) {
+          stopInner();
+          state.curr.value += 1;
+          next.value += 1;
+        }
+      }, { immediate: false });
+    }
 
     startFlag.value = true;
   }, {

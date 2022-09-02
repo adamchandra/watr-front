@@ -10,7 +10,7 @@ import {
   shallowRef,
 } from '@nuxtjs/composition-api';
 
-import Bluebird from 'bluebird';
+// import Bluebird from 'bluebird';
 
 import {
   Radix,
@@ -53,9 +53,9 @@ async function updateDisplay(
   choices: DisplayTreeT,
   query: string,
   renderedRef: Ref<RenderedGroupT[]>,
-  priorAttempt?: Bluebird<void>,
-): Bluebird<void> {
-  const delay = priorAttempt || Bluebird.resolve();
+  priorAttempt?: Promise<void>,
+): Promise<void> {
+  const delay = priorAttempt || Promise.resolve();
 
   return delay.then(() => {
     queryAndUpdateDisplayTree(choices, query, (label) => getLabelTerms(label).map(s => s.toLowerCase()));
@@ -89,7 +89,7 @@ export default defineComponent({
     watch(choicesRef, (choices) => {
       if (choices === null) return;
 
-      let currUpdate: Bluebird<void> = updateDisplay(choices, '', currSelectionRef);
+      let currUpdate: Promise<void> = updateDisplay(choices, '', currSelectionRef);
 
       const updateSelection = (query: string) => {
         currUpdate = updateDisplay(choices, query, currSelectionRef, currUpdate);

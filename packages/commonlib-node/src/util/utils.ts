@@ -7,7 +7,7 @@ export function getOrDie<T>(v: T | null | undefined, msg: string = 'null|undef')
   return v;
 }
 
-export function delay(t: number): Promise<number> {
+export function delay(t: number): Promise<unknown> {
   return new Promise(resolve => { setTimeout(resolve, t); });
 }
 

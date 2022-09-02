@@ -46,9 +46,9 @@ function radGet<T>(
   path: string | string[],
 ): T | undefined {
   const pathCurr = _.concat(path);
-  let radCurr = radix;
+  let radCurr: Radix<T> | undefined = radix;
   while (pathCurr.length > 0 && radCurr !== undefined) {
-    const p = pathCurr.shift();
+    const p = pathCurr.shift()!;
     radCurr = radCurr.children.get(p);
   }
 
@@ -111,14 +111,14 @@ export interface FoldArgs<T, U> {
   index: number;
   nodeData?: T;
   childResults: U[];
-  node: Radix<T>;
+  node?: Radix<T>;
 }
 
 export const radFoldUp = <T, U>(
   radix: Radix<T>,
   f: (path: RadixPath, args: FoldArgs<T, U>) => U,
 ): U => {
-  const rstack: [string[], T | undefined, number, Radix<T>][] = [];
+  const rstack: [string[], T | undefined, number | undefined, Radix<T> | undefined][] = [];
 
   radTraverseDepthFirst(radix, (path, maybeT, childCount, node) => {
     rstack.push([path, maybeT, childCount, node]);
@@ -128,7 +128,7 @@ export const radFoldUp = <T, U>(
   let index = 0;
   while (rstack.length > 0) {
     // prettyPrint({ currRStack: rstack.map(el => ({path: el[0], tval: el[1] })), ustack })
-    const [ipath, nodeData, ichildCount, node] = rstack.pop();
+    const [ipath, nodeData, ichildCount, node] = rstack.pop()!;
     const childResults = ustack.splice(0, ichildCount);
     const ures = f(ipath, {
       nodeData, index, childResults, node,

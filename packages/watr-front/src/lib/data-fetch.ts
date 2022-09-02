@@ -26,13 +26,16 @@ export function fetchAndDecode<A, IO>(
   );
 }
 
-export const fetchAndDecodeTranscript = (entryId: string): TE.TaskEither<string[], Transcript> => {
+export const fetchAndDecodeTranscript = (entryId: string): TE.TaskEither<string, Transcript> => {
   const fetcher = () => getArtifactData<any>(entryId, 'transcript')
     .then(data => (data === undefined
       ? E.left([`could not fetch transcript ${entryId}`])
       : E.right(markRaw(data))));
 
-  return fetchAndDecode(Transcript, fetcher);
+  return pipe(
+    fetchAndDecode(Transcript, fetcher),
+    TE.mapLeft(errs => errs.join("\n"))
+  )
 };
 
 const CorpusEntry = io.type({
@@ -45,11 +48,14 @@ const CorpusEntryList = io.type({
 });
 export type CorpusEntryList = io.TypeOf<typeof CorpusEntryList>;
 
-export const fetchAndDecodeCorpusEntryList = (): TE.TaskEither<string[], CorpusEntryList> => {
+export const fetchAndDecodeCorpusEntryList = (): TE.TaskEither<string, CorpusEntryList> => {
   const fetcher = () => getEntryList<any>()
     .then(data => (data === undefined
       ? E.left(['could not fetch corpus entry listing'])
       : E.right(data)));
 
-  return fetchAndDecode(CorpusEntryList, fetcher);
+  return pipe(
+    fetchAndDecode(CorpusEntryList, fetcher),
+    TE.mapLeft(errs => errs.join("\n"))
+  );
 };

@@ -52,7 +52,7 @@ export default {
 
           textOverlay.clearText();
 
-          const svgLayer = superimposedElements.overlayElements.svg;
+          const svgLayer = superimposedElements.overlayElements.svg!;
           const svgSelect = d3.select(svgLayer);
 
           _.each(inputLines, (line, linenum) => {

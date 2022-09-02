@@ -143,9 +143,10 @@ export const LabelPartialsRepr = io.partial({
   children: io.array(LabelRepr),
   props: io.record(io.string, io.array(io.string)),
 });
+
 export type LabelPartialsRepr = io.TypeOf<typeof LabelPartialsRepr>;
 
-export const Label = new io.Type<Label, LabelRepr, unknown>(
+export const Label: io.Type<Label, LabelRepr, unknown> = new io.Type<Label, LabelRepr, unknown>(
   'Label',
 
   (u: any): u is Label => io.string.is(u.name) && io.array(Range).is(u.range),

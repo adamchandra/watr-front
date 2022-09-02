@@ -68,12 +68,12 @@ export async function useSuperimposedElements({
 
   const width = () => dimensions.value[0];
   const height = () => dimensions.value[1];
-  const placeholderImage = () => `http://via.placeholder.com/${width()}x${height()}`;
+  const placeholderImage = () => `https://via.placeholder.com/${width()}x${height()}`;
   const imgElemSource: Ref<string | null> = deepRef(null);
 
   await awaitRef(mountPoint);
 
-  const overlayContainer = mountPoint.value;
+  const overlayContainer = mountPoint.value!;
   overlayContainer.classList.add('layers');
   const {
     img, canvas, svg, textDiv, eventDiv,

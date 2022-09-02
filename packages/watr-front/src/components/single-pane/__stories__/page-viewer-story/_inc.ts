@@ -27,7 +27,10 @@ export default {
     const params = new URLSearchParams(uri);
     console.log('id', params.get('id'));
 
-    const pageLabelRefs: Array<Ref<Label[]>> = [];
+
+    // const pageLabelRefs: Array<Ref<Label[]>> = [];
+    const pageLabelRef: Ref<Label[]> = deepRef([]);
+    // console.log('pageLabelRefs', pageLabelRefs);
 
     const run = pipe(
       TE.right({ entryId }),
@@ -44,7 +47,8 @@ export default {
         pdfPageViewer,
         transcriptIndex,
         pageNumber,
-        pageLabelRef: pageLabelRefs[pageNumber],
+        // pageLabelRef: pageLabelRefs[pageNumber],
+        pageLabelRef,
         showAllLabels,
       }).then(x => E.right(x))),
 

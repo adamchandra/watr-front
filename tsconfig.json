@@ -1,10 +1,39 @@
 {
-  "extends": "./tsconfig.build.json",
   "compilerOptions": {
-    "baseUrl": "./",
+    "module": "commonjs",
+    "target": "esnext",
+    "lib": ["ESNext"],
+    "moduleResolution": "node",
+    "strict": true,
+    "strictNullChecks": true,
+    "allowJs": false,
+    "sourceMap": true,
+    "noEmitOnError": true,
+    "noEmit": false,
+    "composite": true,
+    "incremental": true,
+    "declaration": true,
+    "declarationMap": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": false,
+    "types": [
+      "node",
+      "jest"
+    ],
     "paths": {
-      "@watr/*": ["packages/*/src"],
-      "~/*": ["packages/*/src"]
+      "@watr/codemorphs": ["packages/codemorphs/src"],
+      "@watr/commonlib-node": ["packages/commonlib-node/src"],
+      "@watr/commonlib-shared": ["packages/commonlib-shared/src"],
+      "@watr/root": ["packages/root/src"],
+      "@watr/server": ["packages/server/src"],
+      "@watr/watr-front": ["packages/watr-front/src"]
     }
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
+  "references": [
+  ]
 }

@@ -48,7 +48,7 @@ export function useGlyphOverlays({
     flashlightRadius,
   });
 
-  const svgLayer = superimposedElements.overlayElements.svg;
+  const svgLayer = superimposedElements.overlayElements.svg!;
   const svgSelect = d3.select(svgLayer);
 
   watch(flashlight.eventTargetRecs.mousemove, (mousemove) => {

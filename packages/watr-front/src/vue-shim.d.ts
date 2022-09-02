@@ -1,6 +1,6 @@
 declare module '*.vue' {
-
-
+  import Vue from 'vue'
+  export default Vue
 }
 
 declare module 'splitpanes' {
@@ -9,4 +9,4 @@ declare module 'splitpanes' {
 }
 
 // eslint-disable-next-line no-restricted-exports
-export { default } from 'vue';
+// export { default } from 'vue';

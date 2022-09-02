@@ -1,17 +1,20 @@
+
 import _ from 'lodash';
 
 import fs from 'fs-extra';
 import path from 'path';
 
-import { Argv, Arguments, Options } from 'yargs';
+import yargs, { Argv, Arguments, Options, MiddlewareFunction } from 'yargs';
+import { putStrLn } from '@watr/commonlib-shared';
 
-import { prettyPrint } from '@watr/commonlib-shared';
+export const YArgs = yargs;
 
+export type YArgsT = yargs.Argv;
 
 export type ArgvApp = (ya: Argv) => Argv;
 
 
-export function config(fs: ArgvApp[]): ArgvApp {
+export function config(...fs: ArgvApp[]): ArgvApp {
   return ya => _.reduce(fs, (acc, f) => f(acc), ya);
 }
 
@@ -55,6 +58,31 @@ const optAndDesc = (optAndDesc: string, ext?: Options) => (ya: Argv): Argv => {
   return ya.option(optname, opts);
 };
 
+const optFlag = (odesc: string, def?: boolean) =>  optAndDesc(odesc, {
+  type: 'boolean',
+  demandOption: def === undefined,
+  default: def
+});
+
+const optNum = (odesc: string, def?: number) =>  optAndDesc(odesc, {
+  type: 'number',
+  demandOption: def === undefined,
+  default: def
+});
+
+const optString = (odesc: string, def?: string) =>  optAndDesc(odesc, {
+  type: 'string',
+  demandOption: def === undefined,
+  default: def
+});
+
+// const optlogLevel = (def?: string) => optAndDesc('log-level: set logging level', {
+//   type: 'string',
+//   choices: AllLogLevels,
+//   demandOption: def === undefined,
+//   default: def
+// });
+
 const existingPath = (pathAndDesc: string) => (ya: Argv) => {
   let [pathname, desc] = pathAndDesc.includes(':')
     ? pathAndDesc.split(':')
@@ -65,27 +93,38 @@ const existingPath = (pathAndDesc: string) => (ya: Argv) => {
   ya.option(pathname, {
     describe: desc,
     type: 'string',
+    demandOption: true,
     requiresArg: true,
   });
 
-  ya.middleware((argv: Arguments) => {
+  const middleFunc: MiddlewareFunction = (argv: Arguments) => {
     const p = resolveArgPath(argv, pathname);
     if (p && fs.existsSync(p)) {
-      return argv;
+      return;
     }
+
+    const errorMsg = `--${pathname}: Path doesn't exist: ${p}`;
+
+    putStrLn(errorMsg)
+
     _.update(argv, ['errors'], (prev: string[] | undefined | null) => {
       const newval = prev || [];
-      return _.concat(newval, [`--${pathname}: ${p} doesn't exist`]);
+      return _.concat(newval, [`--${pathname}: Path doesn't exist: ${p}`]);
     });
-    return argv;
-  }, /* applyBeforeValidation= */ true);
+  };
+
+  ya.middleware(middleFunc, /* applyBeforeValidation= */ true);
 
   return ya;
 };
 
-export const existingDir = (dirAndDesc: string): (ya: Argv) => Argv => existingPath(dirAndDesc);
+export const existingDir = (dirAndDesc: string): (ya: Argv) => Argv => {
+  return existingPath(dirAndDesc);
+};
 
-export const existingFile = (fileAndDesc: string): (ya: Argv) => Argv => existingPath(fileAndDesc);
+export const existingFile = (fileAndDesc: string): (ya: Argv) => Argv => {
+  return existingPath(fileAndDesc);
+};
 
 export const configFile = (ya: Argv): Argv => {
   ya.option('config', {
@@ -110,39 +149,54 @@ export const configFile = (ya: Argv): Argv => {
       _.each(confKVs, ([k, v]) => {
         argv[k] = v;
       });
-      return argv;
+      return;
     }
-    return argv;
+    return;
   }, /* applyBeforeValidation= */ true);
 
   return ya;
 };
 
-export function setOpt(ya: Argv): typeof ya.option {
+
+export const setOpt = (ya: Argv) => {
   return ya.option;
-}
+};
 
 export function registerCmd(
   useYargs: Argv,
   name: string,
   description: string,
   ...fs: ArgvApp[]
-): (cb: (parsedArgs: any) => void) => void {
-  return (cb: (parsedArgs: any) => void) => {
+): (cb: (parsedArgs: any) => void | Promise<void>) => void {
+  return (cb: (parsedArgs: any) => void | Promise<void>) => {
     useYargs.command(
-      name,
-      description,
-      config(fs),
-      (argv: any) => {
+      name, description, config(...fs), async (argv: any): Promise<void> => {
         if (_.isArray(argv.errors)) {
-          const fullArgs = _.merge({}, argv);
-          prettyPrint({ msg: 'Error registering yargs command', errors: argv.errors, fullArgs });
+          const errors: string[] = argv.errors;
+          const errstr = errors.join('\n');
+          putStrLn(`Error running Command: ${errstr}`);
           return;
         }
-        cb(argv);
-      },
+        // const time1 = (new Date()).toLocaleTimeString();
+        const res = await Promise.resolve(cb(argv));
+        // const time2 = (new Date()).toLocaleTimeString();
+        return res;
+      }
     );
   };
+}
+export async function runRegisteredCmds(useYargs: Argv): Promise<void> {
+  const res = useYargs
+    .strictCommands()
+    .demandCommand(1, 'You need at least one command before moving on')
+    .help()
+    .fail((err) => {
+      console.log('RunCLI Error', err);
+      useYargs.showHelp();
+    })
+    .argv;
+
+  await Promise.resolve(res);
 }
 
 export const opt = {
@@ -154,7 +208,8 @@ export const opt = {
   file: existingFile,
   cwd: setCwd,
   ion: optAndDesc,
+  flag: optFlag,
+  num: optNum,
+  str: optString,
+  // logLevel: optlogLevel,
 };
-
-
-export { default as YArgs } from 'yargs';

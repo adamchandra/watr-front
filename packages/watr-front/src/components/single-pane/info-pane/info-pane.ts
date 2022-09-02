@@ -47,11 +47,12 @@ export async function useInfoPane({
   });
 
   const mtext = useMeasuredTextOverlay({ superimposedElements });
+  const mountDiv = mountPoint.value!;
 
-  mountPoint.value.addEventListener('resize', (_event: UIEvent) => {
+  mountDiv.addEventListener('resize', (_event: UIEvent) => {
     superimposedElements.setDimensions(
-      mountPoint.value.clientWidth,
-      mountPoint.value.clientHeight,
+      mountDiv.clientWidth,
+      mountDiv.clientHeight,
     );
   });
 

@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 function getCallerContext() {
   function getErrorObject(): Error {
-    try { throw new Error('unused'); } catch (error) { return error; }
+    try { throw new Error('unused'); } catch (error: any) { return error; }
   }
 
   // Get caller context

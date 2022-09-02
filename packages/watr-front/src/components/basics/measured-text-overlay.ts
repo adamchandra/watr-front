@@ -28,7 +28,7 @@ export function useMeasuredTextOverlay({
   const charWidthCache: Record<string, number> = {};
 
   function putTextLn(style: TextStyle, x: number, y: number, text: string): LineDimensions {
-    const { textDiv } = superimposedElements.overlayElements;
+    const textDiv = superimposedElements.overlayElements.textDiv!;
     const fontstring = makeStyleString(style);
 
     const div = document.createElement('div');

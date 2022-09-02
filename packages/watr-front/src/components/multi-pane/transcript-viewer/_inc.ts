@@ -32,7 +32,7 @@ import { useLabelOverlay } from '~/components/single-pane/label-overlay';
 import { getQueryParam } from '~/lib/url-utils';
 
 import SplitScreen from '~/components/basics/splitscreen/index.vue';
-import { useInfoPane } from '~/components/single-pane/info-pane/info-pane';
+import { InfoPane, useInfoPane } from '~/components/single-pane/info-pane/info-pane';
 import { getLabelProp } from '~/lib/transcript/tracelogs';
 import { createDisplayTree, TreeNode } from '~/components/single-pane/narrowing-filter/display-tree';
 
@@ -78,9 +78,10 @@ export default defineComponent({
       const grouped = _.groupBy(labels, l => l[1]);
       const pageNumbers = _.keys(grouped);
       _.each(pageNumbers, p => {
-        const group = grouped[p];
+        const page = parseInt(p);
+        const group = grouped[page];
         const glabels = _.map(group, g => g[0]);
-        pageLabelRefs[p].value = VC.markRaw(glabels);
+        pageLabelRefs[page].value = VC.markRaw(glabels);
       });
     };
 
@@ -98,6 +99,8 @@ export default defineComponent({
 
     const appStateRefs: VC.ToRefs<AppState> = VC.toRefs(appStateRef);
 
+    // const asdf: TE.TaskEither<string, InfoPane>  = () => useInfoPane({ mountPoint: infoPaneDiv }).then(s => E.right(s));
+
     const run = pipe(
       TE.right({}),
       TE.bind('entryId', ({ }) => TE.fromEither(getQueryParam('id'))),
@@ -107,6 +110,7 @@ export default defineComponent({
       TE.bind('stanzaListDiv', ({ }) => awaitRefTask(stanzaListDiv)),
       TE.bind('selectionFilterDiv', ({ }) => awaitRefTask(selectionFilterDiv)),
       TE.bind('transcript', ({ entryId }) => fetchAndDecodeTranscript(entryId)),
+
       TETap(({ infoPane }) => infoPane.putStringLn('fetched transcript')),
       TE.bind('transcriptIndex', ({ transcript }) => TE.right(new TranscriptIndex(transcript))),
       TETap(({ infoPane }) => infoPane.putStringLn('indexed transcript')),
@@ -115,6 +119,7 @@ export default defineComponent({
         entryId, pageImageListDiv, transcript, transcriptIndex, infoPane,
       }) => {
         const allPageLabels = transcriptIndex.getLabels([]);
+
 
         const displayTree = createDisplayTree<Label>(
           allPageLabels,
@@ -131,7 +136,7 @@ export default defineComponent({
 
         const inits = _.map(transcript.pages, async (_, pageNumber) => {
           const mount = document.createElement('div');
-          pageImageListDiv.append(mount);
+          pageImageListDiv!.append(mount);
           const mountPoint = divRef();
           mountPoint.value = mount;
 
@@ -157,7 +162,7 @@ export default defineComponent({
           const mount = document.createElement('div');
           const mountPoint = divRef();
           mountPoint.value = mount;
-          stanzaListDiv.append(mount);
+          stanzaListDiv!.append(mount);
           return useStanzaViewer({ mountPoint })
             .then(stanzaViewer => stanzaViewer.showStanza(
               transcriptIndex,

@@ -23,7 +23,7 @@ export interface LabelDisplay {
 export async function useLabelDisplay({
   superimposedElements,
 }: Args): Promise<LabelDisplay> {
-  const svgElement = superimposedElements.overlayElements.svg;
+  const svgElement = superimposedElements.overlayElements.svg!;
 
   initSVGDefs(svgElement);
 

@@ -148,7 +148,9 @@ export function createDisplayTree<ItemT>(
 
   radTraverseDepthFirst<NodeT>(labelRadix, (_path, data, _childCount, node) => {
     if (data === undefined) {
-      node.data = emptyNode();
+      if (node) {
+        node.data = emptyNode();
+      }
     } else if (isDataNode(data)) {
       data.setItemCount(data.data.length);
     }
@@ -169,6 +171,9 @@ export function queryAndUpdateDisplayTree<ItemT>(
   const showAll = queryTerms.length === 0;
 
   radFoldUp<NodeT, number>(displayTree, (path, { nodeData, childResults }) => {
+    if (!nodeData) {
+      return 0;
+    }
     nodeData.visibleDescendantCount = _.sum(_.concat(childResults, 0));
 
     if (isDataNode(nodeData)) {
@@ -199,6 +204,10 @@ export function renderDisplayTree<ItemT>(
 ): Array<RenderedGroup<ItemT[]>> {
   const renderedGroups: RenderedGroup<ItemT[]>[][] = radUnfold(displayTree, (path, nodeData) => {
     if (path.length === 0) return [];
+    if (!nodeData) {
+      return [];
+    }
+
     if (nodeData.getTotalVisible() === 0) return [];
 
     const childVis = nodeData.visibleDescendantCount;
@@ -254,7 +263,7 @@ export function renderItemTo<U>(
   traverseDF(ritem, (ri, rchilds) => rstack.push([ri, rchilds]));
   const ustack: U[] = [];
   while (rstack.length > 0) {
-    const [rtop, rchilds] = rstack.pop();
+    const [rtop, rchilds] = rstack.pop()!;
     const childResults = ustack.splice(0, rchilds);
     const ures = f(rtop, childResults);
     ustack.unshift(ures);
@@ -273,7 +282,7 @@ export function renderAbbrevString0(strings: string[]): string {
   const abbrevs = radFoldUp<number, string>(abbrevRadix, (path, { childResults }) => {
     const childAbbrev = childResults.length > 1 ? `(${childResults.join('|')})` : childResults.join('');
     if (path.length > 0) {
-      const pathLast: string = _.last(path);
+      const pathLast: string = _.last(path)!;
       return `${pathLast}${childAbbrev}`;
     }
     return childAbbrev;
@@ -292,7 +301,7 @@ export function renderAbbrevString(strings: string[]): string {
     const childAbbrev = childResults.length > 1 ? ` ${childResults.join(' ')} ` : childResults.join('');
     // const childAbbrev = nodeData === undefined? childAbbrev_ : `.${childAbbrev_}`;
     if (path.length > 0) {
-      const pathLast: string = _.last(path);
+      const pathLast: string = _.last(path)!;
       return `${pathLast}${childAbbrev}`;
     }
     return childAbbrev;

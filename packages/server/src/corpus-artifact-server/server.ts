@@ -14,10 +14,10 @@ registerCmd(
   arglib.YArgs,
   'corpus-server',
   'server filesystem artifacts from corpus',
-  config([
+  config(
     opt.cwd,
     opt.existingDir('corpus-root: root directory for corpus files'),
-  ]),
+  ),
 )((args: any) => {
   const { corpusRoot } = args;
 

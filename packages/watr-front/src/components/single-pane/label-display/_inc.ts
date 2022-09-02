@@ -119,13 +119,13 @@ function drawBasicShapes(showLabel: (l: Label) => void) {
       .withProps('role', ['shaded']).get(),
     (x, y) => makeGridLabel(x, y)
   ];
-  const exampleGallery = _.map(_.zip(examples, galleryGrid), ([lfunc, { x, y }]) => {
-    if (lfunc !== undefined) {
-      return lfunc(x, y);
+  const exampleGallery = _.map(_.zip(examples, galleryGrid), ([lfunc, grid]) => {
+    if (lfunc && grid) {
+      return lfunc(grid.x, grid.y);
     }
   });
 
-  _.each(exampleGallery, (l: Label) => {
+  _.each(exampleGallery, (l?: Label) => {
     if (l !== undefined) {
       showLabel(l);
     }

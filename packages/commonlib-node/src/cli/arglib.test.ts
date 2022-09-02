@@ -16,11 +16,11 @@ describe('Arglib tests', () => {
       yargs,
       'extract-abstracts',
       'run the abstract field extractors over htmls in corpus',
-      config([
+      config(
         opt.cwd,
         opt.existingDir('corpus-root: root directory for corpus files'),
         opt.ion('overwrite: force overwrite of existing files', { boolean: false }),
-      ]),
+      ),
     )((_args: any) => {
       // prettyPrint({ msg: 'success!', args });
     });
@@ -38,18 +38,18 @@ describe('Arglib tests', () => {
     });
     // const args2 = 'c1 --dir non-existent'.split(' ');
 
-    YArgs
-      .demandCommand(1, 'You need at least one command before moving on')
-      .fail((_msg, _err, _yargs) => {
-        // const errmsg = err ? `${err.name}: ${err.message}` : '';
-        // prettyPrint({ msg, errmsg });
-      }).parse(args1);
+    // YArgs
+    //   .demandCommand(1, 'You need at least one command before moving on')
+    //   .fail((_msg, _err, _yargs) => {
+    //     // const errmsg = err ? `${err.name}: ${err.message}` : '';
+    //     // prettyPrint({ msg, errmsg });
+    //   }).parse(args1);
   });
 
   async function runCmd(args: string, ...fs: ArgvApp[]): Promise<Record<string, unknown>> {
     return new Promise((resolve, reject) => {
       yargs.command(
-        'testcmd', 'desc', config(fs), (argv: any) => resolve(argv),
+        'testcmd', 'desc', config(...fs), (argv: any) => resolve(argv),
       );
       const argtokens = args.split(' ');
       const allargs = _.concat(['testcmd'], argtokens);

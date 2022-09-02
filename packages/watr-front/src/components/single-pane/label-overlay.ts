@@ -59,7 +59,10 @@ export async function useLabelOverlay({
   const flashlight = useFlashlight({
     indexKey, transcriptIndex, eventlibCore, flashlightRadius,
   });
+
   let freezeFlashlight = false;
+
+  console.log('pageLabelRef', pageLabelRef);
 
   watch(pageLabelRef, (displayableLabels: Label[]) => {
     // const svgOverlay = superimposedElements.overlayElements.svg;
@@ -71,7 +74,9 @@ export async function useLabelOverlay({
       return;
     }
 
-    infoPane.putStringLn(`Loaded ${displayableLabels.length} labels on page ${pageNumber}`);
+    if (infoPane) {
+      infoPane.putStringLn(`Loaded ${displayableLabels.length} labels on page ${pageNumber}`);
+    }
 
     const shapes = _.flatMap(displayableLabels, (label: Label) => {
       const asSVGs = labelToSVGs(label);
@@ -104,11 +109,12 @@ export async function useLabelOverlay({
       labelDisplay.showSVGShapes(allSvgs);
     }
   });
-  watch(flashlight.eventTargetRecs.mousemove, (mousemove) => {
+  const moveEvent = flashlight.eventTargetRecs.mousemove;
+
+  watch(moveEvent, (mousemove) => {
     if (mousemove === undefined || mousemove.length === 0) return;
     if (freezeFlashlight) return;
-    const svgOverlay = superimposedElements.overlayElements.svg;
-
+    const svgOverlay = superimposedElements.overlayElements.svg!;
     const item = mousemove[0];
     const itemSvg = item.cargo;
     const { rootLabel } = itemSvg.data;
@@ -118,23 +124,25 @@ export async function useLabelOverlay({
       const svgs = labelToSVGs(rootLabel);
       items.push(...svgs);
 
-      infoPane.showLabel(rootLabel, false);
+      if (infoPane) {
+        infoPane.showLabel(rootLabel, false);
+      }
     }
 
     addSvgElements(svgOverlay, items);
   });
 
-  watch(infoPane.reactiveTexts.actions, (actions) => {
-    const svgOverlay = superimposedElements.overlayElements.svg;
-    freezeFlashlight = actions.includes('freeze');
-    d3.select(svgOverlay).classed('inspecting', freezeFlashlight);
-    if (freezeFlashlight) {
-      dimShapesFillStroke(svgOverlay);
-    } else {
-      removeShapes(svgOverlay);
-    }
-  });
-  if (infoPane !== undefined) {
+  if (infoPane) {
+    watch(infoPane.reactiveTexts.actions, (actions) => {
+      const svgOverlay = superimposedElements.overlayElements.svg!;
+      freezeFlashlight = actions.includes('freeze');
+      d3.select(svgOverlay).classed('inspecting', freezeFlashlight);
+      if (freezeFlashlight) {
+        dimShapesFillStroke(svgOverlay);
+      } else {
+        removeShapes(svgOverlay);
+      }
+    });
     watch(flashlight.eventTargetRecs.click, (click) => {
       if (click === undefined || click.length === 0) return;
       if (freezeFlashlight) return;
@@ -146,13 +154,13 @@ export async function useLabelOverlay({
       }
     });
 
-    watch(infoPane.reactiveTexts.mouseover, (hoveringId: string) => {
-      const svgOverlay = superimposedElements.overlayElements.svg;
+    watch(infoPane.reactiveTexts.mouseover, (hoveringId) => {
+      const svgOverlay = superimposedElements.overlayElements.svg!;
       if (hoveringId === null) return;
       highlightShapesFillStroke(svgOverlay, hoveringId);
     });
 
-    watch(infoPane.reactiveTexts.mouseout, (_hoveringId: string) => {
+    watch(infoPane.reactiveTexts.mouseout, (hoveringId) => {
       // if (hoveringId === null) return;
     });
   }
