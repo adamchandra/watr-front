@@ -9,7 +9,7 @@ import {
   toRefs,
   reactive,
 
-} from '@nuxtjs/composition-api';
+} from 'vue';
 
 import { EventlibCore } from './eventlib-core';
 import { EMouseEvent, MouseHandlerInit, MouseEventT } from '~/lib/EventlibHandlers';

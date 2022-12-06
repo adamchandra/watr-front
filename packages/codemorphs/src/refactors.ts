@@ -49,7 +49,7 @@ export function setupVueComponent(tsconfigPath: string, componentName: string, r
   const capParts = _.map(nameParts, _.capitalize);
   const title = _.join(capParts, ' ');
 
-  const vueContent = `<template lang="html" src="./_inc.html"></template>
+  const vueContent = `<template  src="./_inc.html"></template>
 <script lang="ts" src="./index.ts">
 // story-name=${_.camelCase(componentName)}
 // story-title=${title}

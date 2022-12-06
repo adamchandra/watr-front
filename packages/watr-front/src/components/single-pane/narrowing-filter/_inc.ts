@@ -8,7 +8,7 @@ import {
   inject,
   SetupContext,
   shallowRef,
-} from '@nuxtjs/composition-api';
+} from 'vue';
 
 // import Bluebird from 'bluebird';
 

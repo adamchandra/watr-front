@@ -1,9 +1,9 @@
 import _ from 'lodash';
 
-import {
-  Ref,
-  watch,
-} from '@nuxtjs/composition-api';
+// import {
+//   Ref,
+//   watch,
+// } from 'vue';
 
 import * as d3 from 'd3-selection';
 import { TranscriptIndex, TranscriptIndexable } from '~/lib/transcript/transcript-index';
@@ -19,6 +19,7 @@ import { InfoPane } from './info-pane/info-pane';
 import { minMaxToRect } from '~/lib/shape-compat';
 import { ShapeSvg } from '~/lib/transcript/shape-to-svg';
 import { useLabelDisplay } from './label-display';
+import { Ref } from 'vue';
 
 type Args = {
   transcriptIndex: TranscriptIndex;

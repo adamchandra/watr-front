@@ -38,7 +38,7 @@ export function setupStoryVues(tsconfigPath: string, dryrun: boolean) {
 import vueComponent from '${storyPath.vueImportName}'
 export default { components: { vueComponent } }
 </script>
-<template lang="html">
+<template >
 <vueComponent />
 </template>
 `.trimStart();

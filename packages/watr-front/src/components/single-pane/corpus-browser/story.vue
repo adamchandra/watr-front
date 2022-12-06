@@ -8,7 +8,7 @@
  }
 </script>
 
-<template lang="html">
+<template >
   <story-layout>
 
     <template v-slot:title>

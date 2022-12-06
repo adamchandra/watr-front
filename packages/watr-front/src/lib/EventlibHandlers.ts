@@ -3,7 +3,7 @@ import _ from 'lodash';
 import {
   Ref,
   UnwrapRef,
-} from '@nuxtjs/composition-api';
+} from 'vue';
 
 export function getCursorPosition(elem: Element, event: MouseEvent): EventlibPoint {
   const rect: DOMRect = elem.getBoundingClientRect();

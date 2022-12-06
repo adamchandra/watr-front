@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 import {
   watch,
-} from '@nuxtjs/composition-api';
+} from 'vue';
 
 import * as d3 from 'd3-selection';
 

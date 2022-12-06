@@ -3,7 +3,7 @@ import _ from 'lodash';
 import {
   defineComponent,
   SetupContext,
-} from '@nuxtjs/composition-api';
+} from 'vue';
 
 import { Splitpanes, Pane } from 'splitpanes';
 // import 'splitpanes/dist/splitpanes.css'

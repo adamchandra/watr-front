@@ -5,7 +5,7 @@ import {
   ref,
   Ref,
   watch,
-} from '@nuxtjs/composition-api';
+} from 'vue';
 
 import { useSuperimposedElements, ElementTypes } from '~/components/basics/superimposed-elements';
 import { useMeasuredTextOverlay } from '~/components/basics/measured-text-overlay';

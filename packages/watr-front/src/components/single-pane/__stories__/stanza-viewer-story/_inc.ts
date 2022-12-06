@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { defineComponent } from '@nuxtjs/composition-api';
+import { defineComponent } from 'vue';
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';
 import { useStanzaViewer } from '~/components/single-pane/stanza-viewer';

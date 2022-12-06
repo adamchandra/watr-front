@@ -1,33 +1,12 @@
 {
+  "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
-    "target": "ES2018",
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "lib": [
-      "ESNext",
-      "ESNext.AsyncIterable",
-      "DOM"
-    ],
+    "composite": true,
+    "incremental": true,
     "esModuleInterop": true,
-    "allowJs": true,
-    "sourceMap": true,
-    "strict": true,
-    "noEmit": true,
-    "experimentalDecorators": true,
-    "skipLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "~/*": [
-        "./src/*"
-      ]
-    },
-    "types": [
-      "jest"
-    ]
   },
-  "exclude": [
-    "node_modules",
-    ".nuxt",
-    "dist"
+  "references": [
+    {"path": "../commonlib-node"},
+    {"path": "../commonlib-shared"}
   ]
 }

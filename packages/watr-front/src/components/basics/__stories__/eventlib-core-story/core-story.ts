@@ -3,7 +3,7 @@
  */
 import _ from 'lodash';
 
-import { ref, Ref } from '@nuxtjs/composition-api';
+import { ref, Ref } from 'vue';
 import { useEventlibCore } from '~/components/basics/eventlib-core';
 import { useEventlibSelect } from '~/components/basics/eventlib-select';
 import { EMouseEvent, MouseHandlerInit } from '~/lib/EventlibHandlers';

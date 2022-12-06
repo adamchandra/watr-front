@@ -1,4 +1,4 @@
-<template lang="html" src="./_inc.html"></template>
+<template  src="./_inc.html"></template>
 
 <style lang="scss" scoped>
 

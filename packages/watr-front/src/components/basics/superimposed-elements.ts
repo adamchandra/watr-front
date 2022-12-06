@@ -4,7 +4,7 @@ import {
   Ref,
   watch,
   ref as deepRef,
-} from '@nuxtjs/composition-api';
+} from 'vue';
 
 import { awaitRef } from '~/components/basics/component-basics';
 

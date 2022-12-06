@@ -7,7 +7,7 @@ import {
   Ref,
   isReactive,
   markRaw,
-} from '@nuxtjs/composition-api';
+} from 'vue';
 
 import { prettyPrint } from '@watr/commonlib-shared';
 import { watchAll } from './component-basics';

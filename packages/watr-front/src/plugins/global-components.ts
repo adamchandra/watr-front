@@ -1,16 +1,15 @@
 // Register a few commonly used components
 
-import Vue from 'vue';
 
 import StoryLayout from '~/layouts/story/index.vue';
-
 import TranscriptViewer from '~/components/multi-pane/transcript-viewer/index.vue';
-
 import CorpusBrowser from '~/components/single-pane/corpus-browser/index.vue';
 
-Vue.component('StoryLayout', StoryLayout);
-Vue.component('TranscriptViewer', TranscriptViewer);
-Vue.component('CorpusBrowser', CorpusBrowser);
+
+export default defineNuxtPlugin((nuxtApp) => {
+    nuxtApp.vueApp.component('StoryLayout', StoryLayout);
+    nuxtApp.vueApp.component('TranscriptViewer', TranscriptViewer);
+    nuxtApp.vueApp.component('CorpusBrowser', CorpusBrowser);
 
 // import { Splitpanes, Pane } from 'splitpanes'
 // Vue.component('Splitpanes', Splitpanes);
@@ -20,5 +19,6 @@ Vue.component('CorpusBrowser', CorpusBrowser);
 // Install Composition Api
 
 // import Vue from 'vue'
-// import VueCompositionApi from '@nuxtjs/composition-api';
+// import VueCompositionApi from 'vue';
 // Vue.use(VueCompositionApi);
+})

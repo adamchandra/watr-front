@@ -7,7 +7,7 @@
 # lerna exec npx -- install-peerdeps --dev eslint-plugin-jest
 # lerna exec npx -- install-peerdeps --dev eslint-plugin-promise
 # lerna exec npx -- install-peerdeps --dev eslint-plugin-unicorn
-# lerna exec --scope '@watr/watrfront' npx -- install-peerdeps @nuxtjs/composition-api@latest
+# lerna exec --scope '@watr/watrfront' npx -- install-peerdeps vue@latest
 # lerna exec --scope '@watr/watrfront' npx -- install-peerdeps ts-loader@8.0.17
 
 lerna exec npx -- install-peerdeps --dev eslint-plugin-jsx-a11y

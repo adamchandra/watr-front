@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import {
   defineComponent, provide, Ref, shallowRef, markRaw,
-} from '@nuxtjs/composition-api';
+} from 'vue';
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';
 import {

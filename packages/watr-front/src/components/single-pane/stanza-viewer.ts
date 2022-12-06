@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { Ref } from '@nuxtjs/composition-api';
+import { Ref } from 'vue';
 
 import { useSuperimposedElements, ElementTypes } from '~/components/basics/superimposed-elements';
 import { useMeasuredTextOverlay } from '~/components/basics/measured-text-overlay';

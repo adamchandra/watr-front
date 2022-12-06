@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 import {
   Ref,
-} from '@nuxtjs/composition-api';
+} from 'vue';
 
 import { useEventlibCore, EventlibCore } from '~/components/basics/eventlib-core';
 import { useSuperimposedElements, SuperimposedElements, ElementTypes } from '~/components/basics/superimposed-elements';

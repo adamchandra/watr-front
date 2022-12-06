@@ -2,6 +2,6 @@
 import vueComponent from '~/components/single-pane/narrowing-filter/__stories__/index.vue'
 export default { components: { vueComponent } }
 </script>
-<template lang="html">
+<template >
 <vueComponent />
 </template>

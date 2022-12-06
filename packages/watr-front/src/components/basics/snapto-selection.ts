@@ -13,7 +13,7 @@ import _ from 'lodash';
 
 import {
   watch,
-} from '@nuxtjs/composition-api';
+} from 'vue';
 
 import { EventlibSelect } from '~/components/basics/eventlib-select';
 import { bbox, BBox, MinMaxBox } from '~/lib/shape-compat';

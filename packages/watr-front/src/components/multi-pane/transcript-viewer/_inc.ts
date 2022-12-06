@@ -7,9 +7,9 @@ import {
   Ref,
   ref as deepRef,
   shallowRef,
-} from '@nuxtjs/composition-api';
+} from 'vue';
 
-import * as VC from '@nuxtjs/composition-api';
+import * as VC from 'vue';
 
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';

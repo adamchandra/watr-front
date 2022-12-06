@@ -14,9 +14,7 @@
                 :to="item.to"
                 router
                 exact >
-                <v-list-item-content>
                     <v-list-item-title v-text="item.title" />
-                </v-list-item-content>
             </v-list-item>
         </v-list>
     </v-navigation-drawer>
@@ -34,7 +32,7 @@
         <v-toolbar-title v-text="title" />
     </v-app-bar>
     <v-main>
-        <nuxt />
+      <NuxtPage />
     </v-main>
 
     <v-footer :fixed="fixed" app>

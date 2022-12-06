@@ -1,7 +1,7 @@
 import {
   ref as deepRef,
   Ref,
-} from '@nuxtjs/composition-api';
+} from 'vue';
 
 import { useSuperimposedElements, ElementTypes } from '~/components/basics/superimposed-elements';
 

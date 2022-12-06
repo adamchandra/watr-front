@@ -51,6 +51,7 @@
      * The default value is "local".
      */
     // "pnpmStore": "local",
+    // "shamefullyHoist": true,
 
     /**
      * If true, then Rush will add the "--strict-peer-dependencies" option when invoking PNPM.
@@ -77,6 +78,7 @@
      * will recalculate all version selections.
      */
     // "resolutionStrategy": "fast",
+    "resolutionStrategy": "fewer-dependencies",
 
     /**
      * If true, then `rush install` will report an error if manual modifications

@@ -3,7 +3,7 @@ import * as E from 'fp-ts/lib/Either';
 import * as TE from 'fp-ts/lib/TaskEither';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import * as io from 'io-ts';
-import { markRaw } from '@nuxtjs/composition-api';
+import { markRaw } from 'vue';
 import { getArtifactData, getEntryList } from './axios';
 import { Transcript } from './transcript/transcript';
 

@@ -3,4 +3,4 @@
 // story-title=Selection narrowing filter
 </script>
 <style lang="scss" src="./_inc.scss" scoped></style>
-<template lang="html" src="./_inc.html"></template>
+<template  src="./_inc.html"></template>

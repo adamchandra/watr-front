@@ -1,4 +1,4 @@
-import path from 'path';
+import _ from 'lodash';
 
 import axios, {
   AxiosRequestConfig,
@@ -32,8 +32,8 @@ export function resolveCorpusUrl(entryId: string, ...artifactPaths: string[]): s
 }
 
 export function resolveCorpusPath(entryId: string, ...artifactPaths: string[]): string {
-  const leaves = path.join(entryId, ...artifactPaths);
-  return path.join('/api/corpus/entry/', leaves);
+  const leaves = _.join([entryId, ...artifactPaths], '/');
+  return _.join(['/api/corpus/entry', leaves], '/');
 }
 
 export async function getArtifactData<T>(entryId: string, ...artifactPaths: string[]): Promise<T | undefined> {

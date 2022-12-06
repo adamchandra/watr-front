@@ -1,7 +1,7 @@
 import {
   Ref,
   ref,
-} from '@nuxtjs/composition-api';
+} from 'vue';
 
 import _ from 'lodash';
 import { Promise as Bromise } from 'bluebird';

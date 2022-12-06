@@ -2,6 +2,6 @@
 import vueComponent from '~/components/single-pane/info-pane/story.vue'
 export default { components: { vueComponent } }
 </script>
-<template lang="html">
+<template >
 <vueComponent />
 </template>
