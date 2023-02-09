@@ -3,7 +3,7 @@ import Router from 'koa-router';
 import json from 'koa-json';
 import { arglib } from '@watr/commonlib-node';
 
-import { initFileBasedRoutes } from './corpus-routes';
+import { initFileBasedRoutes } from './corpus-routes.js';
 
 const { opt, config, registerCmd } = arglib;
 

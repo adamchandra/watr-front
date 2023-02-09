@@ -64,6 +64,7 @@ specifiers:
   eslint-plugin-react: ^7.31.11
   eslint-plugin-unicorn: ^45.0.1
   eslint-plugin-vue: ^9.8.0
+  esm: ^3.2.25
   fast-csv: ^4.3.6
   fp-ts: ^2.13.1
   fs-extra: ^11.1.0
@@ -93,6 +94,7 @@ specifiers:
   ts-node: ^10.9.1
   tslib: ~2.4.1
   typescript: ^4.9.3
+  vite-plugin-vuetify: ~1.0.0
   vue: ^3.2.45
   vue-router: ~4.1.6
   vuetify: 3.0.3
@@ -165,6 +167,7 @@ dependencies:
   eslint-plugin-react: 7.31.11_eslint@8.29.0
   eslint-plugin-unicorn: 45.0.1_eslint@8.29.0
   eslint-plugin-vue: 9.8.0_eslint@8.29.0
+  esm: 3.2.25
   fast-csv: 4.3.6
   fp-ts: 2.13.1
   fs-extra: 11.1.0
@@ -194,9 +197,10 @@ dependencies:
   ts-node: 10.9.1_2389f7d27e258a183f1e34b7e9a0f6f6
   tslib: 2.4.1
   typescript: 4.9.3
+  vite-plugin-vuetify: 1.0.0_vue@3.2.45+vuetify@3.0.3
   vue: 3.2.45
   vue-router: 4.1.6_vue@3.2.45
-  vuetify: 3.0.3_vue@3.2.45
+  vuetify: 3.0.3_c502fce9a64015a4df93df911ed331dc
   webpack: 5.75.0
   winston: 3.8.2
   wrap-ansi: 8.0.1
@@ -4405,6 +4409,11 @@ packages:
       text-table: 0.2.0
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /esm/3.2.25:
+    resolution: {integrity: sha512-U1suiZ2oDVWv4zPO56S0NcR5QriEahGtdN2OR6FiOG4WJvcjBVFB0qI4+eKoWFH483PKGuLuu6V8Z4T5g63UVA==}
+    engines: {node: '>=6'}
     dev: false
 
   /espree/9.4.1:
@@ -9246,25 +9255,6 @@ packages:
       vue: 3.2.45
     dev: false
 
-  /vuetify/3.0.3_vue@3.2.45:
-    resolution: {integrity: sha512-ODqnS2ux/qUjn/E7W600mvy096nUSSf1mEgYN9o1IpfeNOC7RsakPD37t3zmtift54YTrE/upjSpILg3piYKmQ==}
-    engines: {node: ^12.20 || >=14.13}
-    peerDependencies:
-      vite-plugin-vuetify: ^1.0.0-alpha.12
-      vue: ^3.2.0
-      vue-i18n: ^9.0.0
-      webpack-plugin-vuetify: ^2.0.0-alpha.11
-    peerDependenciesMeta:
-      vite-plugin-vuetify:
-        optional: true
-      vue-i18n:
-        optional: true
-      webpack-plugin-vuetify:
-        optional: true
-    dependencies:
-      vue: 3.2.45
-    dev: false
-
   /walker/1.0.8:
     resolution: {integrity: sha512-ts/8E8l5b7kY0vlWLewOkDXMmPdLcVV4GmOQLyxuSswIJsweeFZtAsMF7k1Nszz+TYBQrlYRmzOnr398y1JemQ==}
     dependencies:
@@ -9575,7 +9565,7 @@ packages:
     dev: false
 
   file:projects/commonlib-node.tgz_b6e0bc900f16b3a5e1a08accba1adac6:
-    resolution: {integrity: sha512-T03OXm3QbOnQ+pT75WxXT7tiCk6Wf6FekIoFYUXGRZ+EMyJkF7egZKMyMOXIaLnRZDfI7GbHJVggwfywy7Mn4A==, tarball: file:projects/commonlib-node.tgz}
+    resolution: {integrity: sha512-BU8zUPdvo0N2DDG9GfNogpSp4sMaBeae/fkY1C6zvmZ2V3g/CrE9mXZl2b7nLAg+y9TxuEodhaM5RyeQw353ww==, tarball: file:projects/commonlib-node.tgz}
     id: file:projects/commonlib-node.tgz
     name: '@rush-temp/commonlib-node'
     version: 0.0.0
@@ -9598,6 +9588,7 @@ packages:
       eslint-plugin-import: 2.26.0_eslint@8.29.0
       eslint-plugin-jsx-a11y: 6.6.1_eslint@8.29.0
       eslint-plugin-react: 7.31.11_eslint@8.29.0
+      esm: 3.2.25
       fast-csv: 4.3.6
       fp-ts: 2.13.1
       fs-extra: 11.1.0
@@ -9629,7 +9620,7 @@ packages:
     dev: false
 
   file:projects/commonlib-shared.tgz_b6e0bc900f16b3a5e1a08accba1adac6:
-    resolution: {integrity: sha512-pkk3UU1HYtWQv6Utx5FInqUnhE91gsRFvMhNPxcPaeUKIHw1eA9jEXCeSf0J976eLmgQLgBFk8+Imd2jX5LAMg==, tarball: file:projects/commonlib-shared.tgz}
+    resolution: {integrity: sha512-yKNePQhLfCOA+4w1sJynIhdfboPoY8drIGp+O36UUUkNZ1+kFNfw3MnkLF7tJzq93j0HT3zGiYuOoZUJEYRAbQ==, tarball: file:projects/commonlib-shared.tgz}
     id: file:projects/commonlib-shared.tgz
     name: '@rush-temp/commonlib-shared'
     version: 0.0.0
@@ -9658,6 +9649,7 @@ packages:
       eslint-plugin-promise: 6.1.1_eslint@8.29.0
       eslint-plugin-react: 7.31.11_eslint@8.29.0
       eslint-plugin-unicorn: 45.0.1_eslint@8.29.0
+      esm: 3.2.25
       fp-ts: 2.13.1
       jest: 29.3.1_4f6d8c3a952f408b8942fae60bc70338
       lodash: 4.17.21

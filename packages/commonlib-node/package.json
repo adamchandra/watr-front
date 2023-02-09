@@ -3,7 +3,11 @@
   "private": false,
   "version": "1.0.0",
   "license": "ISC",
-  "main": "dist/src/index.js",
+
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "module": "./dist/src/main.js",
+
   "scripts": {
     "clean": "rm -rf ./dist",
     "compile": "tsc",
@@ -19,6 +23,7 @@
     "@types/bluebird": "^3.5.38",
     "@watr/commonlib-shared": "*",
     "bluebird": "^3.7.2",
+    "esm": "^3.2.25",
     "fast-csv": "^4.3.6",
     "fp-ts": "^2.13.1",
     "fs-extra": "^11.1.0",

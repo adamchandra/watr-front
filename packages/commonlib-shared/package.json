@@ -3,7 +3,10 @@
   "private": false,
   "version": "1.0.0",
   "license": "ISC",
-  "main": "dist/src/index",
+
+  "main": "./dist/src/index.js",
+  "module": "./dist/src/main.js",
+
   "scripts": {
     "clean": "rm -rf ./dist",
     "compile": "tsc",
@@ -20,6 +23,7 @@
     "chalk": "^5.1.2",
     "crypto-js": "^4.1.1",
     "diff": "^5.1.0",
+    "esm": "^3.2.25",
     "fp-ts": "^2.13.1",
     "lodash": "^4.17.21",
     "slice-ansi": "^5.0.0",
