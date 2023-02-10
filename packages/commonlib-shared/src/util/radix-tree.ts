@@ -88,9 +88,10 @@ export const radTraverseValues = <T>(
   radix: Radix<T>,
   f: (path: RadixPath, t: T) => void,
 ): void => radTraverseDepthFirst(radix, (path, maybeT) => {
-    if (maybeT === undefined) return;
-    f(path, maybeT);
-  });
+  if (maybeT === undefined) return;
+
+  f(path, maybeT);
+});
 
 export const radUnfold = <T, U>(
   radix: Radix<T>,

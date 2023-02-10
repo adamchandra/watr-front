@@ -105,7 +105,7 @@ const existingPath = (pathAndDesc: string) => (ya: Argv) => {
 
     const errorMsg = `--${pathname}: Path doesn't exist: ${p}`;
 
-    putStrLn(errorMsg)
+    putStrLn(errorMsg);
 
     _.update(argv, ['errors'], (prev: string[] | undefined | null) => {
       const newval = prev || [];
