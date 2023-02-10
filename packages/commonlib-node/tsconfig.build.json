@@ -1,9 +1,0 @@
-{
-  /* Use the tsconfig that has the path aliases. */
-  "extends": "../../tsconfig.json",
-
-  "include": [
-    "./src/**/*",
-    "@types"
-  ]
-}
