@@ -1,4 +1,4 @@
-import { storyItems } from '~/pages/stories/autogen/story-list';
+// import { storyItems } from '~/pages/stories/autogen/story-list';
 
 export default {
   components: {},
@@ -10,7 +10,7 @@ export default {
       fixed: false,
       items: [
         { icon: 'mdi-apps', title: 'Home', to: '/' },
-        ...storyItems,
+        // ...storyItems,
       ],
       miniVariant: false,
       right: false,

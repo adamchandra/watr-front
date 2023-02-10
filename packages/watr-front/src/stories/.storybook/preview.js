@@ -1,3 +1,7 @@
+// import * as jest from "jest-mock";
+// const jest = require("jest-mock")
+// window.jest = jest;
+
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
   controls: {

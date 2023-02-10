@@ -13,7 +13,7 @@
     "lint": "npm run lint:js",
     "lintfix": "npm run lint:js -- --fix",
     "test": "jest",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "start-storybook -p 6006 -c src/stories/.storybook",
     "build-storybook": "build-storybook"
   },
   "dependencies": {
@@ -46,12 +46,15 @@
     "@rushstack/eslint-config": "~3.1.1",
     "@rushstack/heft": "~0.49.6",
     "@rushstack/heft-jest-plugin": "~0.5.3",
+
     "@storybook/addon-actions": "^6.5.16",
     "@storybook/addon-essentials": "^6.5.16",
     "@storybook/addon-interactions": "^6.5.16",
     "@storybook/addon-links": "^6.5.16",
-    "@storybook/testing-library": "^0.0.13",
     "@storybook/vue3": "^6.5.16",
+    "@storybook/testing-library": "^0.0.13",
+    "@storybook/preset-scss": "~1.0.3",
+    "@storybook/builder-vite": "~0.4.1",
     "@types/animejs": "^3.1.6",
     "@types/bluebird": "^3.5.38",
     "@types/chai": "^4.3.4",
@@ -71,11 +74,9 @@
     "nuxt": "3.0.0",
     "typescript": "^4.9.3",
     "vue-loader": "^16.8.3",
-    "@storybook/preset-scss": "~1.0.3",
     "css-loader": "~6.7.3",
     "sass": "~1.56.1",
     "sass-loader": "~13.2.0",
-    "style-loader": "~3.3.1",
-    "@storybook/builder-vite": "~0.4.1"
+    "style-loader": "~3.3.1"
   }
 }
