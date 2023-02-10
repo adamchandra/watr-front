@@ -1,4 +1,4 @@
-@import '~/assets/sass/inc/_solarized';
+@import '../../../assets/sass/inc/_solarized';
 
 .splitpanes {
   display: -webkit-box;
@@ -22,10 +22,10 @@
     -ms-flex-direction: row;
     flex-direction: row;
 
-    .splitpanes__pane {
-      // -webkit-transition: width .2s ease-out;
-      // transition: width .2s ease-out;
-    }
+    //.splitpanes__pane {
+    //  // -webkit-transition: width .2s ease-out;
+    //  // transition: width .2s ease-out;
+    //}
 
     >.splitpanes__splitter {
       min-width: 1px;
@@ -39,10 +39,10 @@
     -ms-flex-direction: column;
     flex-direction: column;
 
-    .splitpanes__pane {
-      // -webkit-transition: height .2s ease-out;
-      // transition: height .2s ease-out;
-    }
+    // .splitpanes__pane {
+    //   // -webkit-transition: height .2s ease-out;
+    //   // transition: height .2s ease-out;
+    // }
 
     >.splitpanes__splitter {
       min-height: 1px;
@@ -142,4 +142,3 @@
     }
   }
 }
-

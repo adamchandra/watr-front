@@ -11,8 +11,11 @@
     "esModuleInterop": true,
     "types": ["heft-jest"],
 
-    "lib": ["ESNext", "dom"]
+    "lib": ["ESNext", "dom"],
+    "paths": {
+      "~/*" : ["./src/*"]
+    }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }

@@ -2,17 +2,8 @@
   "name": "WatrFront",
   "description": "WatrWorks Frontend(s)",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "docs": "doctoc --title '**Table of content**' README.md",
-    "clean": "lerna run clean",
-    "build": "lerna run build",
-    "pub": "lerna publish",
-    "test": "lerna run test",
-    "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix",
     "deps:check": "lerna --concurrency 1 exec --stream -- ncu --minimal",
     "deps:update": "lerna --concurrency 1 exec --stream -- ncu --minimal -iu && lerna bootstrap",
     "ui:run": "lerna --concurrency 2 run --stream ui:run",
@@ -20,8 +11,7 @@
     "install:common-deps": "bin/install-deps"
   },
   "devDependencies": {
-    "doctoc": "~2.0.0",
-    "lerna": "~4.0.0"
+    "doctoc": "~2.0.0"
   },
   "dependencies": {}
 }

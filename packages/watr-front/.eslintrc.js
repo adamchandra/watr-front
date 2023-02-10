@@ -1,4 +1,4 @@
 module.exports = {
-  extends: ['../.eslintrc.js'],
+  extends: ['../.eslintrc.js', 'plugin:storybook/recommended'],
   root: false
-}
+};
