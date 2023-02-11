@@ -5,8 +5,9 @@
   "keywords": [],
   "author": "Adam Saunders <saunders@cs.umass.edu>",
   "license": "ISC",
-  "scripts": {},
+  "scripts": {
+    "build": "echo Building WatrFront"
+  },
   "dependencies": {
-    "tsup": "^6.6.0"
   }
 }

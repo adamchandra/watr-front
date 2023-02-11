@@ -393,10 +393,6 @@
    */
   "projects": [
     {
-      "packageName": "@watr/root",
-      "projectFolder": "packages/root",
-    },
-    {
       "packageName": "@watr/commonlib-shared",
       "projectFolder": "packages/commonlib-shared",
     },
@@ -412,9 +408,5 @@
       "packageName": "@watr/watr-front",
       "projectFolder": "packages/watr-front",
     }
-    // {
-    //   "packageName": "@watr/codemorphs",
-    //   "projectFolder": "packages/codemorphs",
-    // },
   ]
 }

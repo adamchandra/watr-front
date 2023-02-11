@@ -9,7 +9,7 @@
   "types": "dist/main.d.ts",
 
   "scripts": {
-    "tsup": "tsup src/main.ts --format cjs,esm --dts",
+    "tsup": "tsup src/main.ts --format cjs,esm",
     "build": "heft build && npm run tsup",
     "rebuild": "heft build --clean && npm run tsup"
   },
@@ -30,17 +30,18 @@
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.38",
-    "@types/fs-extra": "^9.0.13",
+    "@types/fs-extra": "^11.0.1",
     "@types/lodash": "^4.14.191",
-    "@types/node": "18.11.10",
+    "@types/node": "18.13.0",
     "@types/split": "^1.0.2",
     "@types/through2": "^2.0.38",
-    "@types/yargs": "^17.0.15",
-    "eslint": "^8.29.0",
-    "typescript": "^4.9.3",
-    "@rushstack/heft": "~0.49.6",
-    "@rushstack/heft-jest-plugin": "~0.5.3",
-    "@rushstack/eslint-config": "~3.1.1",
+    "@types/yargs": "^17.0.22",
+    "eslint": "^8.34.0",
+    "tsup": "^6.6.0",
+    "typescript": "^4.9.5",
+    "@rushstack/heft": "~0.49.7",
+    "@rushstack/heft-jest-plugin": "~0.5.4",
+    "@rushstack/eslint-config": "~3.2.0",
     "@types/heft-jest": "~1.0.3"
   }
 }
