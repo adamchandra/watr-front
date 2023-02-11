@@ -1,7 +1,3 @@
-import 'chai';
-
-import _ from 'lodash';
-
 import { diffByChars } from './string-utils';
 import { prettyPrint } from './pretty-print';
 

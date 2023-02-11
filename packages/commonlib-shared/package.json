@@ -10,8 +10,9 @@
 
   "scripts": {
     "tsup": "tsup src/main.ts --format cjs,esm --dts",
-    "build": "heft build && npm run tsup",
-    "rebuild": "heft build --clean && npm run tsup"
+    "build": "heft build && rushx tsup",
+    "rebuild": "heft build --clean && rushx tsup",
+    "test": "rushx build && heft test"
   },
 
   "dependencies": {

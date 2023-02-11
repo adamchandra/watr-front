@@ -1,17 +1,12 @@
 {
   "name": "WatrFront",
-  "description": "WatrWorks Frontend(s)",
-  "private": true,
-  "scripts": {
-    "docs": "doctoc --title '**Table of content**' README.md",
-    "deps:check": "lerna --concurrency 1 exec --stream -- ncu --minimal",
-    "deps:update": "lerna --concurrency 1 exec --stream -- ncu --minimal -iu && lerna bootstrap",
-    "ui:run": "lerna --concurrency 2 run --stream ui:run",
-    "ui:dev": "lerna --concurrency 2 run --stream ui:dev",
-    "install:common-deps": "bin/install-deps"
-  },
-  "devDependencies": {
-    "doctoc": "~2.0.0"
-  },
-  "dependencies": {}
+  "private": false,
+  "version": "0.1.0",
+  "keywords": [],
+  "author": "Adam Saunders <saunders@cs.umass.edu>",
+  "license": "ISC",
+  "scripts": {},
+  "dependencies": {
+    "tsup": "^6.6.0"
+  }
 }

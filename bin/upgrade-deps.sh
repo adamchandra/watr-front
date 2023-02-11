@@ -1,10 +1,8 @@
 #!/bin/bash
 
 declare -a dirs=(
-   codemorphs
    commonlib-node
    commonlib-shared
-   root
    server
    watr-front
 )
