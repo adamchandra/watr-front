@@ -1,9 +1,9 @@
 import _ from 'lodash';
 
-// import {
-//   Ref,
-//   watch,
-// } from 'vue';
+import {
+  // Ref,
+  watch,
+} from 'vue';
 
 import * as d3 from 'd3-selection';
 import { TranscriptIndex, TranscriptIndexable } from '~/lib/transcript/transcript-index';

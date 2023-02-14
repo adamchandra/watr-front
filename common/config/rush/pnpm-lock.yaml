@@ -12,7 +12,6 @@ specifiers:
   '@rush-temp/commonlib-shared': file:./projects/commonlib-shared.tgz
   '@rush-temp/front': file:./projects/front.tgz
   '@rush-temp/server': file:./projects/server.tgz
-  '@rush-temp/watr-front': file:./projects/watr-front.tgz
   '@rushstack/eslint-config': ~3.2.0
   '@rushstack/heft': ~0.49.7
   '@rushstack/heft-jest-plugin': ~0.5.4
@@ -34,7 +33,6 @@ specifiers:
   '@storybook/client-api': ~6.5.16
   '@storybook/client-logger': ~6.5.16
   '@storybook/components': ~6.5.16
-  '@storybook/preset-scss': ~1.0.3
   '@storybook/preview-web': ~6.5.16
   '@storybook/testing-library': ^0.0.13
   '@storybook/vue3': ^6.5.16
@@ -73,7 +71,6 @@ specifiers:
   chroma-js: ^2.4.2
   core-js: ^3.27.2
   crypto-js: ^4.1.1
-  css-loader: ~6.7.3
   d3-selection: ^3.0.0
   d3-transition: ^3.0.1
   diff: ^5.1.0
@@ -84,7 +81,6 @@ specifiers:
   eslint-plugin-jsdoc: ^39.6.4
   eslint-plugin-nuxt: ^4.0.0
   eslint-plugin-storybook: ^0.6.10
-  eslint-plugin-vue: ^9.9.0
   eslint-plugin-vuetify: ^2.0.0-beta.2
   esm: ^3.2.25
   fast-csv: ^4.3.6
@@ -107,11 +103,9 @@ specifiers:
   pumpify: ^2.0.1
   rbush: ^3.0.1
   sass: ~1.57.1
-  sass-loader: ~13.2.0
   slice-ansi: ^5.0.0
   split: ^1.0.1
   splitpanes: ^3.1.5
-  style-loader: ~3.3.1
   tailwindcss: ^3.2.4
   through2: ^4.0.2
   tsup: ^6.6.0
@@ -138,7 +132,6 @@ dependencies:
   '@rush-temp/commonlib-shared': file:projects/commonlib-shared.tgz
   '@rush-temp/front': file:projects/front.tgz_@types+node@18.13.0
   '@rush-temp/server': file:projects/server.tgz
-  '@rush-temp/watr-front': file:projects/watr-front.tgz_be2460e76c48d9a238b9472130ef4fe9
   '@rushstack/eslint-config': 3.2.0_eslint@8.34.0+typescript@4.9.5
   '@rushstack/heft': 0.49.7_@types+node@18.13.0
   '@rushstack/heft-jest-plugin': 0.5.4_bfe1ea12967bf3211815ddf895beee3d
@@ -160,7 +153,6 @@ dependencies:
   '@storybook/client-api': 6.5.16
   '@storybook/client-logger': 6.5.16
   '@storybook/components': 6.5.16
-  '@storybook/preset-scss': 1.0.3_1138430e71c1b85918fa5f157c8e5757
   '@storybook/preview-web': 6.5.16
   '@storybook/testing-library': 0.0.13
   '@storybook/vue3': 6.5.16_04ce7c6d78b20fb986d7f03992202e3c
@@ -199,7 +191,6 @@ dependencies:
   chroma-js: 2.4.2
   core-js: 3.27.2
   crypto-js: 4.1.1
-  css-loader: 6.7.3
   d3-selection: 3.0.0
   d3-transition: 3.0.1_d3-selection@3.0.0
   diff: 5.1.0
@@ -210,7 +201,6 @@ dependencies:
   eslint-plugin-jsdoc: 39.9.1_eslint@8.34.0
   eslint-plugin-nuxt: 4.0.0_eslint@8.34.0
   eslint-plugin-storybook: 0.6.10_eslint@8.34.0+typescript@4.9.5
-  eslint-plugin-vue: 9.9.0_eslint@8.34.0
   eslint-plugin-vuetify: 2.0.0-beta.2_eslint@8.34.0+vuetify@3.1.4
   esm: 3.2.25
   fast-csv: 4.3.6
@@ -233,11 +223,9 @@ dependencies:
   pumpify: 2.0.1
   rbush: 3.0.1
   sass: 1.57.1
-  sass-loader: 13.2.0_node-sass@8.0.0+sass@1.57.1
   slice-ansi: 5.0.0
   split: 1.0.1
   splitpanes: 3.1.5
-  style-loader: 3.3.1
   tailwindcss: 3.2.6
   through2: 4.0.2
   tsup: 6.6.0_typescript@4.9.5
@@ -4843,18 +4831,6 @@ packages:
       core-js: 3.27.2
     dev: false
 
-  /@storybook/preset-scss/1.0.3_1138430e71c1b85918fa5f157c8e5757:
-    resolution: {integrity: sha512-o9Iz6wxPeNENrQa2mKlsDKynBfqU2uWaRP80HeWp4TkGgf7/x3DVF2O7yi9N0x/PI1qzzTTpxlQ90D62XmpiTw==}
-    peerDependencies:
-      css-loader: '*'
-      sass-loader: '*'
-      style-loader: '*'
-    dependencies:
-      css-loader: 6.7.3
-      sass-loader: 13.2.0_node-sass@8.0.0+sass@1.57.1
-      style-loader: 3.3.1
-    dev: false
-
   /@storybook/preview-web/6.5.16:
     resolution: {integrity: sha512-IJnvfe2sKCfk7apN9Fu9U8qibbarrPX5JB55ZzK1amSHVmSDuYk5MIMc/U3NnSQNnvd1DO5v/zMcGgj563hrtg==}
     peerDependencies:
@@ -8471,22 +8447,6 @@ packages:
       postcss-modules-values: 4.0.0_postcss@8.4.21
       postcss-value-parser: 4.2.0
       schema-utils: 3.1.1
-      semver: 7.3.8
-    dev: false
-
-  /css-loader/6.7.3:
-    resolution: {integrity: sha512-qhOH1KlBMnZP8FzRO6YCH9UHXQhVMcEGLyNdb7Hv2cpcmJbW0YrddO+tG1ab5nT41KpHIYGsbeHqxB9xPu1pKQ==}
-    engines: {node: '>= 12.13.0'}
-    peerDependencies:
-      webpack: ^5.0.0
-    dependencies:
-      icss-utils: 5.1.0_postcss@8.4.21
-      postcss: 8.4.21
-      postcss-modules-extract-imports: 3.0.0_postcss@8.4.21
-      postcss-modules-local-by-default: 4.0.0_postcss@8.4.21
-      postcss-modules-scope: 3.0.0_postcss@8.4.21
-      postcss-modules-values: 4.0.0_postcss@8.4.21
-      postcss-value-parser: 4.2.0
       semver: 7.3.8
     dev: false
 
@@ -16620,31 +16580,6 @@ packages:
       yargs: 17.6.2
     dev: false
 
-  /sass-loader/13.2.0_node-sass@8.0.0+sass@1.57.1:
-    resolution: {integrity: sha512-JWEp48djQA4nbZxmgC02/Wh0eroSUutulROUusYJO9P9zltRbNN80JCBHqRGzjd4cmZCa/r88xgfkjGD0TXsHg==}
-    engines: {node: '>= 14.15.0'}
-    peerDependencies:
-      fibers: '>= 3.1.0'
-      node-sass: ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
-      sass: ^1.3.0
-      sass-embedded: '*'
-      webpack: ^5.0.0
-    peerDependenciesMeta:
-      fibers:
-        optional: true
-      node-sass:
-        optional: true
-      sass:
-        optional: true
-      sass-embedded:
-        optional: true
-    dependencies:
-      klona: 2.0.6
-      neo-async: 2.6.2
-      node-sass: 8.0.0
-      sass: 1.57.1
-    dev: false
-
   /sass/1.57.1:
     resolution: {integrity: sha512-O2+LwLS79op7GI0xZ8fqzF7X2m/m8WFfI02dHOdsK5R2ECeS5F62zrwg/relM1rjSLy7Vd/DiMNIvPrQGsA0jw==}
     engines: {node: '>=12.0.0'}
@@ -17390,13 +17325,6 @@ packages:
       loader-utils: 2.0.4
       schema-utils: 2.7.1
       webpack: 4.46.0
-    dev: false
-
-  /style-loader/3.3.1:
-    resolution: {integrity: sha512-GPcQ+LDJbrcxHORTRes6Jy2sfvK2kS6hpSfI/fXhPt+spVzxF6LJ1dHLN9zIGmVaaP044YKaIatFaufENRiDoQ==}
-    engines: {node: '>= 12.13.0'}
-    peerDependencies:
-      webpack: ^5.0.0
     dev: false
 
   /style-to-object/0.3.0:
@@ -19363,7 +19291,7 @@ packages:
     dev: false
 
   file:projects/front.tgz_@types+node@18.13.0:
-    resolution: {integrity: sha512-ycE6QLyk34xISCDw1z2k3CjK5nKsEo8JApzPpCdA0OkShS1no57ttNaWRcd52plWCIED45IVp7pwOpFzGssdgw==, tarball: file:projects/front.tgz}
+    resolution: {integrity: sha512-tW8DiZz8e7SCXs3HPPN1cZtTbZ4sMdzZ1dFL7s+tdXKpNtxxF3dPEGo51PVw6mOUE4ogPQUR0TtbhVudTg33zA==, tarball: file:projects/front.tgz}
     id: file:projects/front.tgz
     name: '@rush-temp/front'
     version: 0.0.0
@@ -19397,6 +19325,16 @@ packages:
       '@storybook/testing-library': 0.0.13
       '@storybook/vue3': 6.5.16_04ce7c6d78b20fb986d7f03992202e3c
       '@tailwindcss/postcss7-compat': 2.2.17
+      '@types/animejs': 3.1.7
+      '@types/bluebird': 3.5.38
+      '@types/chai': 4.3.4
+      '@types/chroma-js': 2.1.5
+      '@types/d3-selection': 3.0.4
+      '@types/d3-transition': 3.0.3
+      '@types/fs-extra': 11.0.1
+      '@types/heft-jest': 1.0.3
+      '@types/lodash': 4.14.191
+      '@types/rbush': 3.0.0
       '@typescript-eslint/eslint-plugin': 5.52.0_f08b54c834075f34fbbeff430137cec8
       '@typescript-eslint/parser': 5.52.0_eslint@8.34.0+typescript@4.9.5
       animejs: 3.2.1
@@ -19534,120 +19472,4 @@ packages:
       - postcss
       - supports-color
       - ts-node
-    dev: false
-
-  file:projects/watr-front.tgz_be2460e76c48d9a238b9472130ef4fe9:
-    resolution: {integrity: sha512-wWZ8v/IUx+M85JzLCBxO/FHGeQ7Jdlclfz60cJRMW63f1guB8Vn2WNlHFg2aZ2f4Z4riRmmVOcZGQULbsE7DNg==, tarball: file:projects/watr-front.tgz}
-    id: file:projects/watr-front.tgz
-    name: '@rush-temp/watr-front'
-    version: 0.0.0
-    dependencies:
-      '@babel/core': 7.20.12
-      '@mdi/font': 7.1.96
-      '@nuxtjs/axios': 5.13.6
-      '@storybook/addon-actions': 6.5.16
-      '@storybook/addon-essentials': 6.5.16_f0ae37049a7da9d26c3e422f6121a764
-      '@storybook/addon-interactions': 6.5.16_eslint@8.34.0+typescript@4.9.5
-      '@storybook/addon-links': 6.5.16
-      '@storybook/builder-vite': 0.4.1_eslint@8.34.0+typescript@4.9.5
-      '@storybook/client-api': 6.5.16
-      '@storybook/client-logger': 6.5.16
-      '@storybook/preset-scss': 1.0.3_1138430e71c1b85918fa5f157c8e5757
-      '@storybook/testing-library': 0.0.13
-      '@storybook/vue3': 6.5.16_04ce7c6d78b20fb986d7f03992202e3c
-      '@types/animejs': 3.1.7
-      '@types/bluebird': 3.5.38
-      '@types/chai': 4.3.4
-      '@types/chroma-js': 2.1.5
-      '@types/d3-selection': 3.0.4
-      '@types/d3-transition': 3.0.3
-      '@types/fs-extra': 11.0.1
-      '@types/lodash': 4.14.191
-      '@types/rbush': 3.0.0
-      animejs: 3.2.1
-      axios: 1.3.2
-      babel-loader: 8.3.0_@babel+core@7.20.12
-      bitset: 5.1.1
-      bluebird: 3.7.2
-      chroma-js: 2.4.2
-      core-js: 3.27.2
-      css-loader: 6.7.3
-      d3-selection: 3.0.0
-      d3-transition: 3.0.1_d3-selection@3.0.0
-      eslint: 8.34.0
-      eslint-plugin-nuxt: 4.0.0_eslint@8.34.0
-      eslint-plugin-storybook: 0.6.10_eslint@8.34.0+typescript@4.9.5
-      eslint-plugin-vue: 9.9.0_eslint@8.34.0
-      fp-ts: 2.13.1
-      fs-extra: 11.1.0
-      io-ts: 2.2.20_fp-ts@2.13.1
-      io-ts-types: 0.5.19_fp-ts@2.13.1+io-ts@2.2.20
-      lodash: 4.17.21
-      npm-run-all: 4.1.5
-      nuxt: 3.2.0_937450d50c49c4d3fd51268559dd0374
-      rbush: 3.0.1
-      sass: 1.57.1
-      sass-loader: 13.2.0_node-sass@8.0.0+sass@1.57.1
-      splitpanes: 3.1.5
-      style-loader: 3.3.1
-      typescript: 4.9.5
-      vue: 3.2.47
-      vue-loader: 16.8.3
-      vue-router: 4.1.6_vue@3.2.47
-      vuetify: 3.1.4_c9c6834d6d727902af8147c5e287415e
-    transitivePeerDependencies:
-      - '@babel/preset-env'
-      - '@storybook/angular'
-      - '@storybook/builder-manager4'
-      - '@storybook/builder-manager5'
-      - '@storybook/builder-webpack4'
-      - '@storybook/builder-webpack5'
-      - '@storybook/html'
-      - '@storybook/manager-webpack5'
-      - '@storybook/mdx2-csf'
-      - '@storybook/vue'
-      - '@storybook/web-components'
-      - '@sveltejs/vite-plugin-svelte'
-      - '@types/node'
-      - '@types/react'
-      - '@vitejs/plugin-react'
-      - '@vitejs/plugin-react-swc'
-      - '@vitejs/plugin-vue'
-      - '@vue/compiler-sfc'
-      - bufferutil
-      - debug
-      - encoding
-      - fibers
-      - less
-      - lit
-      - lit-html
-      - meow
-      - monocle-ts
-      - newtype-ts
-      - node-sass
-      - optionator
-      - react
-      - react-dom
-      - rollup
-      - sass-embedded
-      - stylelint
-      - stylus
-      - sugarss
-      - supports-color
-      - svelte
-      - sveltedoc-parser
-      - terser
-      - utf-8-validate
-      - vite
-      - vite-plugin-vuetify
-      - vls
-      - vti
-      - vue-docgen-api
-      - vue-i18n
-      - vue-template-compiler
-      - vue-tsc
-      - webpack
-      - webpack-cli
-      - webpack-command
-      - webpack-plugin-vuetify
     dev: false
