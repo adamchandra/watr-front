@@ -10,3 +10,8 @@ declare module 'splitpanes' {
 
 // eslint-disable-next-line no-restricted-exports
 // export { default } from 'vue';
+declare module '*.vue' {
+  import type { DefineComponent } from 'vue'
+  const component: DefineComponent<{}, {}, any>
+  export default component
+}

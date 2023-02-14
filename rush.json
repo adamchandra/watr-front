@@ -407,6 +407,10 @@
     {
       "packageName": "@watr/watr-front",
       "projectFolder": "packages/watr-front",
+    },
+    {
+      "packageName": "@watr/front",
+      "projectFolder": "packages/front",
     }
   ]
 }

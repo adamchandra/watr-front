@@ -1,5 +1,5 @@
 // plugins/vuetify.ts
-// import { defineNuxtPlugin } from '#app'
+import { defineNuxtPlugin } from '#app'
 import { createVuetify } from 'vuetify'
 
 // Import everything

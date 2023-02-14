@@ -1,4 +1,5 @@
 const path = require('node:path');
+// const vuetify = require('@vuetify/vite-plugin')
 
 module.exports = {
   "stories": ["../src/stories/**/*.stories.@(js|jsx|ts|tsx)"],
@@ -39,6 +40,7 @@ module.exports = {
         dedupe: ["@storybook/client-api"],
         alias: {
           vue: 'vue/dist/vue.esm-bundler.js',
+          '~' : path.resolve(__dirname, '../src')
         },
       }
     };
