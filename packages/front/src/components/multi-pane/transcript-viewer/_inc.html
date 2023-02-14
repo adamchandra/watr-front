@@ -1,0 +1,60 @@
+<div class="transcriptViewer">
+
+  <div class="header">
+    This is the header
+  </div>
+
+  <SplitScreen v-bind:rightSidePanes="3">
+
+    <template v-slot:leftside>
+
+      <div class="pageImageListFrame">
+
+        <v-card
+          class="controlsx d-flex justify-start"
+          color="black"
+        >
+
+          <v-switch
+            color="blue"
+            v-model="showAllLabels"
+            dense
+            hide-details
+          />
+
+        </v-card>
+
+
+        <div class="pageImageListOuter">
+          <div ref="pageImageListDiv" class="pageImageListInner" />
+        </div>
+      </div>
+    </template>
+
+    <template v-slot:rightside#1>
+      <div class="selectionFilterFrame" v-show="showPageOverlays" >
+        <NarrowingFilter
+          v-on:items-selected="onItemsSelected"
+          v-on:items-reset="onItemsReset"
+        />
+        <div ref="selectionFilterDiv" class="selectionFilter" />
+      </div>
+    </template>
+
+    <template v-slot:rightside#2>
+      <div ref="infoPaneDiv" class="infoPane" />
+    </template>
+
+    <template v-slot:rightside#3>
+      <div class="stanzaListFrame">
+        <div ref="stanzaListDiv" class="stanzaList" />
+      </div>
+    </template>
+
+  </SplitScreen>
+
+  <div class="footer">
+    This is the footer
+  </div>
+
+</div>

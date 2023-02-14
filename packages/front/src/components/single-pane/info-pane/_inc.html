@@ -1,0 +1,47 @@
+<NuxtLayout name="story-layout">
+
+  <template v-slot:title>
+    Info Pane
+  </template>
+
+  <template v-slot:description>
+  </template>
+
+  <template v-slot:controls>
+
+    <div class="d-flex">
+      <div justify="space-between" cols="4">
+        <v-text-field outlined
+          hide-details
+          class="mt-3"
+          label="Input text"
+          persistent-hint
+          filled
+          v-model="inputText"
+        />
+        <ul>
+          <li>
+            space character will write current text using putString
+          </li>
+          <li>
+            '.' character will emit with putStringLn
+
+          </li>
+          <li>
+            Type 'clear' to clear the screen
+          </li>
+        </ul>
+
+      </div>
+    </div>
+  </template>
+
+  <template v-slot:notes>
+    Notes go here...
+  </template>
+
+  <template v-slot:main>
+    <div ref="infoPaneDiv" class="infoPane" />
+  </template>
+
+</NuxtLayout>

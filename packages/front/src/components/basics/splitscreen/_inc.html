@@ -1,0 +1,18 @@
+<splitpanes class="basic-theme" vertical :push-other-panes="false">
+
+  <pane>
+    <slot name="leftside" />
+  </pane>
+
+  <pane>
+    <splitpanes horizontal :push-other-panes="true">
+
+      <pane v-for="i in rightSidePanes" :key="i" >
+        <slot :name="'rightside#'+i" />
+      </pane>
+
+
+    </splitpanes>
+  </pane>
+
+</splitpanes>
