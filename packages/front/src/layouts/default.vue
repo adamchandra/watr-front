@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-navigation-drawer>
-      なびばー
+      ACS
     </v-navigation-drawer>
     <v-main>
       <v-container>

@@ -30,50 +30,46 @@ export interface SuperimposedElements {
 type Args = {
   mountPoint: Ref<HTMLDivElement | null>;
   includeElems: ElementTypes[];
-  // excludeEventDiv: boolean;
 };
 
 export async function useSuperimposedElements({
   mountPoint, includeElems,
 }: Args): Promise<SuperimposedElements> {
-  const useElem: (et: ElementTypes) => boolean = (et) => includeElems.includes(et);
+  const usingLayer: (et: ElementTypes) => boolean = (et) => includeElems.includes(et);
 
   const overlayElements: OverlayElements = {};
 
-  if (useElem(ElementTypes.Event)) {
+  if (usingLayer(ElementTypes.Event)) {
     const el = overlayElements.eventDiv = document.createElement('div');
     el.classList.add('layer');
     el.classList.add('event-layer');
   }
 
-  if (useElem(ElementTypes.Img)) {
+  if (usingLayer(ElementTypes.Img)) {
     const el = overlayElements.img = document.createElement('img');
     el.classList.add('layer');
   }
-  if (useElem(ElementTypes.Canvas)) {
+  if (usingLayer(ElementTypes.Canvas)) {
     const el = overlayElements.canvas = document.createElement('canvas');
     el.classList.add('layer');
   }
-  if (useElem(ElementTypes.Svg)) {
+  if (usingLayer(ElementTypes.Svg)) {
     const el = overlayElements.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     el.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xlink', 'http://www.w3.org/1999/xlink');
     el.classList.add('layer');
   }
-  if (useElem(ElementTypes.Text)) {
+  if (usingLayer(ElementTypes.Text)) {
     const el = overlayElements.textDiv = document.createElement('div');
     el.classList.add('layer', 'text-layer');
   }
 
   const dimensions: Ref<[number, number]> = deepRef([200, 500] as [number, number]);
 
-  const width = () => dimensions.value[0];
-  const height = () => dimensions.value[1];
-  const placeholderImage = () => `https://via.placeholder.com/${width()}x${height()}`;
+  const placeholderImage = (w: number, h: number) => `https://via.placeholder.com/${w}x${h}`;
   const imgElemSource: Ref<string | null> = deepRef(null);
 
-  await awaitRef(mountPoint);
+  const overlayContainer = await awaitRef(mountPoint);
 
-  const overlayContainer = mountPoint.value!;
   overlayContainer.classList.add('layers');
   const {
     img, canvas, svg, textDiv, eventDiv,
@@ -82,6 +78,7 @@ export async function useSuperimposedElements({
   if (img) {
     img.addEventListener('load', () => {
       const { width, height } = img;
+      console.log(`addEventListen(${width}, ${height})`)
       dimensions.value = [width, height];
     });
     overlayContainer.append(img);
@@ -111,6 +108,7 @@ export async function useSuperimposedElements({
     const w = `${width}px`;
     const h = `${height}px`;
 
+    console.log(`setting w/h=${w}, ${h}`)
     overlayContainer.style.width = w;
     overlayContainer.style.height = h;
     if (img) {
@@ -118,7 +116,7 @@ export async function useSuperimposedElements({
         img.width = width;
         img.height = height;
       } else {
-        img.src = placeholderImage();
+        img.src = placeholderImage(width, height);
       }
     }
     if (canvas) {

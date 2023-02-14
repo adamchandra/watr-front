@@ -4831,6 +4831,14 @@ packages:
       core-js: 3.27.2
     dev: false
 
+  /@storybook/preset-scss/1.0.3:
+    resolution: {integrity: sha512-o9Iz6wxPeNENrQa2mKlsDKynBfqU2uWaRP80HeWp4TkGgf7/x3DVF2O7yi9N0x/PI1qzzTTpxlQ90D62XmpiTw==}
+    peerDependencies:
+      css-loader: '*'
+      sass-loader: '*'
+      style-loader: '*'
+    dev: false
+
   /@storybook/preview-web/6.5.16:
     resolution: {integrity: sha512-IJnvfe2sKCfk7apN9Fu9U8qibbarrPX5JB55ZzK1amSHVmSDuYk5MIMc/U3NnSQNnvd1DO5v/zMcGgj563hrtg==}
     peerDependencies:
@@ -19291,7 +19299,7 @@ packages:
     dev: false
 
   file:projects/front.tgz_@types+node@18.13.0:
-    resolution: {integrity: sha512-tW8DiZz8e7SCXs3HPPN1cZtTbZ4sMdzZ1dFL7s+tdXKpNtxxF3dPEGo51PVw6mOUE4ogPQUR0TtbhVudTg33zA==, tarball: file:projects/front.tgz}
+    resolution: {integrity: sha512-LVc51tiO1BYOE7EhYgrFF0yWSW9ICcGp/jAQ5IWJ7l288vRCMqWEcIwzxamxoTBmM5AlsIxSFeoG3AVZhwj+/w==, tarball: file:projects/front.tgz}
     id: file:projects/front.tgz
     name: '@rush-temp/front'
     version: 0.0.0
@@ -19321,6 +19329,7 @@ packages:
       '@storybook/client-api': 6.5.16
       '@storybook/client-logger': 6.5.16
       '@storybook/components': 6.5.16
+      '@storybook/preset-scss': 1.0.3
       '@storybook/preview-web': 6.5.16
       '@storybook/testing-library': 0.0.13
       '@storybook/vue3': 6.5.16_04ce7c6d78b20fb986d7f03992202e3c
@@ -19398,6 +19407,7 @@ packages:
       - '@vue/compiler-sfc'
       - '@vue/composition-api'
       - bufferutil
+      - css-loader
       - debug
       - encoding
       - less
@@ -19410,6 +19420,8 @@ packages:
       - react
       - react-dom
       - rollup
+      - sass-loader
+      - style-loader
       - stylelint
       - stylus
       - sugarss

@@ -4,11 +4,12 @@ const vuetify = require("vite-plugin-vuetify");
 module.exports = {
   stories: ["../src/**/*.stories.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
   addons: [
-    "@storybook/addon-links",
+    // "@storybook/addon-links",
     "@storybook/addon-essentials",
-    "@storybook/addon-interactions",
-    "@storybook/addon-viewport",
-    "@storybook/addon-knobs",
+    // "@storybook/addon-interactions",
+    // "@storybook/addon-viewport",
+    // "@storybook/addon-knobs",
+    "@storybook/preset-scss",
     {
       name: "@storybook/addon-postcss",
       options: {
@@ -31,6 +32,7 @@ module.exports = {
   async viteFinal(config, { configType }) {
     config.resolve.alias["~storybook"] = path.resolve(__dirname);
     config.resolve.alias["@"] = path.resolve(__dirname, "..", "src");
+    config.resolve.alias["~"] = path.resolve(__dirname, "..", "src");
     config.plugins = [...config.plugins, vuetify()];
 
     return {

@@ -9,10 +9,10 @@ import { pipe } from 'fp-ts/lib/function';
 import * as E from 'fp-ts/lib/Either';
 import * as TE from 'fp-ts/lib/TaskEither';
 import { TranscriptIndex } from '~/lib/transcript/transcript-index';
-import { usePdfPageViewer } from '~/components/single-pane/page-viewer';
+import { usePdfPageViewer, PdfPageViewer } from '~/components/single-pane/page-viewer';
 import { fetchAndDecodeTranscript } from '~/lib/data-fetch';
 import { getURLQueryParam } from '~/lib/url-utils';
-import { useLabelOverlay } from '../../label-overlay';
+import { useLabelOverlay } from '~/components/single-pane/label-overlay';
 import { Label } from '~/lib/transcript/labels';
 
 export default {
@@ -32,7 +32,7 @@ export default {
     const pageLabelRef: Ref<Label[]> = deepRef([]);
     // console.log('pageLabelRefs', pageLabelRefs);
 
-    const run = pipe(
+    const run: TE.TaskEither<string, {}> = pipe(
       TE.right({ entryId }),
       TE.bind('transcript', ({ entryId }) => fetchAndDecodeTranscript(entryId)),
       TE.bind('transcriptIndex', ({ transcript }) => TE.right(new TranscriptIndex(transcript))),
@@ -41,7 +41,8 @@ export default {
         transcriptIndex,
         pageNumber,
         entryId,
-      }).then(x => E.right(x))),
+      }).then(x => E.right<string, PdfPageViewer>(x)).catch(err => E.left(''))),
+
 
       TE.bind('labelOverlay', ({ pdfPageViewer, transcriptIndex }) => () => useLabelOverlay({
         pdfPageViewer,
@@ -50,11 +51,11 @@ export default {
         // pageLabelRef: pageLabelRefs[pageNumber],
         pageLabelRef,
         showAllLabels,
-      }).then(x => E.right(x))),
+      }).then(x => E.right(x)).catch(err => E.left(''))),
 
       TE.mapLeft(errors => {
         _.each(errors, error => console.log('error', error));
-        return errors;
+        return '';
       }),
     );
 

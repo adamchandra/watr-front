@@ -1,6 +1,7 @@
-
 <template>
-  <div>
+  <div class="bg-green flex">
+    <div ref="mountPoint" id="event-div" class="eventbox"> </div>
+
     <ul>
       <li>
         <h3>Mouse Activity {{ mouseActivity }}</h3>
@@ -9,16 +10,13 @@
         <h3>Selection Rect: {{ selectionRef }}</h3>
       </li>
       <li v-for="(item, i) in mouseActivityLog" :key="i">
-        {{item}}
+        {{ item }}
       </li>
-
     </ul>
 
-    <div ref="mountPoint" id="event-div" class="eventbox"> </div>
-
   </div>
-</template>
 
+</template>
 
 <script lang="ts" src="./EventLibStory.ts"> </script>
 

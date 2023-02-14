@@ -11,11 +11,12 @@ export default {
 
     const run = async () => {
       const elemOverlay = await useSuperimposedElements({
+        // includeElems: [ElementTypes.Canvas, ElementTypes.Svg, ElementTypes.Text, ElementTypes.Event],
         includeElems: [ElementTypes.Img, ElementTypes.Canvas, ElementTypes.Svg, ElementTypes.Text, ElementTypes.Event],
         mountPoint,
       });
 
-      elemOverlay.setDimensions(300, 350);
+      elemOverlay.setDimensions(400, 500);
     };
 
     run();

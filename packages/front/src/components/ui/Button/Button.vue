@@ -25,7 +25,7 @@ export default {
       validator(value) {
         return ['small', 'medium', 'large'].includes(value);
       },
-      default: 'mefium',
+      default: 'medium',
     },
     backgroundColor: {
       type: String,

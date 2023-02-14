@@ -19,5 +19,5 @@
 </script>
 
 <style lang="scss" scoped>
-    @import '~/assets/sass/overlayed-svg-canvas-div';
+    @import '@/assets/sass/overlayed-svg-canvas-div';
 </style>

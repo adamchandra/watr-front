@@ -64,6 +64,7 @@
     "@storybook/client-api": "~6.5.16",
     "@storybook/client-logger": "~6.5.16",
     "@storybook/components": "~6.5.16",
+    "@storybook/preset-scss": "~1.0.3",
     "@storybook/preview-web": "~6.5.16",
     "@storybook/testing-library": "^0.0.13",
     "@storybook/vue3": "^6.5.16",

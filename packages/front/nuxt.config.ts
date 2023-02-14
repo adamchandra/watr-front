@@ -5,7 +5,9 @@ import * as postcss from './postcss.config';
 export default defineNuxtConfig({
   srcDir: 'src/',
   buildModules: ['@nuxtjs/tailwindcss', '@pinia/nuxt'],
-  css: ['@/assets/sass/app.scss'],
+  css: [
+    '@/assets/sass/app.scss'
+  ],
   build: {
     transpile: ['vuetify'],
     postcss: {

@@ -17,9 +17,11 @@ import * as E from 'fp-ts/lib/Either';
 import { Radix } from '@watr/commonlib-shared';
 import { divRef } from '~/lib/vue-composition-lib';
 import { awaitRefTask } from '~/components/basics/component-basics';
-import { usePdfPageViewer } from '~/components/single-pane/page-viewer';
-import { useStanzaViewer } from '~/components/single-pane/stanza-viewer';
+import { usePdfPageViewer, PdfPageViewer } from '~/components/single-pane/page-viewer';
+import { useStanzaViewer, StanzaViewer } from '~/components/single-pane/stanza-viewer';
 import { TranscriptIndex } from '~/lib/transcript/transcript-index';
+
+import { Transcript } from '~/lib/transcript/transcript';
 import { Label, PageRange, Range } from '~/lib/transcript/labels';
 
 import NarrowingFilter from '~/components/single-pane/narrowing-filter/index.vue';
@@ -28,11 +30,11 @@ import {
 } from '~/components/single-pane/narrowing-filter/_inc';
 
 import { fetchAndDecodeTranscript } from '~/lib/data-fetch';
-import { useLabelOverlay } from '~/components/single-pane/label-overlay';
+import { useLabelOverlay, LabelOverlay } from '~/components/single-pane/label-overlay';
 import { getQueryParam } from '~/lib/url-utils';
 
 import SplitScreen from '~/components/basics/splitscreen/index.vue';
-import { InfoPane, useInfoPane } from '~/components/single-pane/info-pane/info-pane';
+import { useInfoPane, InfoPane } from '~/components/single-pane/info-pane/info-pane';
 import { getLabelProp } from '~/lib/transcript/tracelogs';
 import { createDisplayTree, TreeNode } from '~/components/single-pane/narrowing-filter/display-tree';
 
@@ -42,8 +44,22 @@ interface AppState {
   showPageOverlays: boolean;
 }
 
-const TETap = <E, A>(tapf: (a: A) => unknown | Promise<unknown>) => TE.chain<E, A, A>((a: A) => () => Promise.resolve(tapf(a))
-  .then(() => E.right(a)));
+const TETap = <E, A>(tapf: (a: A) => unknown | Promise<unknown>) => TE.chain<E, A, A>(
+  (a: A) =>
+    () => Promise.resolve(tapf(a))
+      .then(() => E.right(a))
+      .catch(() => E.right(a))
+);
+interface QType {
+  entryId?: string;
+  infoPane?: InfoPane;
+  // pageImageListDiv?: Element;
+  // stanzaListDiv?: Element;
+  // selectionFilterDiv?: Element;
+  // transcript?: Transcript;
+  // pageViewers?: PdfPageViewer[];
+  // stanzaViewers?: StanzaViewer[];
+}
 
 function isPageRange(r: Range): r is PageRange {
   return r.unit === 'page';
@@ -101,10 +117,11 @@ export default defineComponent({
 
     // const asdf: TE.TaskEither<string, InfoPane>  = () => useInfoPane({ mountPoint: infoPaneDiv }).then(s => E.right(s));
 
-    const run = pipe(
+
+    const run: TE.TaskEither<unknown, {}> = pipe(
       TE.right({}),
       TE.bind('entryId', ({ }) => TE.fromEither(getQueryParam('id'))),
-      TE.bind('infoPane', ({ }) => () => useInfoPane({ mountPoint: infoPaneDiv }).then(E.right)),
+      TE.bind('infoPane', ({ }) => () => useInfoPane({ mountPoint: infoPaneDiv }).then(E.right).catch(() => E.left(''))),
       TETap(({ infoPane, entryId }) => infoPane.putStringLn(`entry: ${entryId}`)),
       TE.bind('pageImageListDiv', ({ }) => awaitRefTask(pageImageListDiv)),
       TE.bind('stanzaListDiv', ({ }) => awaitRefTask(stanzaListDiv)),
@@ -112,7 +129,7 @@ export default defineComponent({
       TE.bind('transcript', ({ entryId }) => fetchAndDecodeTranscript(entryId)),
 
       TETap(({ infoPane }) => infoPane.putStringLn('fetched transcript')),
-      TE.bind('transcriptIndex', ({ transcript }) => TE.right(new TranscriptIndex(transcript))),
+      TE.bind('transcriptIndex', ({ transcript }) => TE.right<string, TranscriptIndex>(new TranscriptIndex(transcript))),
       TETap(({ infoPane }) => infoPane.putStringLn('indexed transcript')),
 
       TE.bind('pageViewers', ({
@@ -134,7 +151,7 @@ export default defineComponent({
           return pageLabelRef;
         }));
 
-        const inits = _.map(transcript.pages, async (_, pageNumber) => {
+        const inits: Promise<LabelOverlay>[] = _.map(transcript.pages, async (_, pageNumber) => {
           const mount = document.createElement('div');
           pageImageListDiv!.append(mount);
           const mountPoint = divRef();
@@ -153,32 +170,40 @@ export default defineComponent({
             }));
         });
 
-        return () => Promise.all(inits).then(E.right);
+        const asdf = Promise.all(inits)
+          .then(x => E.right<string, LabelOverlay[]>(x))
+        ;
+        return () => asdf;
       }),
 
       TETap(({ infoPane }) => infoPane.putStringLn('initialized page viewers')),
+
       TE.bind('stanzaViewers', ({ stanzaListDiv, transcript, transcriptIndex }) => {
-        const inits = _.map(transcript.stanzas, async (_, stanzaNumber) => {
+
+        const inits: Promise<StanzaViewer>[] = transcript.stanzas.map(async (sdf, stanzaNumber) => {
           const mount = document.createElement('div');
           const mountPoint = divRef();
           mountPoint.value = mount;
           stanzaListDiv!.append(mount);
-          return useStanzaViewer({ mountPoint })
-            .then(stanzaViewer => stanzaViewer.showStanza(
-              transcriptIndex,
-              stanzaNumber,
-              {
-                indexGranularity: 'none',
-                lineBegin: 0,
-                lineCount: 10,
-              },
-            ));
+          const viewer = useStanzaViewer({ mountPoint })
+            .then(stanzaViewer => {
+              stanzaViewer.showStanza(
+                transcriptIndex,
+                stanzaNumber,
+                {
+                  indexGranularity: 'none',
+                  lineBegin: 0,
+                  lineCount: 10,
+                })
+              return stanzaViewer;
+            });
+          return viewer;
         });
 
-        return () => Promise.all(inits).then(E.right);
+        const asdf = Promise.all(inits).then(x => E.right<string, StanzaViewer[]>(x));
+        return () => asdf;
       }),
 
-      TETap(({ infoPane }) => infoPane.putStringLn('initialized stanza viewers')),
       TE.mapLeft(errors => {
         _.each(errors, error => console.log('error', error));
         return errors;
