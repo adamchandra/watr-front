@@ -6,9 +6,7 @@
       :to="'transcriptViewer?id='+entry.entryId"
       router
       exact >
-      <v-list-item-content>
-        <v-list-item-title v-text="entry.entryId" />
-      </v-list-item-content>
+      <span v-text="entry.entryId" />
     </v-list-item>
   </v-list>
 </div>

@@ -1,0 +1,21 @@
+<div>
+
+  <v-container>
+    <v-row>
+      <v-col justify="space-between" cols="4">
+        <span>
+          Selection Count: {{ selectionRef.length }}
+        </span>
+      </v-col>
+    </v-row>
+  </v-container>
+
+  <NarrowingFilter v-on:items-selected="onItemsSelected" />
+
+</div>
+
+<!--
+     Filter Selection/Narrowing
+     Fuzzy search/narrowing for a list of items
+     TODO: Allow geometry based filtering along with text based
+-->

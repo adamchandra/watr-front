@@ -6,16 +6,16 @@
 .narrowing-filter {
 
   .controls {
-      background: $base02;
+      background: white;
   }
 
   .selection-frame {
 
     .selection {
-      background: $base01;
+      background: wheat;
       font-size: 0.9em;
       font-weight: normal;
-      color: white;
+      color: black;
       overflow: auto;
       max-height: 80vh;
     }

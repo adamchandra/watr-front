@@ -13,6 +13,7 @@
     "lintfix": "npm run lint -- --fix",
     "storybook": "start-storybook -p 6009",
     "build-storybook": "build-storybook",
+    "run:server": "cd ../server && rushx start",
     "stories": "run-p run:server storybook"
   },
   "dependencies": {

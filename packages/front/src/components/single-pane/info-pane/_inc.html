@@ -1,14 +1,4 @@
-<NuxtLayout name="story-layout">
-
-  <template v-slot:title>
-    Info Pane
-  </template>
-
-  <template v-slot:description>
-  </template>
-
-  <template v-slot:controls>
-
+<div>
     <div class="d-flex">
       <div justify="space-between" cols="4">
         <v-text-field outlined
@@ -34,14 +24,7 @@
 
       </div>
     </div>
-  </template>
 
-  <template v-slot:notes>
-    Notes go here...
-  </template>
+  <div ref="infoPaneDiv" class="infoPane" />
 
-  <template v-slot:main>
-    <div ref="infoPaneDiv" class="infoPane" />
-  </template>
-
-</NuxtLayout>
+</div>

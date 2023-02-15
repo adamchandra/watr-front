@@ -78,7 +78,6 @@ export async function useSuperimposedElements({
   if (img) {
     img.addEventListener('load', () => {
       const { width, height } = img;
-      console.log(`addEventListen(${width}, ${height})`)
       dimensions.value = [width, height];
     });
     overlayContainer.append(img);
@@ -108,7 +107,6 @@ export async function useSuperimposedElements({
     const w = `${width}px`;
     const h = `${height}px`;
 
-    console.log(`setting w/h=${w}, ${h}`)
     overlayContainer.style.width = w;
     overlayContainer.style.height = h;
     if (img) {
